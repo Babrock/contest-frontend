@@ -1,4 +1,4 @@
-package model;
+package com.example.contestbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
@@ -16,10 +16,6 @@ import static javax.persistence.CascadeType.ALL;
 public class Voivodeship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_voiodeship;
-    private String name;
-
-    @JsonManagedReference
-    @OneToMany(cascade = ALL, mappedBy = "voivodeship", fetch = FetchType.LAZY)
-    private List<Voivodeship> voivodeships;
+    private Integer idVoivodeship;
+    private String voivodeshipName;
 }

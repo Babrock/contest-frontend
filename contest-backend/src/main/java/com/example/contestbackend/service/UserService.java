@@ -9,10 +9,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserRepositoryImpl {
     private final UserRepository userRepository;
-
     public List<UserResponse> getUsers() {
-        return null;
+        return userRepository.findAllProjectedBy();
+    }
+    public UserResponse getSingleUser(int id) {
+        return userRepository.findById(id, UserResponse.class);
     }
 }

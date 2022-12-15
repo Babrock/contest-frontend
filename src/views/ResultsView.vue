@@ -1,27 +1,28 @@
 <template>
-    <header> Wyniki
-    </header>
-    <main>
-        <RouterView />
-    </main>
+  <ol class="olResults">
+    <li><a href="wyniki/wynikiwgwoj.html" target="window">Uczestnicy konkursu wg województwa</a></li>
+    <li><a href="wyniki/wynikiwgwoj.html" target="window">Uczestnicy konkursu wg regionu</a></li>
+    <li><a href="wyniki/wynikiwgwoj.html" target="window">Bieżąca statystyka</a></li>
+    <li><a href="wyniki/wynikiwgwoj.html" target="window">Wyniki wg regionów</a></li>
+    <li><a href="wyniki/wynikiwgwoj.html" target="window">Wyniki wg województw</a></li>
+  </ol>
+  <iframe class="iframeResults" name="window" src=""></iframe>
 </template>
 
 <style>
-header {
-  margin-top: 1rem;
-  line-height: 1.5;
-  max-height: 10vh;
-  background: rgb(8, 71, 92);
-  box-shadow:  0px 0px 10px 5px rgba(0, 255, 47, 0.5);
 
+.olResults{
+  margin: 10%;
 }
 
-main {
-    min-height: 100vh;
-    max-height: 10vh;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between; 
-    align-items: center;
-  }
+
+
+.iframeResults {
+  width: 1000px;
+  height: 500px;
+  margin: 3%;
+}
+
 </style>
+
+

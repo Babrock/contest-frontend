@@ -1,44 +1,86 @@
 <template>
-  <div class="layout">
-    <header class="napis">
-        Logowanie 
-    </header>
-    <main>
-        MAIN tu jest, chyba
-    </main>
+  <img alt="uniwer logo" class="photoLogin" src="@/assets/uniwerBetter.png" width="125" height="125" />
+  <div class="login">
+    <form action="" method="POST">
+      <p>Login: <br><input type="text" id="login" name="login" placeholder="Podaj Login"><br> </p>
+      <p>Hasło: <br><input type="password" id="haslo" name="haslo" placeholder="Podaj Hasło"><br> </p>
+      <p>Adres E-mail:<br><input type="email" id="email" name="email" placeholder="Podaj Email"><br></p>
+      <button class="buttonContinue" style="vertical-align:middle"><span>Przejdź dalej </span></button>
+    </form>
+
   </div>
 </template>
 
 <style>
-.napis{
+.photoLogin{
+  width: 50%;
+  height: auto;
+  margin: 10%;
+  margin-top: 5.5%;
+  margin-left: 40%;
+}
+
+.login {
+  position: absolute;
+  margin-top: 30%;
+  margin-left: 5%;
+  float: left;
+  padding: 5%;
+  box-shadow: 0 0 100px 40px rgba(0, 0, 0, 0.2);
+
+  padding: 2%;
+  font-weight: bold;
+  text-shadow: 1px 0px 10px #000000;
+}
+
+
+
+.buttonContinue {
+  background-color: #55d86d;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.buttonContinue:hover {
+  background-color: #ADD8E6;
+  border: none;
   color: black;
-}
-header {
-  /* margin-top: 1rem;
-  line-height: 1.5;
-  max-height: 10vh;
-  background: rgb(8, 71, 92);
-  box-shadow:  0px 0px 10px 5px rgba(0, 255, 47, 0.5);
-  place-items: center; */
-
-  margin-top: 1rem;
-  line-height: 1.5;
-  /* max-height: 10vh; */
-  background: #55d86d;
-  box-shadow:  0px 0px 10px 5px rgba(0, 255, 47, 0.5);
-
+  padding: 12px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 10px;
 }
 
-main {
-    min-height: 100vh;
-    max-height: 10vh;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between; 
-    align-items: center;
-  }
 
-.layout{
-  width: 100%;
+.buttonContinue span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.buttonContinue span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.buttonContinue:hover span {
+  padding-right: 30px;
+}
+
+.buttonContinue:hover span:after {
+  opacity: 1;
+  right: 0;
 }
 </style>

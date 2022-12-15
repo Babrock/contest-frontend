@@ -1,3 +1,4 @@
+import { formToJSON } from 'axios'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
@@ -6,17 +7,34 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'homeView',
       component: HomeView
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
+      path: '/login',
+      name: 'loginView',
+      component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/form',
+      name: 'formView',
+      component: () => import('../views/FormView.vue')
+    },
+    {
+      path: '/results',
+      name: 'resultsView',
+      component: () => import('../views/ResultsView.vue')
+    },
+    {
+      path: '/location',
+      name: 'locationView',
+      component: () => import('../views/LocationView.vue')
+    },
+    {
+      path: '/informations',
+      name: 'informationsView',
+      component: () => import('../views/InformationsView.vue')
+    },
   ]
 })
 

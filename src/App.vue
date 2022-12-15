@@ -2,42 +2,45 @@
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 </script>
-
 <template>
-  <header>
-    <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
-    <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">Logowanie</RouterLink>
-    </nav>
-  </header>
-  <main>
-    <RouterView />
-  </main>
+  <div>
+    <header>
+      <nav>
+        <RouterLink to="/">Strona Główna</RouterLink>
+        <RouterLink to="/login">Logowanie</RouterLink>
+        <RouterLink to="/form">Formularz</RouterLink>
+        <RouterLink to="/results">Wyniki</RouterLink>
+        <RouterLink to="/informations">Informacje o konkursie</RouterLink>
+        <RouterLink to="/location">Lokalizacja</RouterLink>
+      </nav>
+    </header>
+    <main>
+      <RouterView />
+    </main>
+  </div>
 </template>
-
 <style scoped>
-main {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  margin-top: 1px;
+  line-height: 3;
+  background: rgb(0, 0, 0);
+  box-shadow: 0px 0px 10px 5px rgba(0, 13, 255, 0.5);
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+main {
+  min-height: 10vh;
+  max-height: 10vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
 }
 
 nav {
-  width: 100%;
-  font-size: 12px;
+  width: auto;
+  font-size: 16px;
   text-align: center;
-  margin-top: 2rem;
+  margin: 1%;
 }
 
 nav a.router-link-exact-active {
@@ -50,13 +53,14 @@ nav a.router-link-exact-active:hover {
 
 nav a {
   display: inline-block;
-  padding: 0 1rem;
+  padding: 0 3rem;
   border-left: 1px solid var(--color-border);
 }
 
 nav a:first-of-type {
   border: 0;
-} 
+}
+
 
 /* @media (min-width: 1024px) {
   header {

@@ -1,0 +1,268 @@
+<script>
+import { watch } from 'vue';
+
+export default {
+  data() {
+    return {
+      voivodeships: [],
+      counties: [],
+      communities: [],
+      categories: [],
+      form: {
+        schoolData: {
+          voivodeship: 0,
+          county: 0,
+          community: 0,
+          category: 0,
+
+          city: "",
+          complex: "",
+          name: "",
+          patron: "",
+          phone: "",
+          mail: "",
+
+          street: "",
+          buildingAndPremises: "",
+          preciseCity: "",
+          post: "",
+        },
+
+        headmaster: {
+          title: "",
+          firstname: "",
+          lastname: "",
+          mail: "",
+        },
+        coordinator: {
+          title: "",
+          firstname: "",
+          lastname: "",
+          mail: "",
+          phone: "",
+        }
+
+
+      }
+    }
+  },
+  mounted() {
+    this.axios.get(`http://localhost:8080/voivodeships`).then((response) => {
+      this.voivodeships = response.data
+    }),
+      this.axios.get(`http://localhost:8080/categories`).then((response) => {
+        this.categories = response.data
+      })
+  },
+  watch: {
+    "form.schoolData.voivodeship"(value) {
+      this.axios.get(`http://localhost:8080/counties/?voivodeship=${value}`).then((response) => {
+        this.counties = response.data
+      })
+    },
+    "form.schoolData.county"(value) {
+      this.axios.get(`http://localhost:8080/communities/?county=${value}`).then((response) => {
+        this.communities = response.data
+      })
+    }
+  },
+}
+</script>
+
+<template>
+  <div class="pageA4">
+    <form>
+      <h1>Formularz Zgłoszeniowy</h1>
+      <div class="container">
+        <legend>Dane Szkoły:</legend>
+
+        <div class="w-100">
+          <div>
+            <label for="voivodeships">Wybierz województwo:</label>
+            <select id="voivodeships" v-model="form.schoolData.voivodeship">
+              <option value="0">Wybierz województwo</option>
+              <option v-for="voivodeship in voivodeships" :value="voivodeship.id"> {{ voivodeship.name }} </option>
+            </select>
+          </div>
+
+          <div class="w-100">
+            <label for="counties">Wybierz powiat:</label>
+            <select id="counties" v-model="form.schoolData.county" :disabled="(counties.length < 1)">
+              <option v-for="county in counties" :value="county.id"> {{ county.name }} </option>
+            </select>
+          </div>
+
+          <div class="w-100">
+            <label for="communities">Wybierz gmine:</label>
+            <select id="communities" v-model="form.schoolData.community" :disabled="(communities.length < 1)">
+              <option v-for="community in communities" :value="community.id"> {{ community.name }}</option>
+            </select>
+          </div>
+
+          <div class="w-100">
+            <label for="categories">Wybierz Typ szkoły:</label>
+            <select id="categories" v-model="form.schoolData.category">
+              <option value="0">Wybierz Typ szkoły</option>
+              <option v-for="category in categories" :value="category.id"> {{ category.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="w-100">
+          <label for="ms">Miejscowość:</label>
+          <input v-model="form.schoolData.city" type="text" name="ms" required="required" placeholder="Miejscowość">
+        </div>
+        <div class="w-100">
+          <label for="zespolSzkol">Zespołu szkół:</label>
+          <input v-model="form.schoolData.complex" type="text" name="zespolSzkol" required="required"
+            placeholder="Zespół szkół">
+        </div>
+        <div class="w-100">
+          <label for="nazszkoly">Nazwa szkoły:</label>
+          <input v-model="form.schoolData.name" type="text" name="nazszkoly" required="required"
+            placeholder="Nazwa szkoły">
+        </div>
+        <div class="w-100">
+          <label for="patron">Patron:</label>
+          <input v-model="form.schoolData.patron" type="text" name="patron" required="required"
+            placeholder="Patron">
+        </div>
+        <div class="w-100">
+          <label for="tel">Telefon:</label>
+          <input v-model="form.schoolData.phone" type="number" name="tel" required="required"
+            placeholder="+48 000 000 000">
+        </div>
+        <div class="w-100">
+          <label for="em">E-mail:</label>
+          <input v-model="form.schoolData.mail" type="email" name="em" required="required"
+            placeholder="adres@strona.pl">
+        </div>
+        <div>
+          <legend>Dokładny adres szkoły (tak jak na kopercie, bez nazwy szkoły)</legend>
+        </div>
+        <div class="w-100">
+          <label for="ul">Ulica:</label>
+          <input v-model="form.schoolData.street" type="text" name="ul" required="required" placeholder="ulica">
+        </div>
+        <div class="w-100">
+          <label for="kp">Nr bud i lok:</label>
+          <input v-model="form.schoolData.buildingAndPremises" type="text" name="kp" required="required"
+            placeholder="Nr budynku i lokalu">
+        </div>
+        <div class="w-100">
+          <label for="ms">Miejscowość:</label>
+          <input v-model="form.schoolData.preciseCity" type="text" name="ms" required="required"
+            placeholder="Miejscowość">
+        </div>
+        <div class="w-100">
+          <label for="kp">Kod pocztowy:</label>
+          <input v-model="form.schoolData.post" type="text" name="kp" required="required" placeholder="00-000">
+        </div>
+      </div>
+
+      <div class="container">
+        <legend>Dane Dyrektora Szkoły:</legend>
+        <div class="w-100">
+          <label for="tyt">Tytuł:</label>
+          <input v-model="form.headmaster.title" type="text" name="tyt" required="required" placeholder="Tytuł">
+        </div>
+        <div class="w-100">
+          <label for="im">Imie:</label>
+          <input v-model="form.headmaster.firstname" type="text" name="im" required="required" placeholder="Imie">
+        </div>
+        <div class="w-100">
+          <label for="naz">Nazwisko:</label>
+          <input v-model="form.headmaster.lastname" type="text" name="naz" required="required" placeholder="Nazwisko">
+        </div>
+        <div class="w-100">
+          <label for="emn">E-mail:</label>
+          <input v-model="form.headmaster.mail" type="email" name="emn" required="required"
+            placeholder="adres@strona.pl">
+        </div>
+      </div>
+
+      <div class="container">
+        <legend>Dane dotyczace nauczyciela koordynujacego przebieg konkursu w szkole:</legend>
+        <div class="w-100">
+          <label for="tytn">Tytuł:</label>
+          <input v-model="form.coordinator.title" type="text" name="tytn" required="required" placeholder="Tytuł">
+        </div>
+        <div class="w-100">
+          <label for="imn">Imie:</label>
+          <input v-model="form.coordinator.firstname" type="text" name="imn" required="required" placeholder="Imie">
+        </div>
+        <div class="w-100">
+          <label for="nazn">Nazwisko:</label>
+          <input v-model="form.coordinator.lastname" type="text" name="nazn" required="required" placeholder="Nazwisko">
+        </div>
+        <div class="w-100">
+          <label for="emn">E-mail:</label>
+          <input v-model="form.coordinator.mail" type="email" name="emn" required="required"
+            placeholder="adres@strona.pl">
+        </div>
+        <div class="w-100">
+          <label for="tel">Telefon:</label>
+          <input v-model="form.coordinator.phone" type="number" name="tel" required="required"
+            placeholder="+48 000 000 000">
+        </div>
+      </div>
+      <div class="buttons">
+        <div>
+          <input type="reset" value="Wyczyść">
+        </div>
+        <div>
+          <input type="submit" value="Wyślij">
+        </div>
+      </div>
+
+      <div>
+        {{ form }}
+      </div>
+
+    </form>
+  </div>
+</template>
+
+<style>
+.pageA4 {
+  margin: auto;
+  margin-left: 10%;
+  margin-right: 10%;
+  color: rgb(0, 0, 0);
+  background-color: #ffffff;
+  border-radius: 20px;
+}
+
+.container {
+  background-color: lightgray;
+  margin: 1cm;
+  padding: 3mm;
+  border: 1px solid black;
+
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 1mm;
+  justify-content: 0;
+}
+
+.container input {
+  width: 80%;
+}
+
+.container label {
+  width: 10%;
+}
+
+h1 {
+  text-align: center;
+  margin: 0%;
+  margin-top: 3mm;
+}
+
+.buttons {
+  display: flex;
+  margin: auto;
+  gap: 10%;
+  justify-content: center;
+}
+</style>

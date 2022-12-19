@@ -21,9 +21,9 @@ const router = createRouter({
       component: () => import('../views/FormView.vue')
     },
     {
-      path: '/results',
-      name: 'resultsView',
-      component: () => import('../views/ResultsView.vue')
+      path: '/scores',
+      name: 'scoresView',
+      component: () => import('../views/ScoresView.vue')
     },
     {
       path: '/location',
@@ -33,7 +33,16 @@ const router = createRouter({
     {
       path: '/informations',
       name: 'informationsView',
-      component: () => import('../views/InformationsView.vue')
+      component: () => import('../views/InformationsView.vue'),
+      children: [
+        { path: 'statute',component: () => import('../views/information/StatuteView.vue') },
+        { path: 'genesis',component: () => import('../views/information/GenesisView.vue') },
+      ],
+    },
+    {
+      path: '/addScores',
+      name: 'addScoresView',
+      component: () => import('../views/addScoresView.vue')
     },
   ]
 })

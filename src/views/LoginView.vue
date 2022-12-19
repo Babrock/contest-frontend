@@ -1,39 +1,69 @@
 <template>
-  <img alt="uniwer logo" class="photoLogin" src="@/assets/uniwerBetter.png" width="125" height="125" />
-  <div class="login">
-    <form action="" method="POST">
-      <p>Login: <br><input type="text" id="login" name="login" placeholder="Podaj Login"><br> </p>
-      <p>Hasło: <br><input type="password" id="haslo" name="haslo" placeholder="Podaj Hasło"><br> </p>
-      <p>Adres E-mail:<br><input type="email" id="email" name="email" placeholder="Podaj Email"><br></p>
-      <button class="buttonContinue" style="vertical-align:middle"><span>Przejdź dalej </span></button>
-    </form>
-
+  <div class="containerL">
+    <img alt="uniwer logo" class="photoLogin" src="@/assets/uniwerBetter.png" width="125" height="125" />
+    <div class="login">
+      <p>Adres E-mail:<br><input v-model="username" type="email" id="email" name="email" placeholder="Podaj Email"><br>
+      </p>
+      <p>Hasło: <br><input v-model="password" type="password" id="haslo" name="haslo" placeholder="Podaj Hasło"><br>
+      </p>
+      <button @click="login" class="buttonContinue" style="vertical-align:middle"><span>Przejdź dalej </span></button>
+    </div>
   </div>
 </template>
 
+<script>
+import { useAuthStore } from '@/store/auth.js'
+
+export default {
+  data() {
+    return {
+      authStore: useAuthStore(),
+      username: "",
+      password: "",
+    }
+  },
+  methods: {
+    login() {
+      const formData = new FormData()
+      formData.append("username", this.username)
+      formData.append("password", this.password)
+
+      this.axios.post("http://localhost:8080/login", formData).then(response => {
+        this.authStore.isAuthenticated = true
+        this.authStore.role = response.data
+        this.$router.push('/')
+      }).catch(err => {
+        if(err.response.status === 401) {
+          alert('bledny login lub haslo')
+        }
+      })
+    }
+  }
+}
+</script>
+
 <style>
-.photoLogin{
-  width: 50%;
-  height: auto;
-  margin: 10%;
-  margin-top: 5.5%;
-  margin-left: 40%;
+.containerL {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+
+  margin: auto;
+  margin-top: 5%;
+  padding: 3%;
+  box-shadow: 0 0 100px 40px rgba(0, 0, 0, 0.2);
 }
 
 .login {
-  position: absolute;
-  margin-top: 30%;
+  margin-top: 10%;
   margin-left: 5%;
-  float: left;
-  padding: 5%;
-  box-shadow: 0 0 100px 40px rgba(0, 0, 0, 0.2);
-
-  padding: 2%;
-  font-weight: bold;
-  text-shadow: 1px 0px 10px #000000;
 }
 
-
+.photoLogin {
+  width: 80%;
+  height: auto;
+}
 
 .buttonContinue {
   background-color: #55d86d;

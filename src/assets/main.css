@@ -15,22 +15,36 @@ a,
   transition: 0.4s;
 }
 
-legend{
+legend {
   width: 100%;
 }
 
-.w-100{
+.w-100 {
   width: 100%;
 }
 
-.w-50{
+.w-50 {
   width: 50%;
 }
-input{
 
+h1,h2,h3 {
+  text-align: center;
+  margin: auto;
+  margin-top: 3%;
+  color: black;
+}
+
+input {
   padding: 1mm;
   float: right;
 }
+.buttons {
+  display: flex;
+  margin: 5%;
+  gap: 10%;
+  justify-content: center;
+}
+
 @media (hover: hover) {
   /* a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);

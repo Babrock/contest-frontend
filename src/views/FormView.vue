@@ -1,5 +1,4 @@
 <script>
-import { watch } from 'vue';
 
 export default {
   data() {
@@ -66,12 +65,21 @@ export default {
       })
     }
   },
+  methods: {
+    onSubmit() {
+      this.axios.post('http://localhost:8080/form', this.form).then(response => {
+        alert("Formularz został zgłoszony.")
+      }).catch(err => {
+        alert('Wystąpił nieoczekiwany błąd.')
+      })
+    }
+  }
 }
 </script>
 
 <template>
   <div class="pageA4">
-    <form>
+    <form  @submit.prevent="onSubmit">
       <h1>Formularz Zgłoszeniowy</h1>
       <div class="container">
         <legend>Dane Szkoły:</legend>
@@ -110,31 +118,31 @@ export default {
 
         <div class="w-100">
           <label for="ms">Miejscowość:</label>
-          <input v-model="form.schoolData.city" type="text" name="ms" required="required" placeholder="Miejscowość">
+          <input v-model="form.schoolData.city" type="text" name="ms" placeholder="Miejscowość">
         </div>
         <div class="w-100">
           <label for="zespolSzkol">Zespołu szkół:</label>
-          <input v-model="form.schoolData.complex" type="text" name="zespolSzkol" required="required"
+          <input v-model="form.schoolData.complex" type="text" name="zespolSzkol" 
             placeholder="Zespół szkół">
         </div>
         <div class="w-100">
           <label for="nazszkoly">Nazwa szkoły:</label>
-          <input v-model="form.schoolData.name" type="text" name="nazszkoly" required="required"
+          <input v-model="form.schoolData.name" type="text" name="nazszkoly" 
             placeholder="Nazwa szkoły">
         </div>
         <div class="w-100">
           <label for="patron">Patron:</label>
-          <input v-model="form.schoolData.patron" type="text" name="patron" required="required"
+          <input v-model="form.schoolData.patron" type="text" name="patron" 
             placeholder="Patron">
         </div>
         <div class="w-100">
           <label for="tel">Telefon:</label>
-          <input v-model="form.schoolData.phone" type="number" name="tel" required="required"
+          <input v-model="form.schoolData.phone" type="tel" name="tel" 
             placeholder="+48 000 000 000">
         </div>
         <div class="w-100">
           <label for="em">E-mail:</label>
-          <input v-model="form.schoolData.mail" type="email" name="em" required="required"
+          <input v-model="form.schoolData.mail" type="email" name="em" 
             placeholder="adres@strona.pl">
         </div>
         <div>
@@ -142,21 +150,21 @@ export default {
         </div>
         <div class="w-100">
           <label for="ul">Ulica:</label>
-          <input v-model="form.schoolData.street" type="text" name="ul" required="required" placeholder="ulica">
+          <input v-model="form.schoolData.street" type="text" name="ul"  placeholder="ulica">
         </div>
         <div class="w-100">
           <label for="kp">Nr bud i lok:</label>
-          <input v-model="form.schoolData.buildingAndPremises" type="text" name="kp" required="required"
+          <input v-model="form.schoolData.buildingAndPremises" type="text" name="kp" 
             placeholder="Nr budynku i lokalu">
         </div>
         <div class="w-100">
           <label for="ms">Miejscowość:</label>
-          <input v-model="form.schoolData.preciseCity" type="text" name="ms" required="required"
+          <input v-model="form.schoolData.preciseCity" type="text" name="ms" 
             placeholder="Miejscowość">
         </div>
         <div class="w-100">
           <label for="kp">Kod pocztowy:</label>
-          <input v-model="form.schoolData.post" type="text" name="kp" required="required" placeholder="00-000">
+          <input v-model="form.schoolData.post" type="text" name="kp"  placeholder="00-000">
         </div>
       </div>
 
@@ -164,19 +172,19 @@ export default {
         <legend>Dane Dyrektora Szkoły:</legend>
         <div class="w-100">
           <label for="tyt">Tytuł:</label>
-          <input v-model="form.headmaster.title" type="text" name="tyt" required="required" placeholder="Tytuł">
+          <input v-model="form.headmaster.title" type="text" name="tyt"  placeholder="Tytuł">
         </div>
         <div class="w-100">
           <label for="im">Imie:</label>
-          <input v-model="form.headmaster.firstname" type="text" name="im" required="required" placeholder="Imie">
+          <input v-model="form.headmaster.firstname" type="text" name="im"  placeholder="Imie">
         </div>
         <div class="w-100">
           <label for="naz">Nazwisko:</label>
-          <input v-model="form.headmaster.lastname" type="text" name="naz" required="required" placeholder="Nazwisko">
+          <input v-model="form.headmaster.lastname" type="text" name="naz"  placeholder="Nazwisko">
         </div>
         <div class="w-100">
           <label for="emn">E-mail:</label>
-          <input v-model="form.headmaster.mail" type="email" name="emn" required="required"
+          <input v-model="form.headmaster.mail" type="email" name="emn" 
             placeholder="adres@strona.pl">
         </div>
       </div>
@@ -185,31 +193,28 @@ export default {
         <legend>Dane dotyczace nauczyciela koordynujacego przebieg konkursu w szkole:</legend>
         <div class="w-100">
           <label for="tytn">Tytuł:</label>
-          <input v-model="form.coordinator.title" type="text" name="tytn" required="required" placeholder="Tytuł">
+          <input v-model="form.coordinator.title" type="text" name="tytn"  placeholder="Tytuł">
         </div>
         <div class="w-100">
           <label for="imn">Imie:</label>
-          <input v-model="form.coordinator.firstname" type="text" name="imn" required="required" placeholder="Imie">
+          <input v-model="form.coordinator.firstname" type="text" name="imn"  placeholder="Imie">
         </div>
         <div class="w-100">
           <label for="nazn">Nazwisko:</label>
-          <input v-model="form.coordinator.lastname" type="text" name="nazn" required="required" placeholder="Nazwisko">
+          <input v-model="form.coordinator.lastname" type="text" name="nazn"  placeholder="Nazwisko">
         </div>
         <div class="w-100">
           <label for="emn">E-mail:</label>
-          <input v-model="form.coordinator.mail" type="email" name="emn" required="required"
+          <input v-model="form.coordinator.mail" type="email" name="emn" 
             placeholder="adres@strona.pl">
         </div>
         <div class="w-100">
           <label for="tel">Telefon:</label>
-          <input v-model="form.coordinator.phone" type="number" name="tel" required="required"
+          <input v-model="form.coordinator.phone" type="number" name="tel" 
             placeholder="+48 000 000 000">
         </div>
       </div>
       <div class="buttons">
-        <div>
-          <input type="reset" value="Wyczyść">
-        </div>
         <div>
           <input type="submit" value="Wyślij">
         </div>
@@ -228,17 +233,16 @@ export default {
   margin: auto;
   margin-left: 10%;
   margin-right: 10%;
+  margin-top: 2%;
   color: rgb(0, 0, 0);
   background-color: #ffffff;
   border-radius: 20px;
 }
-
 .container {
   background-color: lightgray;
   margin: 1cm;
   padding: 3mm;
   border: 1px solid black;
-
   display: flex;
   flex-wrap: wrap;
   row-gap: 1mm;
@@ -253,16 +257,11 @@ export default {
   width: 10%;
 }
 
-h1 {
-  text-align: center;
-  margin: 0%;
-  margin-top: 3mm;
-}
-
 .buttons {
   display: flex;
   margin: auto;
   gap: 10%;
   justify-content: center;
 }
+
 </style>

@@ -33,12 +33,14 @@ export default {
           lastname: "",
           mail: "",
         },
+
         coordinator: {
           title: "",
           firstname: "",
           lastname: "",
           mail: "",
           phone: "",
+          wantsToRate: 0,
         }
 
 
@@ -51,6 +53,9 @@ export default {
     }),
       this.axios.get(`http://localhost:8080/categories`).then((response) => {
         this.categories = response.data
+      }),
+      this.axios.get(`http://localhost:8080/titles`).then((response) => {
+        this.titles = response.data
       })
   },
   watch: {
@@ -79,7 +84,7 @@ export default {
 
 <template>
   <div class="pageA4">
-    <form  @submit.prevent="onSubmit">
+    <form @submit.prevent="onSubmit">
       <h1>Formularz Zgłoszeniowy</h1>
       <div class="container">
         <legend>Dane Szkoły:</legend>
@@ -122,98 +127,138 @@ export default {
         </div>
         <div class="w-100">
           <label for="zespolSzkol">Zespołu szkół:</label>
-          <input v-model="form.schoolData.complex" type="text" name="zespolSzkol" 
-            placeholder="Zespół szkół">
+          <input v-model="form.schoolData.complex" type="text" name="zespolSzkol" placeholder="Zespół szkół">
         </div>
         <div class="w-100">
           <label for="nazszkoly">Nazwa szkoły:</label>
-          <input v-model="form.schoolData.name" type="text" name="nazszkoly" 
-            placeholder="Nazwa szkoły">
+          <input v-model="form.schoolData.name" type="text" name="nazszkoly" placeholder="Nazwa szkoły">
         </div>
         <div class="w-100">
           <label for="patron">Patron:</label>
-          <input v-model="form.schoolData.patron" type="text" name="patron" 
-            placeholder="Patron">
+          <input v-model="form.schoolData.patron" type="text" name="patron" placeholder="Patron">
         </div>
         <div class="w-100">
           <label for="tel">Telefon:</label>
-          <input v-model="form.schoolData.phone" type="tel" name="tel" 
-            placeholder="+48 000 000 000">
+          <input v-model="form.schoolData.phone" type="tel" name="tel" placeholder="+48 000 000 000">
         </div>
         <div class="w-100">
           <label for="em">E-mail:</label>
-          <input v-model="form.schoolData.mail" type="email" name="em" 
-            placeholder="adres@strona.pl">
+          <input v-model="form.schoolData.mail" type="email" name="em" placeholder="adres@strona.pl">
         </div>
         <div>
           <legend>Dokładny adres szkoły (tak jak na kopercie, bez nazwy szkoły)</legend>
         </div>
         <div class="w-100">
           <label for="ul">Ulica:</label>
-          <input v-model="form.schoolData.street" type="text" name="ul"  placeholder="ulica">
+          <input v-model="form.schoolData.street" type="text" name="ul" placeholder="ulica">
         </div>
         <div class="w-100">
           <label for="kp">Nr bud i lok:</label>
-          <input v-model="form.schoolData.buildingAndPremises" type="text" name="kp" 
-            placeholder="Nr budynku i lokalu">
+          <input v-model="form.schoolData.buildingAndPremises" type="text" name="kp" placeholder="Nr budynku i lokalu">
         </div>
         <div class="w-100">
           <label for="ms">Miejscowość:</label>
-          <input v-model="form.schoolData.preciseCity" type="text" name="ms" 
-            placeholder="Miejscowość">
+          <input v-model="form.schoolData.preciseCity" type="text" name="ms" placeholder="Miejscowość">
         </div>
         <div class="w-100">
           <label for="kp">Kod pocztowy:</label>
-          <input v-model="form.schoolData.post" type="text" name="kp"  placeholder="00-000">
+          <input v-model="form.schoolData.post" type="text" name="kp" placeholder="00-000">
         </div>
       </div>
 
       <div class="container">
         <legend>Dane Dyrektora Szkoły:</legend>
         <div class="w-100">
-          <label for="tyt">Tytuł:</label>
-          <input v-model="form.headmaster.title" type="text" name="tyt"  placeholder="Tytuł">
-        </div>
+            <label for="titles">Wybierz tytuł:</label>
+            <select id="titles" v-model="form.headmaster.title">
+              <option value="0">Wybierz tytuł</option>
+              <option v-for="title in titles" :value="title.id"> {{ title.name }}</option>
+            </select>
+          </div>
         <div class="w-100">
           <label for="im">Imie:</label>
-          <input v-model="form.headmaster.firstname" type="text" name="im"  placeholder="Imie">
+          <input v-model="form.headmaster.firstname" type="text" name="im" placeholder="Imie">
         </div>
         <div class="w-100">
           <label for="naz">Nazwisko:</label>
-          <input v-model="form.headmaster.lastname" type="text" name="naz"  placeholder="Nazwisko">
+          <input v-model="form.headmaster.lastname" type="text" name="naz" placeholder="Nazwisko">
         </div>
         <div class="w-100">
           <label for="emn">E-mail:</label>
-          <input v-model="form.headmaster.mail" type="email" name="emn" 
-            placeholder="adres@strona.pl">
+          <input v-model="form.headmaster.mail" type="email" name="emn" placeholder="adres@strona.pl">
         </div>
       </div>
 
       <div class="container">
         <legend>Dane dotyczace nauczyciela koordynujacego przebieg konkursu w szkole:</legend>
         <div class="w-100">
-          <label for="tytn">Tytuł:</label>
-          <input v-model="form.coordinator.title" type="text" name="tytn"  placeholder="Tytuł">
-        </div>
+            <label for="titles">Wybierz tytuł:</label>
+            <select id="titles" v-model="form.coordinator.title">
+              <option value="0">Wybierz tytuł</option>
+              <option v-for="title in titles" :value="title.id"> {{ title.name }}</option>
+            </select>
+          </div>
         <div class="w-100">
           <label for="imn">Imie:</label>
-          <input v-model="form.coordinator.firstname" type="text" name="imn"  placeholder="Imie">
+          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
         </div>
         <div class="w-100">
           <label for="nazn">Nazwisko:</label>
-          <input v-model="form.coordinator.lastname" type="text" name="nazn"  placeholder="Nazwisko">
+          <input v-model="form.coordinator.lastname" type="text" name="nazn" placeholder="Nazwisko">
         </div>
         <div class="w-100">
           <label for="emn">E-mail:</label>
-          <input v-model="form.coordinator.mail" type="email" name="emn" 
-            placeholder="adres@strona.pl">
+          <input v-model="form.coordinator.mail" type="email" name="emn" placeholder="adres@strona.pl">
         </div>
         <div class="w-100">
           <label for="tel">Telefon:</label>
-          <input v-model="form.coordinator.phone" type="number" name="tel" 
-            placeholder="+48 000 000 000">
+          <input v-model="form.coordinator.phone" type="number" name="tel" placeholder="+48 000 000 000">
         </div>
+        <div>
+          <label for="wantsToRate">Prosimy o zaznaczenie poniższego pola w przypadku chęci udziału koordynatora w
+            pracach
+            Komisji Sprawdzającej prace uczestników konkursu z etapu finałowego w swoim regionie.
+            Na podstawie powyższej deklaracji Przewodniczący RKO MK „MBG” będzie mógł w razie potrzeby zaprosić
+            koordynatora do udziału w sprawdzaniu prac konkursowych.
+            O faktycznym udziale w pracach Komisji koordynator zdecyduje przyjmując bądź odrzucając otrzymane
+            zaproszenie.
+            Jednocześnie informujemy, że wszystkie osoby zaangażowane w organizację i przebieg konkursu działają na
+            zasadzie wolontariatu. Deklaracja współpracy jest całkowicie dobrowolna</label>
+        </div>
+        <input type="checkbox" id="wantsToRate" v-model="form.coordinator.wantsToRate" />
       </div>
+
+      <div class="container">
+<!--         
+        <legend>Dane dotyczace Nauczyciela:</legend>
+        <div class="w-100">
+          <label for="tyt">Tytuł:</label>
+          <input v-model="form.headmaster.title" type="text" name="tyt" placeholder="Tytuł">
+        </div>
+        <div class="w-100">
+          <label for="imn">Imie:</label>
+          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+        </div>
+        <div class="w-100">
+          <label for="imn">Nazwisko:</label>
+          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+        </div> -->
+
+        <!-- <legend>Dane dotyczace klasy:</legend>
+        <div class="w-100">
+          <label for="nazwaKlasy">Nazwa klasy:</label>
+          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+        </div>
+        <div class="w-100">
+          <label for="iloscUczniow">Ilość uczniów:</label>
+          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+        </div>
+        <div class="w-100">
+          <label for="prefJezyk">Preferowany język:</label>
+          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+        </div> -->
+      </div>
+      
       <div class="buttons">
         <div>
           <input type="submit" value="Wyślij">
@@ -223,7 +268,6 @@ export default {
       <div>
         {{ form }}
       </div>
-
     </form>
   </div>
 </template>
@@ -238,6 +282,7 @@ export default {
   background-color: #ffffff;
   border-radius: 20px;
 }
+
 .container {
   background-color: lightgray;
   margin: 1cm;
@@ -257,11 +302,14 @@ export default {
   width: 10%;
 }
 
+#wantsToRate {
+  width: 50px;
+}
+
 .buttons {
   display: flex;
   margin: auto;
   gap: 10%;
   justify-content: center;
 }
-
 </style>

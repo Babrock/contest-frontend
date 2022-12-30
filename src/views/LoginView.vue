@@ -33,7 +33,7 @@ export default {
         this.authStore.role = response.data
         this.$router.push('/')
       }).catch(err => {
-        if(err.response.status === 401) {
+        if (err.response.status === 401) {
           alert('bledny login lub haslo')
         }
       })

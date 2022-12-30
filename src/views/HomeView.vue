@@ -24,19 +24,19 @@
 
   <h3><br> Terminarz XXXIV MK "MBG" Senior edycja (2022/2023)</h3>
   <ol>
-    <li>Zgłoszenia uczestnictwa: <font color="red">od października do grudnia 2022 roku</font>
+    <li>Zgłoszenia uczestnictwa: <h3>od października do grudnia 2022 roku</h3>
     </li>
     <li>Etap wstępny (wewnątrzszkolny): od stycznia do 28 lutego 2023 roku</li>
-    <li>Finał:<font color="red"><b> 9 marca 2023</b> </font>
+    <li>Finał:<h3><b> 9 marca 2023</b> </h3>
     </li>
   </ol>
 
   <h3>Terminarz MK "MBG" Junior edycja (2022/2023)</h3>
   <ol class="olHome">
-    <li> Zgłoszenia uczestnictwa: <font color="red">od października do grudnia 2022 roku</font>
+    <li> Zgłoszenia uczestnictwa: <h3>od października do grudnia 2022 roku</h3>
     </li>
     <li> Etap wstępny (wewnątrzszkolny): od stycznia do 28 lutego 2023 roku</li>
-    <li>Finał:<font color="red"><b> 7 marca 2023</b></font>
+    <li>Finał:<h3><b> 7 marca 2023</b></h3>
     </li>
   </ol>
   czerwiec: wręczenie dyplomów laureatom konkursu w regionach.
@@ -51,7 +51,7 @@
   margin-top: 0%;
 }
 
-h2, h3 {
+h2 {
   width: 100%;
   color: greenyellow;
 }

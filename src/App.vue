@@ -24,6 +24,7 @@ export default {
   <div>
     <header>
       <nav>
+        <RouterLink v-if="role=='ROLE_ADMIN'" to="/register">Rejestracja</RouterLink>
         <RouterLink to="/">Strona Główna</RouterLink>
         <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
         <RouterLink to="/form">Formularz</RouterLink>

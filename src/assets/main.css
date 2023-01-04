@@ -38,11 +38,16 @@ input {
   padding: 1mm;
   float: right;
 }
+
 .buttons {
   display: flex;
   margin: 5%;
   gap: 10%;
   justify-content: center;
+}
+
+span[role = alert]{
+  color: red;
 }
 
 @media (hover: hover) {

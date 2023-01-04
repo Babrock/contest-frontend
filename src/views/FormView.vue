@@ -1,62 +1,65 @@
 <script>
-
+import { Form, Field, ErrorMessage } from 'vee-validate';
 export default {
+  components: {
+    Form,
+    Field,
+    ErrorMessage,
+  },
   data() {
     return {
       voivodeships: [],
       counties: [],
       communities: [],
       categories: [],
+      titles: [],
       form: {
         schoolData: {
           voivodeship: 0,
           county: 0,
           community: 0,
           category: 0,
-
           city: "",
           complex: "",
           name: "",
           patron: "",
           phone: "",
-          mail: "",
-
+          email: "",
           street: "",
           buildingAndPremises: "",
           preciseCity: "",
           post: "",
+          headmaster: {
+            title: 0,
+            firstname: "",
+            lastname: "",
+            email: "",
+          }
         },
-
-        headmaster: {
-          title: "",
-          firstname: "",
-          lastname: "",
-          mail: "",
-        },
-
         coordinator: {
-          title: "",
+          title: 0,
+          role: 2,
           firstname: "",
           lastname: "",
-          mail: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
           phone: "",
           wantsToRate: 0,
         }
-
-
       }
     }
   },
-  mounted() {
+  beforeMount() {
     this.axios.get(`http://localhost:8080/voivodeships`).then((response) => {
       this.voivodeships = response.data
-    }),
-      this.axios.get(`http://localhost:8080/categories`).then((response) => {
-        this.categories = response.data
-      }),
-      this.axios.get(`http://localhost:8080/titles`).then((response) => {
-        this.titles = response.data
-      })
+    })
+    this.axios.get(`http://localhost:8080/categories`).then((response) => {
+      this.categories = response.data
+    })
+    this.axios.get(`http://localhost:8080/titles`).then((response) => {
+      this.titles = response.data
+    })
   },
   watch: {
     "form.schoolData.voivodeship"(value) {
@@ -70,21 +73,32 @@ export default {
       })
     }
   },
+
   methods: {
-    onSubmit() {
+    onSubmit(values) {
+      console.log(JSON.stringify(values, null, 2));
       this.axios.post('http://localhost:8080/form', this.form).then(response => {
         alert("Formularz został zgłoszony.")
       }).catch(err => {
         alert('Wystąpił nieoczekiwany błąd.')
       })
-    }
+    },
+    validatePassword(value) {
+      if (!value) {
+        return 'Hasło jest wymagane';
+      }
+      if (this.form.coordinator.confirmPassword != value) {
+        return 'Hasła nie są zgodne';
+      }
+      return true;
+    },
   }
 }
 </script>
 
 <template>
   <div class="pageA4">
-    <form @submit.prevent="onSubmit">
+    <Form @submit="onSubmit">
       <h1>Formularz Zgłoszeniowy</h1>
       <div class="container">
         <legend>Dane Szkoły:</legend>
@@ -142,8 +156,8 @@ export default {
           <input v-model="form.schoolData.phone" type="tel" name="tel" placeholder="+48 000 000 000">
         </div>
         <div class="w-100">
-          <label for="em">E-mail:</label>
-          <input v-model="form.schoolData.mail" type="email" name="em" placeholder="adres@strona.pl">
+          <label for="em">E-email:</label>
+          <input v-model="form.schoolData.email" type="eemail" name="em" placeholder="adres@strona.pl">
         </div>
         <div>
           <legend>Dokładny adres szkoły (tak jak na kopercie, bez nazwy szkoły)</legend>
@@ -169,35 +183,35 @@ export default {
       <div class="container">
         <legend>Dane Dyrektora Szkoły:</legend>
         <div class="w-100">
-            <label for="titles">Wybierz tytuł:</label>
-            <select id="titles" v-model="form.headmaster.title">
-              <option value="0">Wybierz tytuł</option>
-              <option v-for="title in titles" :value="title.id"> {{ title.name }}</option>
-            </select>
-          </div>
+          <label for="titles">Wybierz tytuł:</label>
+          <select id="titles-headmaster" v-model="form.schoolData.headmaster.title">
+            <option value="0">Wybierz tytuł</option>
+            <option v-for="title in titles" :value="title.id"> {{ title.name }}</option>
+          </select>
+        </div>
         <div class="w-100">
           <label for="im">Imie:</label>
-          <input v-model="form.headmaster.firstname" type="text" name="im" placeholder="Imie">
+          <input v-model="form.schoolData.headmaster.firstname" type="text" name="im" placeholder="Imie">
         </div>
         <div class="w-100">
           <label for="naz">Nazwisko:</label>
-          <input v-model="form.headmaster.lastname" type="text" name="naz" placeholder="Nazwisko">
+          <input v-model="form.schoolData.headmaster.lastname" type="text" name="naz" placeholder="Nazwisko">
         </div>
         <div class="w-100">
-          <label for="emn">E-mail:</label>
-          <input v-model="form.headmaster.mail" type="email" name="emn" placeholder="adres@strona.pl">
+          <label for="emn">E-email:</label>
+          <input v-model="form.schoolData.headmaster.email" type="eemail" name="emn" placeholder="adres@strona.pl">
         </div>
       </div>
 
       <div class="container">
         <legend>Dane dotyczace nauczyciela koordynujacego przebieg konkursu w szkole:</legend>
         <div class="w-100">
-            <label for="titles">Wybierz tytuł:</label>
-            <select id="titles" v-model="form.coordinator.title">
-              <option value="0">Wybierz tytuł</option>
-              <option v-for="title in titles" :value="title.id"> {{ title.name }}</option>
-            </select>
-          </div>
+          <label for="titles">Wybierz tytuł:</label>
+          <select id="titles-coordinator" v-model="form.coordinator.title">
+            <option value="0">Wybierz tytuł</option>
+            <option v-for="title in titles" :value="title.id"> {{ title.name }}</option>
+          </select>
+        </div>
         <div class="w-100">
           <label for="imn">Imie:</label>
           <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
@@ -207,9 +221,20 @@ export default {
           <input v-model="form.coordinator.lastname" type="text" name="nazn" placeholder="Nazwisko">
         </div>
         <div class="w-100">
-          <label for="emn">E-mail:</label>
-          <input v-model="form.coordinator.mail" type="email" name="emn" placeholder="adres@strona.pl">
+          <label for="emn">E-email:</label>
+          <input v-model="form.coordinator.email" type="email" name="emn" placeholder="Adres@strona.pl">
         </div>
+        <div class="w-100">
+          <label for="password">password:</label>
+          <Field :validateOnMount="true" :validateOnInput="true" v-model="form.coordinator.password"
+            :rules="validatePassword" type="password" name="password" placeholder="Haslo" />
+        </div>
+        <div class="w-100">
+          <label for="pasconfirmPasswprds">confirmPassword:</label>
+          <Field :validateOnMount="true" :validateOnInput="true" v-model="form.coordinator.confirmPassword"
+            type="password" name="confirmPasswprd" :rules="validatePassword" placeholder="Potwierdź hasło" />
+        </div>
+        <ErrorMessage name="password" />
         <div class="w-100">
           <label for="tel">Telefon:</label>
           <input v-model="form.coordinator.phone" type="number" name="tel" placeholder="+48 000 000 000">
@@ -228,8 +253,7 @@ export default {
         <input type="checkbox" id="wantsToRate" v-model="form.coordinator.wantsToRate" />
       </div>
 
-      <div class="container">
-<!--         
+      <!-- <div class="container"> 
         <legend>Dane dotyczace Nauczyciela:</legend>
         <div class="w-100">
           <label for="tyt">Tytuł:</label>
@@ -242,9 +266,9 @@ export default {
         <div class="w-100">
           <label for="imn">Nazwisko:</label>
           <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
-        </div> -->
+        </div>
 
-        <!-- <legend>Dane dotyczace klasy:</legend>
+        <legend>Dane dotyczace klasy:</legend>
         <div class="w-100">
           <label for="nazwaKlasy">Nazwa klasy:</label>
           <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
@@ -256,15 +280,12 @@ export default {
         <div class="w-100">
           <label for="prefJezyk">Preferowany język:</label>
           <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
-        </div> -->
-      </div>
-      
-      <div class="buttons">
-        <div>
-          <input type="submit" value="Wyślij">
         </div>
-      </div>
+      </div> -->
 
+      <div class="buttons">
+        <button>wyślij</button>
+      </div>
       <div>
         {{ form }}
       </div>

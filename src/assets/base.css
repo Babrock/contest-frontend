@@ -16,9 +16,9 @@
   --vt-c-divider-dark-2: rgba(0, 0, 0, 0.48);
 
   --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(255, 255, 255);
+  --vt-c-text-light-2: black;
   --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgb(255, 255, 255);
+  --vt-c-text-dark-2: black;
 }
 
 /* semantic color variables for this project */

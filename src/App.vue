@@ -21,7 +21,6 @@ export default {
 }
 </script>
 <template>
-  <div>
     <header>
       <nav>
         <RouterLink v-if="role=='ROLE_ADMIN'" to="/register">Rejestracja</RouterLink>
@@ -38,29 +37,28 @@ export default {
     <main>
       <RouterView />
     </main>
-  </div>
 </template>
 <style scoped>
 header {
-  margin-top: 1px;
+  width: 100%;
   line-height: 3;
   background: rgb(0, 0, 0);
   box-shadow: 0px 0px 10px 5px rgba(0, 13, 255, 0.5);
 }
 
 main {
+  max-width: 1000px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  margin-top: 10px;
 }
 
 nav {
   width: auto;
   font-size: 16px;
   text-align: center;
-  margin: 1%;
-  
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
@@ -69,7 +67,7 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: yellow;
 }
 
 nav a.router-link-exact-active:hover {

@@ -1,5 +1,6 @@
 <script>
-import { Form, Field, ErrorMessage } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import { object, string, ref } from 'yup'
 export default {
   components: {
     Form,
@@ -8,11 +9,19 @@ export default {
   },
   data() {
     return {
+      schema: object({
+        schoolEmail: string().email("To musi być email").required("Pole jest wymagane"),
+        headmasterEmail: string().email("To musi być email").required("Pole jest wymagane"),
+        coordinatorEmail: string().email("To musi być email").required("Pole jest wymagane"),
+        password: string().min(5,"Hasło musi mieć minimum 5 znaków").required("Pole jest wymagane"),
+        passwordConfirmation: string().required("Pole jest wymagane").oneOf([ref('password')], 'Hasło nie pasuje'),
+      }),
       voivodeships: [],
       counties: [],
       communities: [],
       categories: [],
       titles: [],
+      languages: [],
       form: {
         schoolData: {
           voivodeship: 0,
@@ -46,6 +55,14 @@ export default {
           confirmPassword: "",
           phone: "",
           wantsToRate: 0,
+        },
+        schoolClass: {
+          title: 0,
+          firstname: "",
+          lastname: "",
+          name: "",
+          students: 0,
+          language: 0,
         }
       }
     }
@@ -59,6 +76,9 @@ export default {
     })
     this.axios.get(`http://localhost:8080/titles`).then((response) => {
       this.titles = response.data
+    })
+    this.axios.get(`http://localhost:8080/languages`).then((response) => {
+      this.languages = response.data
     })
   },
   watch: {
@@ -76,12 +96,13 @@ export default {
 
   methods: {
     onSubmit(values) {
-      console.log(JSON.stringify(values, null, 2));
-      this.axios.post('http://localhost:8080/form', this.form).then(response => {
-        alert("Formularz został zgłoszony.")
-      }).catch(err => {
-        alert('Wystąpił nieoczekiwany błąd.')
-      })
+      if (window.confirm("Czy potwierdzasz zgodność danych?")) {
+        this.axios.post('http://localhost:8080/form', this.form).then(response => {
+          alert("Formularz został zgłoszony.")
+        }).catch(err => {
+          alert('Wystąpił nieoczekiwany błąd.')
+        })
+      }
     },
     validatePassword(value) {
       if (!value) {
@@ -92,13 +113,14 @@ export default {
       }
       return true;
     },
+
   }
 }
 </script>
 
 <template>
   <div class="pageA4">
-    <Form @submit="onSubmit">
+    <Form @submit="onSubmit" :validationSchema="schema">
       <h1>Formularz Zgłoszeniowy</h1>
       <div class="container">
         <legend>Dane Szkoły:</legend>
@@ -156,8 +178,9 @@ export default {
           <input v-model="form.schoolData.phone" type="tel" name="tel" placeholder="+48 000 000 000">
         </div>
         <div class="w-100">
-          <label for="em">E-email:</label>
-          <input v-model="form.schoolData.email" type="eemail" name="em" placeholder="adres@strona.pl">
+          <label for="schoolEmail">E-email:</label>
+          <Field :validateOnInput="true" v-model="form.schoolData.email" type="email" name="schoolEmail" placeholder="adres@strona.pl"/>
+          <ErrorMessage class="err" name="schoolEmail" />
         </div>
         <div>
           <legend>Dokładny adres szkoły (tak jak na kopercie, bez nazwy szkoły)</legend>
@@ -198,9 +221,10 @@ export default {
           <input v-model="form.schoolData.headmaster.lastname" type="text" name="naz" placeholder="Nazwisko">
         </div>
         <div class="w-100">
-          <label for="emn">E-email:</label>
-          <input v-model="form.schoolData.headmaster.email" type="eemail" name="emn" placeholder="adres@strona.pl">
+          <label for="headmasterEmail">E-email:</label>
+          <Field :validateOnInput="true" v-model="form.schoolData.headmaster.email" type="email" name="headmasterEmail" placeholder="adres@strona.pl"/>
         </div>
+          <ErrorMessage name="headmasterEmail" />
       </div>
 
       <div class="container">
@@ -221,20 +245,22 @@ export default {
           <input v-model="form.coordinator.lastname" type="text" name="nazn" placeholder="Nazwisko">
         </div>
         <div class="w-100">
-          <label for="emn">E-email:</label>
-          <input v-model="form.coordinator.email" type="email" name="emn" placeholder="Adres@strona.pl">
+          <label for="coordinatorEmail">E-email:</label>
+          <Field :validateOnInput="true" v-model="form.coordinator.email" type="email" name="coordinatorEmail" placeholder="Adres@strona.pl"/>
         </div>
+        <ErrorMessage name="coordinatorEmail" />
         <div class="w-100">
-          <label for="password">password:</label>
-          <Field :validateOnMount="true" :validateOnInput="true" v-model="form.coordinator.password"
-            :rules="validatePassword" type="password" name="password" placeholder="Haslo" />
+          <label for="password">Hasło:</label>
+          <Field :validateOnInput="true" v-model="form.coordinator.password" type="password"
+            name="password" placeholder="Haslo" />
+          </div>
+          <ErrorMessage name="password" />
+          <div class="w-100">
+          <label for="passwordConfirmation">Potwierdź hasło:</label>
+          <Field  :validateOnInput="true" v-model="form.coordinator.confirmPassword"
+            type="password" name="passwordConfirmation" placeholder="Potwierdź hasło" />
         </div>
-        <div class="w-100">
-          <label for="pasconfirmPasswprds">confirmPassword:</label>
-          <Field :validateOnMount="true" :validateOnInput="true" v-model="form.coordinator.confirmPassword"
-            type="password" name="confirmPasswprd" :rules="validatePassword" placeholder="Potwierdź hasło" />
-        </div>
-        <ErrorMessage name="password" />
+        <ErrorMessage name="passwordConfirmation" />
         <div class="w-100">
           <label for="tel">Telefon:</label>
           <input v-model="form.coordinator.phone" type="number" name="tel" placeholder="+48 000 000 000">
@@ -253,35 +279,42 @@ export default {
         <input type="checkbox" id="wantsToRate" v-model="form.coordinator.wantsToRate" />
       </div>
 
-      <!-- <div class="container"> 
+      <div class="container"> 
         <legend>Dane dotyczace Nauczyciela:</legend>
         <div class="w-100">
-          <label for="tyt">Tytuł:</label>
-          <input v-model="form.headmaster.title" type="text" name="tyt" placeholder="Tytuł">
+          <label for="titles">Tytuł:</label>
+          <select id="titles-teacher" v-model="form.schoolClass.title">
+            <option value="0">Wybierz tytuł</option>
+            <option v-for="title in titles" :value="title.id" >{{ title.name }}</option>
+          </select>
         </div>
         <div class="w-100">
-          <label for="imn">Imie:</label>
-          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+          <label for="first">Imie:</label>
+          <input v-model="form.schoolClass.firstname" type="text" name="firstname" placeholder="Imie">
         </div>
         <div class="w-100">
-          <label for="imn">Nazwisko:</label>
-          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+          <label for="last">Nazwisko:</label>
+          <input v-model="form.schoolClass.lastname" type="text" name="lastname" placeholder="Nazwisko">
         </div>
 
         <legend>Dane dotyczace klasy:</legend>
         <div class="w-100">
           <label for="nazwaKlasy">Nazwa klasy:</label>
-          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+          <input v-model="form.schoolClass.name" type="text" name="className" placeholder="Nazwa klasy">
         </div>
         <div class="w-100">
           <label for="iloscUczniow">Ilość uczniów:</label>
-          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+          <input v-model="form.schoolClass.students" type="text" name="count" placeholder="Ilość uczniów">
         </div>
         <div class="w-100">
-          <label for="prefJezyk">Preferowany język:</label>
-          <input v-model="form.coordinator.firstname" type="text" name="imn" placeholder="Imie">
+          <label for="language">Preferowany język:</label>
+          <select id="language-class" v-model="form.schoolClass.language">
+          <option value="0">Wybierz język</option>
+          <option v-for="language in languages" :value="language.id">{{ language.name }}</option>
+          </select>
         </div>
-      </div> -->
+      </div>
+
 
       <div class="buttons">
         <button>wyślij</button>
@@ -295,15 +328,13 @@ export default {
 
 <style>
 .pageA4 {
-  margin: auto;
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-top: 2%;
   color: rgb(0, 0, 0);
   background-color: #ffffff;
   border-radius: 20px;
 }
-
+form h1{
+  text-align: center;
+}
 .container {
   background-color: lightgray;
   margin: 1cm;
@@ -315,22 +346,14 @@ export default {
   justify-content: 0;
 }
 
-.container input {
-  width: 80%;
-}
-
-.container label {
-  width: 10%;
-}
-
-#wantsToRate {
-  width: 50px;
-}
-
 .buttons {
   display: flex;
   margin: auto;
   gap: 10%;
   justify-content: center;
+}
+
+.err{
+  float: right;
 }
 </style>

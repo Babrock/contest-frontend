@@ -8,15 +8,15 @@ export default {
             school: 0,
             form: {
                 schoolClass: 0,
-                zad1: 0,
-                zad2: 0,
-                zad3: 0,
-                zad4: 0,
-                zad5: 0,
-                zad6: 0,
-                zad7: 0,
-                zad8: 0,
-                zad9: 0,
+                task1: 0,
+                task2: 0,
+                task3: 0,
+                task4: 0,
+                task5: 0,
+                task6: 0,
+                task7: 0,
+                task8: 0,
+                task9: 0,
             }
         }
     },
@@ -69,55 +69,55 @@ export default {
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad1">zadanie 1:</label>
-                    <input v-model="form.zad1" type="number" name="zad1" placeholder="Zadanie 1">
+                    <input v-model="form.task1" type="number"  min="0" max="100" step="0.01" name="zad1" placeholder="Zadanie 1">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad1">zadanie 2:</label>
-                    <input v-model="form.zad2" type="number" name="zad2" placeholder="Zadanie 2">
+                    <input v-model="form.task2" type="number" min="0" max="100" step="0.01" name="zad2" placeholder="Zadanie 2">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad3">zadanie 3:</label>
-                    <input v-model="form.zad3" type="number" name="zad3" placeholder="Zadanie 3">
+                    <input v-model="form.task3" type="number" min="0" max="100" step="0.01" name="zad3" placeholder="Zadanie 3">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad1">zadanie 4:</label>
-                    <input v-model="form.zad4" type="number" name="zad4" placeholder="Zadanie 4">
+                    <input v-model="form.task4" type="number" min="0" max="100" step="0.01" name="zad4" placeholder="Zadanie 4">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad5">zadanie 5:</label>
-                    <input v-model="form.zad5" type="number" name="zad5" placeholder="Zadanie 5">
+                    <input v-model="form.task5" type="number" min="0" max="100" step="0.01" name="zad5" placeholder="Zadanie 5">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad6">zadanie 6:</label>
-                    <input v-model="form.zad6" type="number" name="zad6" placeholder="Zadanie 6">
+                    <input v-model="form.task6" type="number" min="0" max="100" step="0.01" name="zad6" placeholder="Zadanie 6">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad7">zadanie 7:</label>
-                    <input v-model="form.zad7" type="number" name="zad7" placeholder="Zadanie 7">
+                    <input v-model="form.task7" type="number" min="0" max="100" step="0.01" name="zad7" placeholder="Zadanie 7">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad8">zadanie 8:</label>
-                    <input v-model="form.zad8" type="number" name="zad8" placeholder="Zadanie 8">
+                    <input v-model="form.task8" type="number" min="0" max="100" step="0.01" name="zad8" placeholder="Zadanie 8">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
                     <label for="zad9">zadanie 9:</label>
-                    <input v-model="form.zad9" type="number" name="zad9" placeholder="Zadanie 9">
+                    <input v-model="form.task9" type="number" min="0" max="100" step="0.01" name="zad9" placeholder="Zadanie 9">
                 </div>
             </div>
             <div class="buttons">

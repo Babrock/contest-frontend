@@ -42,6 +42,11 @@ const router = createRouter({
       children: [
         { path: 'statute',component: () => import('../views/information/StatuteView.vue') },
         { path: 'genesis',component: () => import('../views/information/GenesisView.vue') },
+        { path: 'idee',component: () => import('../views/information/IdeeContestView.vue') },
+        { path: 'awards',component: () => import('../views/information/AwardsView.vue') },
+        { path: 'specification',component: () => import('../views/information/SpecificationContentTasksView.vue') },
+        { path: 'conditions',component: () => import('../views/information/ConditionsOfParticipationView.vue') },
+        { path: 'rules',component: () => import('../views/information/RulesView.vue') },
       ],
     },
     {

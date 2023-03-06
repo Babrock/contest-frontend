@@ -10,19 +10,10 @@
 </template>
 
 <style>
-
-.olResults{
-  margin: 10%;
-}
-
-
-
 .iframeResults {
   width: 1000px;
   height: 500px;
-  margin: 3%;
 }
-
 </style>
 
 

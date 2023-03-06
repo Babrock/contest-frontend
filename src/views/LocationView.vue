@@ -11,11 +11,9 @@
 iframe{
   height: 800px;
   width: 1820px;
-  margin:  2%;
 }
 
 h1{
-  margin: 1px;
   text-align: center;
 }
 </style>

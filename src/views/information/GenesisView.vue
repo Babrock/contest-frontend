@@ -1,7 +1,6 @@
 <template>
     <h1>Geneza konkursu</h1>
     <blockquote>
-
         <ul>
             <li>Od kilkunastu lat w krajach Europy Zachodniej organizowany jest Międzynarodowy Konkurs
                 Matematyczny <b><i>"Mathematiques sans frontieres"</i></b>
@@ -39,11 +38,3 @@
         </ul>
     </blockquote>
 </template>
-<script>
-export default {
-
-}
-</script>
-<style scoped>
-
-</style>

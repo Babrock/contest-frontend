@@ -1,38 +1,61 @@
 <template>
-    <div class="row">
-        <div class="side-bar w-100">
-            <RouterLink to="/informations/statute">Regulamin konkursu MBG Senior</RouterLink>
-            <RouterLink to="/informations/genesis">Geneza konkursu </RouterLink>
-            <!-- <a href="genezaKonkursu.html" target="okno">Geneza konkursu </a>
-            <a href="warunkiUdzialuwKonkursie.html" target="okno">Warunki udziału w konkursie </a>
-            <a href="specyfikacjaZadanKonkursowych.html" target="okno">Specyfika zadań konkursowych </a>
-            <a href="ideeKonkursu.html" target="okno">Idee konkursu</a>
-            <a href="zasadyOgolne.html" target="okno">Zasady ogólne</a>
-            <a href="nagrody.html" target="okno">Nagrody</a> -->
-        </div>
-        <div>
-            <RouterView/>
-            <!-- <iframe name="okno" src=""></iframe> -->
-
-            <!-- <a href="regse.pdf"><b>Pobierz Regulamin</b></a> -->
-            <!-- <a href="RegJr.pdf"><b>Pobierz Regulamin Junior</b></a> -->
-        </div>
+    <nav>
+        <RouterLink to="/informations/statute">Regulamin konkursu MBG Senior</RouterLink>
+        <RouterLink to="/informations/genesis">Geneza konkursu</RouterLink>
+        <RouterLink to="/informations/idee">Idea konkursu</RouterLink>
+        <RouterLink to="/informations/awards">Nagrody konkursu</RouterLink>
+        <RouterLink to="/informations/specification">Specyfikacja zadań konkursowych</RouterLink>
+        <RouterLink to="/informations/conditions">Warunki udziału w konkursie</RouterLink>
+        <RouterLink to="/informations/rules">Zasady ogólne</RouterLink>
+    </nav>
+    <div>
+        <RouterView />
     </div>
 </template>
 
 <style>
-/* iframe {
-    width: 100%;
-    height: 500px;
-    margin: 3%;
-} */
-
 .side-bar {
+    color: black;
+    font-size: 16px;
+    text-align: center;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    flex-direction: row;
 }
 
-.row {
-    display: flex;
+nav {
+  width: auto;
+  font-size: 16px;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  margin: auto;
+}
+
+nav a.router-link-exact-active {
+  color: yellow;
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 1%;
+  padding-top: 0%;
+  padding-bottom: 0%;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:hover {
+  background-color: grey;
+  cursor: pointer;
+}
+
+nav a:first-of-type {
+  border: 0;
 }
 </style>

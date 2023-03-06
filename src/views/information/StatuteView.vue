@@ -1,7 +1,6 @@
 <template>
+<div>
     <h1>Regulamin konkursu</h1>
-    <blockquote>
-
         Wyciąg z regulaminu:
         <ol>
             <li>W konkursie biorą udział klasy ósme szkoły podstawowej oraz klasy pierwsze liceum lub technikum.</li>
@@ -14,7 +13,6 @@
                 Etap wstępny odbywa się zgodnie z terminarzem obowiązującym w danej edycji i jest przeprowadzany przez
                 nauczycieli matematyki w danej szkole.
                 <br>
-
                 Zadania wstępne wraz ze schematem oceniania i
                 kluczem rozwiązań otrzymują nauczyciele koordynujący przebieg konkursu w szkole pocztą
                 elektroniczną.<br>
@@ -55,13 +53,9 @@
                 powoływanych przez Regionalne Komitety Organizacyjne MK "MbG".
             </li>
         </ol>
-    </blockquote>
+</div>
 </template>
-<script>
-export default {
 
-}
-</script>
 <style scoped>
 
 </style>

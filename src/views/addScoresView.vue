@@ -27,8 +27,8 @@ export default {
     },
     watch: {
         "form.school"(value) {
-      this.axios.get(`http://localhost:8080/classes?school_id=${value}`).then((response) => {
-        this.schoolClasses = response.data
+            this.axios.get(`http://localhost:8080/classes?school_id=${value}`).then((response) => {
+            this.schoolClasses = response.data
       })
     }
     },
@@ -36,10 +36,10 @@ export default {
         onSubmit() {
             this.axios.post('http://localhost:8080/scores/add', this.form).then(response => {
                 console.log(response);
-                // alert("Wyniki zostały dodane.")
+                alert("Wyniki zostały dodane.")
             }).catch(err => {
                 if (err.response.status === 403)
-                    alert('Nie masz uprawnien')
+                    alert('Nie masz uprawnien.')
             })
         }
     }
@@ -54,8 +54,7 @@ export default {
                 <label for="schools">Wybierz szkołe:</label>
                 <select id="schools" v-model="form.school">
                     <option value="0">Wybierz szkołe</option>
-                    <option v-for="school in schools" :value="school.id"> {{ school.name }}
-                    </option>
+                    <option v-for="school in schools" :value="school.id"> {{ school.name }} </option>
                 </select>
             </div>
             <div class="containerW">

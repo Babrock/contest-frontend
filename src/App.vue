@@ -28,6 +28,8 @@ export default {
         <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
         <RouterLink to="/form">Formularz</RouterLink>
         <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_COORDINATOR'" to="/addScores">Dodaj punkty</RouterLink>
+        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_COORDINATOR'" to="/deleteScores">Usuń punkty</RouterLink>
+        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_COORDINATOR'" to="/editScores">Edytuj punkty</RouterLink>
         <RouterLink to="/scores">Wyniki</RouterLink>
         <RouterLink to="/informations/statute">Informacje o konkursie</RouterLink>
         <RouterLink to="/location">Lokalizacja</RouterLink>

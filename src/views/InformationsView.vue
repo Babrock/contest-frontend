@@ -1,16 +1,16 @@
 <template>
-    <nav>
-        <RouterLink to="/informations/statute">Regulamin konkursu MBG Senior</RouterLink>
-        <RouterLink to="/informations/genesis">Geneza konkursu</RouterLink>
-        <RouterLink to="/informations/idee">Idea konkursu</RouterLink>
-        <RouterLink to="/informations/awards">Nagrody konkursu</RouterLink>
-        <RouterLink to="/informations/specification">Specyfikacja zadań konkursowych</RouterLink>
-        <RouterLink to="/informations/conditions">Warunki udziału w konkursie</RouterLink>
-        <RouterLink to="/informations/rules">Zasady ogólne</RouterLink>
-    </nav>
-    <div>
-        <RouterView />
-    </div>
+  <nav>
+    <RouterLink to="/informations/statute">Regulamin konkursu MBG Senior</RouterLink>
+    <RouterLink to="/informations/genesis">Geneza konkursu</RouterLink>
+    <RouterLink to="/informations/idee">Idea konkursu</RouterLink>
+    <RouterLink to="/informations/awards">Nagrody konkursu</RouterLink>
+    <RouterLink to="/informations/specification">Specyfikacja zadań konkursowych</RouterLink>
+    <RouterLink to="/informations/conditions">Warunki udziału w konkursie</RouterLink>
+    <RouterLink to="/informations/rules">Zasady ogólne</RouterLink>
+  </nav>
+  <div>
+    <RouterView/>
+  </div>
 </template>
 
 <style>

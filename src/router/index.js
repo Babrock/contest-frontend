@@ -28,7 +28,14 @@ const router = createRouter({
     {
       path: '/scores',
       name: 'scoresView',
-      component: () => import('../views/ScoresView.vue')
+      component: () => import('../views/ScoresView.vue'),
+      children: [
+        { path: 'currentStatistics', component: () => import('../views/result/CurrentStatisticsView.vue') },
+        { path: 'participantsByRegion', component: () => import('../views/result/ParticipantsByRegionView.vue') },
+        { path: 'participantsByVoivodeship', component: () => import('../views/result/ParticipantsByVoivodeshipView.vue') },
+        { path: 'resultsByRegion', component: () => import('../views/result/resultsByRegionView.vue') },
+        { path: 'resultsByVoivodeship', component: () => import('../views/result/resultsByVoivodeshipView.vue') },
+      ],
     },
     {
       path: '/location',
@@ -54,6 +61,16 @@ const router = createRouter({
       name: 'addScoresView',
       component: () => import('../views/addScoresView.vue')
     },
+    {
+      path: '/deleteScores',
+      name: 'deleteScoresView',
+      component: () => import('../views/DeleteScoresView.vue')
+    },
+    {
+      path: '/editScores',
+      name: 'editScoresView',
+      component: () => import('../views/EditScoresView.vue')
+    }
   ]
 })
 

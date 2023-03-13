@@ -30,17 +30,10 @@ export default {
           <th>Wynik</th>
           <th>idk</th>
         </tr>
-        <tr>
-          <th><option v-for="voivodeship in voivodeships"> {{ voivodeship.name }} </option></th>
-          <td><option v-for="score in scores" :value="score.id"> {{ score.task1 }} , {{ score.task2 }}</option></td>
+        <tr v-for="voivodeship in voivodeships"> {{ voivodeship.name }} 
+          <th></th>
+          <td  v-for="score in scores" :value="score.id"> {{ score.task1 }} , {{ score.task2 }}</td>
           <td></td>
-        </tr>
-        <tr>
-          <td>kujawsko-pomorskie</td>
-          <td>dipka</td>
-        </tr>
-        <tr>
-          <td>łódzkie</td>
         </tr>
     </table>
 </template>

@@ -319,9 +319,6 @@ export default {
       <div class="buttons">
         <button>wyślij</button>
       </div>
-      <div>
-        {{ form }}
-      </div>
     </form>
   </div>
 </template>
@@ -349,8 +346,9 @@ form h1{
 .buttons {
   display: flex;
   margin: auto;
+  margin: 3%;
   gap: 10%;
-  justify-content: center;
+  justify-content: center; 
 }
 
 .err{

@@ -14,9 +14,11 @@ const pinia = createPinia()
 axios.defaults.baseURL = 'http://localhost:8080'
 axios.defaults.withCredentials= true
 
+import { TablePlugin } from 'bootstrap-vue'
 const app = createApp(App)
 app.use(VueAxios, axios)
 app.use(pinia)
+app.use(TablePlugin)
 app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
 
 

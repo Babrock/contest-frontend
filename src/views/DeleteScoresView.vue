@@ -1,12 +1,17 @@
 <script>
+import { resolveComponent } from 'vue'
+
 export default {
     data() {
         return {
             schools: [],
             schoolClasses: [],
+            tasks: [],
             school: 0,
             form: {
+                school: 0,
                 schoolClass: 0,
+                id_task: 0
             }
         }
     },
@@ -14,22 +19,33 @@ export default {
         this.axios.get(`http://localhost:8080/schools`).then((response) => {
             this.schools = response.data
         })
+        this.axios.get(`http://localhost:8080/tasks`).then((response) => {
+            this.tasks = response.data
+        })
     },
     watch: {
         "form.school"(value) {
             this.axios.get(`http://localhost:8080/classes?school_id=${value}`).then((response) => {
                 this.schoolClasses = response.data
             })
+        },
+        "form.schoolClass"(value) {
+            this.axios.get(`http://localhost:8080/tasks?schoolClass_id=${value}`).then((response) => {
+                this.tasks = response.data
+            })
         }
     },
     methods: {
         onSubmit() {
-            this.axios.delete(`http//localhost:8080/scores/${value}`).then(response => {
-                alert("Wyniki zostały usunięte.")
-            }).catch(err => {
-                if (err.response.status === 403)
-                    alert("Nie masz uprawnień.")
-            })
+            if (window.confirm("Czy na pewno chcesz usnąć wyniki?")) {
+                console.log(this.form.id_task)
+                this.axios.delete(`http://localhost:8080/tasks/${this.form.id_task}`).then(response => {
+                    alert("Wyniki zostały usunięte.")
+                }).catch(err => {
+                    if (err.response.status === 403)
+                        alert("Nie masz uprawnień.")
+                })
+            }
         }
     },
 }
@@ -52,13 +68,17 @@ export default {
                     <option v-for="schoolClass in schoolClasses" :value="schoolClass.id"> {{ schoolClass.name }}</option>
                 </select>
             </div>
+            <div class="containerW">
+                <label for="taskName">Wybierz Zadanie:</label>
+                <select id="taskName" v-model="form.id_task">
+                    <option value="0">Wybierz zadanie</option>
+                    <option v-for="task in tasks" :value="task.id"> {{ task.name }}</option>
+                </select>
+            </div>
             <div class="buttons">
                 <div>
                     <input type="submit" value="Usuń">
                 </div>
-            </div>
-            <div>
-                {{ form }}
             </div>
         </form>
     </div>

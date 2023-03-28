@@ -7,15 +7,8 @@ export default {
             school: 0,
             form: {
                 schoolClass: 0,
-                task1: 0,
-                task2: 0,
-                task3: 0,
-                task4: 0,
-                task5: 0,
-                task6: 0,
-                task7: 0,
-                task8: 0,
-                task9: 0,
+                name: 0,
+                score: 0,
             }
         }
     },
@@ -33,13 +26,14 @@ export default {
     },
     methods: {
         onSubmit() {
-            this.axios.post('http://localhost:8080/scores/add', this.form).then(response => {
-                console.log(response);
+            if(window.confirm("Czy na pewno chcesz dodać wyniki?")){
+                this.axios.post('http://localhost:8080/tasks/add', this.form).then(response => {
                 alert("Wyniki zostały dodane.")
             }).catch(err => {
                 if (err.response.status === 403)
                     alert('Nie masz uprawnien.')
             })
+            }
         }
     }
 }
@@ -65,74 +59,22 @@ export default {
             </div>
             <div class="containerW">
                 <div class="w-100">
-                    <label for="zad1">zadanie 1:</label>
-                    <input v-model="form.task1" type="number" min="0" max="100" step="0.01" name="zad1"
-                        placeholder="Zadanie 1">
+                    <label for="taskName">Numer zadania</label>
+                    <input v-model="form.name" type="text" name="taskName"
+                        placeholder="Numer zadania">
                 </div>
             </div>
             <div class="containerW">
                 <div class="w-100">
-                    <label for="zad1">zadanie 2:</label>
-                    <input v-model="form.task2" type="number" min="0" max="100" step="0.01" name="zad2"
-                        placeholder="Zadanie 2">
-                </div>
-            </div>
-            <div class="containerW">
-                <div class="w-100">
-                    <label for="zad3">zadanie 3:</label>
-                    <input v-model="form.task3" type="number" min="0" max="100" step="0.01" name="zad3"
-                        placeholder="Zadanie 3">
-                </div>
-            </div>
-            <div class="containerW">
-                <div class="w-100">
-                    <label for="zad1">zadanie 4:</label>
-                    <input v-model="form.task4" type="number" min="0" max="100" step="0.01" name="zad4"
-                        placeholder="Zadanie 4">
-                </div>
-            </div>
-            <div class="containerW">
-                <div class="w-100">
-                    <label for="zad5">zadanie 5:</label>
-                    <input v-model="form.task5" type="number" min="0" max="100" step="0.01" name="zad5"
-                        placeholder="Zadanie 5">
-                </div>
-            </div>
-            <div class="containerW">
-                <div class="w-100">
-                    <label for="zad6">zadanie 6:</label>
-                    <input v-model="form.task6" type="number" min="0" max="100" step="0.01" name="zad6"
-                        placeholder="Zadanie 6">
-                </div>
-            </div>
-            <div class="containerW">
-                <div class="w-100">
-                    <label for="zad7">zadanie 7:</label>
-                    <input v-model="form.task7" type="number" min="0" max="100" step="0.01" name="zad7"
-                        placeholder="Zadanie 7">
-                </div>
-            </div>
-            <div class="containerW">
-                <div class="w-100">
-                    <label for="zad8">zadanie 8:</label>
-                    <input v-model="form.task8" type="number" min="0" max="100" step="0.01" name="zad8"
-                        placeholder="Zadanie 8">
-                </div>
-            </div>
-            <div class="containerW">
-                <div class="w-100">
-                    <label for="zad9">zadanie 9:</label>
-                    <input v-model="form.task9" type="number" min="0" max="100" step="0.01" name="zad9"
-                        placeholder="Zadanie 9">
+                    <label for="Liczba punktów">Liczba punktów</label>
+                    <input v-model="form.score" type="number" min="0" max="100" step="0.5" name="score"
+                        placeholder="Liczba punktów">
                 </div>
             </div>
             <div class="buttons">
                 <div>
                     <input type="submit" value="Wyślij">
                 </div>
-            </div>
-            <div>
-                {{ form }}
             </div>
         </form>
     </div>

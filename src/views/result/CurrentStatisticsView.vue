@@ -3,7 +3,7 @@ export default {
   data() {
     return {
       voivodeships: [],
-      scores: [],
+      tasks: [],
       sum: 0,
     }
   },
@@ -11,13 +11,13 @@ export default {
     this.axios.get(`http://localhost:8080/voivodeships`).then((response) => {
       this.voivodeships = response.data
     })
-    this.axios.get(`http://localhost:8080/scores`).then((response) => {
-      this.scores = response.data
+    this.axios.get(`http://localhost:8080/tasks`).then((response) => {
+      this.tasks = response.data
     })
   },
   methods: {
     kurwa(sum){
-      return sum = this.scores.task1 + this.scores.task2
+
     },
   }
 }
@@ -31,8 +31,8 @@ export default {
           <th>idk</th>
         </tr>
         <tr v-for="voivodeship in voivodeships"> {{ voivodeship.name }} 
-          <th></th>
-          <td  v-for="score in scores" :value="score.id"> {{ score.task1 }} , {{ score.task2 }}</td>
+          <th v-for="task in tasks" :value="task.id">{{ task.name }}</th>
+          <td></td>
           <td></td>
         </tr>
     </table>

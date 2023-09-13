@@ -16,7 +16,7 @@ export default {
       this.axios.post("http://localhost:8080/login", formData).then(response => {
         this.authStore.isAuthenticated = true
         this.authStore.role = response.data
-        this.axios.get('http://localhost:8080/scores')
+        this.axios.get('http://localhost:8080/tasks')
         this.$router.push('/')
       }).catch(err => {
         if (err.response.status === 401) {
@@ -56,11 +56,8 @@ export default {
   background-color: #ADD8E6;
   border: none;
   color: black;
-  padding: 12px 32px;
   text-decoration: none;
-  margin: 4px 2px;
   cursor: pointer;
-  border-radius: 10px;
 }
 
 

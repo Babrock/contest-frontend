@@ -8,6 +8,25 @@ import * as Vue from 'vue' // in Vue 3
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
+// Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+import * as labs from 'vuetify/labs/components'
+import '@mdi/font/css/materialdesignicons.css'
+
+
+const vuetify = createVuetify({
+  theme: { defaultTheme: 'light' },
+  components,
+  components: {
+    ...components,
+    ...labs
+  },
+  directives,
+})
+
 import { createPinia } from 'pinia'
 const pinia = createPinia()
 
@@ -17,6 +36,7 @@ axios.defaults.withCredentials= true
 const app = createApp(App)
 app.use(VueAxios, axios)
 app.use(pinia)
+app.use(vuetify)
 app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
 
 

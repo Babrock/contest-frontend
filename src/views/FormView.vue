@@ -22,11 +22,13 @@ export default {
       categories: [],
       titles: [],
       languages: [],
+      regions: [],
       form: {
         schoolData: {
           voivodeship: 0,
           county: 0,
           community: 0,
+          region: 0,
           category: 0,
           city: "",
           complex: "",
@@ -79,6 +81,9 @@ export default {
     })
     this.axios.get(`http://localhost:8080/languages`).then((response) => {
       this.languages = response.data
+    })
+    this.axios.get(`http://localhost:8080/regions`).then((response) => {
+      this.regions = response.data
     })
   },
   watch: {
@@ -145,6 +150,14 @@ export default {
             <label for="communities">Wybierz gmine:</label>
             <select id="communities" v-model="form.schoolData.community" :disabled="(communities.length < 1)">
               <option v-for="community in communities" :value="community.id"> {{ community.name }}</option>
+            </select>
+          </div>
+
+          <div class="w-100">
+            <label for="regions">Wybierz Region szkoły:</label>
+            <select id="regions" v-model="form.schoolData.region">
+              <option value="0">Wybierz Region szkoły</option>
+              <option v-for="region in regions" :value="region.id"> {{ region.name }}</option>
             </select>
           </div>
 
@@ -319,9 +332,6 @@ export default {
       <div class="buttons">
         <button>wyślij</button>
       </div>
-      <div>
-        {{ form }}
-      </div>
     </form>
   </div>
 </template>
@@ -349,8 +359,9 @@ form h1{
 .buttons {
   display: flex;
   margin: auto;
+  margin: 3%;
   gap: 10%;
-  justify-content: center;
+  justify-content: center; 
 }
 
 .err{

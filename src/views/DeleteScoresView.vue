@@ -54,6 +54,7 @@ export default {
     <div class="pageA4W">
         <form @submit.prevent="onSubmit">
             <h2>Usuwanie wyników</h2>
+            {{  form.id_task }}
             <div class="containerW">
                 <label for="schools">Wybierz szkołe:</label>
                 <select id="schools" v-model="form.school">

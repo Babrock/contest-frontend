@@ -5,6 +5,18 @@ export default {
       voivodeships: [],
       tasks: [],
       sum: 0,
+      selectedVoivodeship: null,
+      itemsPerPage: 5,
+      headers: [
+        {
+          title: 'Punkty',
+          key: 'score',
+        },
+        { title: 'Klasa', key: 'name' },
+        { title: 'Liczba uczniów', key: 'schoolClass.students' },
+        { title: 'Nauczyciel', key: 'schoolClass.teacher' },
+        { title: 'Nazwa szkoły', key: 'schoolClass.school.name' },
+      ],
     }
   },
   beforeMount() {
@@ -15,40 +27,71 @@ export default {
       this.tasks = response.data
     })
   },
-  methods: {
-    kurwa(sum){
-
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
-  }
+  },
+
+  watch: {
+    dialog(val) {
+      val || this.close()
+    },
+    dialogDelete(val) {
+      val || this.closeDelete()
+    },
+  },
+
+  methods: {
+        editItem (item) {
+          this.editedIndex = this.desserts.indexOf(item)
+          this.editedItem = Object.assign({}, item)
+          this.dialog = true
+        },
+  
+        deleteItem (item) {
+          this.editedIndex = this.desserts.indexOf(item)
+          this.editedItem = Object.assign({}, item)
+          this.dialogDelete = true
+        },
+  
+        deleteItemConfirm () {
+          this.desserts.splice(this.editedIndex, 1)
+          this.closeDelete()
+        },
+  
+        close () {
+          this.dialog = false
+          this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem)
+            this.editedIndex = -1
+          })
+        },
+  
+        closeDelete () {
+          this.dialogDelete = false
+          this.$nextTick(() => {
+            this.editedItem = Object.assign({}, this.defaultItem)
+            this.editedIndex = -1
+          })
+        },
+  
+        save () {
+          if (this.editedIndex > -1) {
+            Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          } else {
+            this.desserts.push(this.editedItem)
+          }
+          this.close()
+        },
+      },
 }
 </script>
 
 <template>
-    <table>
-        <tr class="trHead">
-          <th>województwo</th>
-          <th>Wynik</th>
-          <th>idk</th>
-        </tr>
-        <tr v-for="voivodeship in voivodeships"> {{ voivodeship.name }} 
-          <th v-for="task in tasks" :value="task.id">{{ task.name }}</th>
-          <td></td>
-          <td></td>
-        </tr>
-    </table>
+  <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="tasks" item-value="name"
+class="elevation-1">
+  </v-data-table>
 </template>
 
-<style>
-table {
-  background-color:black;
-}
-.trHead {
-  background-color: grey;
-}
-tr {
-  background-color: lightgray;
-  text-align: center;
-  /* vertical-align: middle; */
-}
-
-</style>
+<style></style>

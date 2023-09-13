@@ -7,12 +7,14 @@ export default {
             schools: [],
             schoolClasses: [],
             tasks: [],
-            school: 0,
             form: {
                 school: 0,
-                schoolClass: 0,
                 id_task: 0,
-                scores: 0,
+            },
+            task: {
+                schoolClass: 0,
+                name: "",
+                score: 0,
             }
         }
     },
@@ -30,7 +32,7 @@ export default {
                 this.schoolClasses = response.data
             })
         },
-        "form.schoolClass"(value) {
+        "task.schoolClass"(value) {
             this.axios.get(`http://localhost:8080/tasks?schoolClass_id=${value}`).then((response) => {
                 this.tasks = response.data
             })
@@ -38,10 +40,12 @@ export default {
     },
     methods: {
         onSubmit() {
-            if (window.confirm("Czy na pewno chcesz usnąć wyniki?")) {
+            if (window.confirm("Czy na pewno chcesz zmienić wyniki?")) {
                 console.log(this.form.id_task)
-                this.axios.delete(`http://localhost:8080/tasks/${this.form.id_task}`).then(response => {
-                    alert("Wyniki zostały usunięte.")
+                console.log(this.task)
+                console.log(this.form)
+                this.axios.put(`http://localhost:8080/tasks/${this.form.id_task}`, this.task).then(response => {
+                    alert("Wyniki zostały zmienione.")
                 }).catch(err => {
                     if (err.response.status === 403)
                         alert("Nie masz uprawnień.")
@@ -54,7 +58,7 @@ export default {
 <template>
     <div class="pageA4W">
         <form @submit.prevent="onSubmit">
-            <h2>Usuwanie wyników</h2>
+            <h2>Edytowanie wyników</h2>
             <div class="containerW">
                 <label for="schools">Wybierz szkołe:</label>
                 <select id="schools" v-model="form.school">
@@ -64,7 +68,7 @@ export default {
             </div>
             <div class="containerW">
                 <label for="schoolClasses">Wybierz klasę:</label>
-                <select id="schoolClasses" v-model="form.schoolClass">
+                <select id="schoolClasses" v-model="task.schoolClass">
                     <option value="0">Wybierz klasę</option>
                     <option v-for="schoolClass in schoolClasses" :value="schoolClass.id"> {{ schoolClass.name }}</option>
                 </select>
@@ -77,16 +81,24 @@ export default {
                 </select>
             </div>
             <div class="containerW">
-                <label for="scores">Wpisz nowe punkty:</label>
-                <input v-model="form.scores" type="number" name="scores" min="0" max="100" step="0.5" placeholder="Wpisz nowe punkty">
+                <label for="zadanie">Nowe zadanie:</label>
+                <input v-model="task.name" type="number" min="0" max="100" step="1" name="zadanie" placeholder="Zadanie">
+            </div>
+            <div class="containerW">
+                <label for="score">Wpisz nowe punkty:</label>
+                <input v-model="task.score" type="number" name="score" min="0" max="100" step="0.5"
+                    placeholder="Wpisz nowe punkty">
             </div>
             <div class="buttons">
                 <div>
-                    <input type="submit" value="Usuń">
+                    <input type="submit" value="Zmień">
                 </div>
             </div>
             <div>
-                {{  form }}
+                {{ form }} 
+            </div>
+            <div>
+                {{ task }}
             </div>
         </form>
     </div>

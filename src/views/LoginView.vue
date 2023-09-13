@@ -56,11 +56,8 @@ export default {
   background-color: #ADD8E6;
   border: none;
   color: black;
-  padding: 12px 32px;
   text-decoration: none;
-  margin: 4px 2px;
   cursor: pointer;
-  border-radius: 10px;
 }
 
 

@@ -57,6 +57,11 @@ const router = createRouter({
       ],
     },
     {
+      path: '/allScores',
+      name: 'allScoresView',
+      component: () => import('../views/AllScoresView.vue')
+    },
+    {
       path: '/addScores',
       name: 'addScoresView',
       component: () => import('../views/addScoresView.vue')

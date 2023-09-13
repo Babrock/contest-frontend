@@ -26,13 +26,13 @@ export default {
     },
     methods: {
         onSubmit() {
-            if(window.confirm("Czy na pewno chcesz dodać wyniki?")){
+            if (window.confirm("Czy na pewno chcesz dodać wyniki?")) {
                 this.axios.post('http://localhost:8080/tasks/add', this.form).then(response => {
-                alert("Wyniki zostały dodane.")
-            }).catch(err => {
-                if (err.response.status === 403)
-                    alert('Nie masz uprawnien.')
-            })
+                    alert("Wyniki zostały dodane.")
+                }).catch(err => {
+                    if (err.response.status === 403)
+                        alert('Nie masz uprawnien.')
+                })
             }
         }
     }
@@ -60,8 +60,7 @@ export default {
             <div class="containerW">
                 <div class="w-100">
                     <label for="taskName">Numer zadania</label>
-                    <input v-model="form.name" type="text" name="taskName"
-                        placeholder="Numer zadania">
+                    <input v-model="form.name" type="text" name="taskName" placeholder="Numer zadania">
                 </div>
             </div>
             <div class="containerW">
@@ -107,4 +106,5 @@ export default {
 
 .containerW label {
     width: 50%;
-}</style>
+}
+</style>

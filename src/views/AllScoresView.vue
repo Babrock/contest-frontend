@@ -35,7 +35,7 @@
                     <v-text-field v-model="editedItem.name" label="Numer zadania"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.score" label="Liczba punktów"></v-text-field>
+                    <v-text-field v-model="editedItem.score" label="Liczba punktów TEST" ></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -62,7 +62,6 @@
               <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
-            {{  editedItem.id_task }}
           </v-card>
 
         </v-dialog>
@@ -88,7 +87,7 @@ export default {
     schools: [],
     schoolClasses: [],
     selectedSchoolId: null,
-    schoolClass: null,
+    schoolClass: 0,
     school: 0,
     tasks: [],
     itemsPerPage: 5,
@@ -110,16 +109,16 @@ export default {
     desserts: [],
     editedIndex: -1,
     editedItem: {
+      id_task: 0,
       schoolClass: 0,
       name: 0,
       score: 0,
-      id_task: 0,
     },
     defaultItem: {
+      id_task: 0,
       schoolClass: 0,
       name: 0,
       score: 0,
-      id_task: 0,
     },
   }),
   beforeMount() {
@@ -145,7 +144,7 @@ export default {
       return this.schools.map(school => school.name)
     },
     taskId(){
-      return this.tasks.map(task => tasks.id_task)
+      return this.tasks.map(tasks => tasks.id)
     },
   },
 
@@ -174,7 +173,7 @@ export default {
 
     editItem(item) {
       this.editedIndex = this.tasks.indexOf(item)
-      this.editedItem = Object.assign({}, this.tasks[this.editedIndex])
+      this.editedItem = Object.assign(this.tasks[this.editedIndex], this.tasks[this.editedIndex])
       this.dialog = true
     },
 
@@ -208,8 +207,7 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-          Object.assign(this.tasks[this.editedIndex], this.editedItem)
-          this.axios.put(`http://localhost:8080/tasks/${this.editedItem.id}`)
+          this.axios.put(`http://localhost:8080/tasks/${this.editedItem.id}`, this.editedItem)
         } else {
           this.axios.post('http://localhost:8080/tasks/add', this.editedItem)
         }
@@ -218,5 +216,4 @@ export default {
   },
 }
 </script>
-
 <style></style>

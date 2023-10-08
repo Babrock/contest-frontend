@@ -21,16 +21,16 @@ export default {
 }
 </script>
 <template>
-    <header>
+    <header id="buttonDisplayNone">
       <nav>
         <RouterLink v-if="role=='ROLE_ADMIN'" to="/register">Rejestracja</RouterLink>
         <RouterLink to="/">Strona Główna</RouterLink>
         <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
         <RouterLink to="/form">Formularz</RouterLink>
         <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Punty</RouterLink>
-        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/addScores">Dodaj punkty</RouterLink>
+        <!-- <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/addScores">Dodaj punkty</RouterLink>
         <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/deleteScores">Usuń punkty</RouterLink>
-        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/editScores">Edytuj punkty</RouterLink>
+        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/editScores">Edytuj punkty</RouterLink> -->
         <RouterLink to="/scores">Wyniki</RouterLink>
         <RouterLink to="/informations/statute">Informacje o konkursie</RouterLink>
         <RouterLink to="/location">Lokalizacja</RouterLink>
@@ -93,6 +93,7 @@ nav a:hover {
 nav a:first-of-type {
   border: 0;
 }
+
 
 
 /* @media (min-width: 1024px) {

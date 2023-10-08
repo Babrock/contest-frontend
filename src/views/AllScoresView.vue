@@ -24,18 +24,24 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
-                    <v-select label="Wybierz szkołe" v-model="selectedSchoolId" :items="schools" item-value="id"
-                      item-title="name"></v-select>
+                    <v-select 
+                      label="Wybierz szkołe" 
+                      v-model="selectedSchoolId" 
+                      :items="schools" 
+                      item-value="id"
+                      item-title="name"
+                    ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-select label="Wybierz klasę" v-model="editedItem.schoolClass" :items="schoolClasses" item-value="id"
-                      item-title="name"></v-select>
+                      item-title="name" no-data-text="Nie wybrano szkoły">
+                    </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="Numer zadania"></v-text-field>
+                    <v-text-field v-model="editedItem.name" type="number"  min="0" max="100" label="Numer zadania"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.score" label="Liczba punktów TEST" ></v-text-field>
+                    <v-text-field v-model="editedItem.score" type="number"  min="0" max="100" step="0.5" label="Liczba punktów" ></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -44,10 +50,10 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue-darken-1" variant="text" @click="close">
-                Cancel
+                Anuluj
               </v-btn>
               <v-btn color="blue-darken-1" variant="text" @click="save">
-                Save
+                Zapisz
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -87,10 +93,10 @@ export default {
     schools: [],
     schoolClasses: [],
     selectedSchoolId: null,
-    schoolClass: 0,
+    schoolClass: "tu",
     school: 0,
     tasks: [],
-    itemsPerPage: 5,
+    itemsPerPage: 15,
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -106,17 +112,16 @@ export default {
       { title: 'Punkty', key: 'score' },
       { title: 'Opcje', key: 'actions', sortable: false },
     ],
-    desserts: [],
     editedIndex: -1,
     editedItem: {
       id_task: 0,
-      schoolClass: 0,
+      schoolClass: "editedItem",
       name: 0,
       score: 0,
     },
     defaultItem: {
       id_task: 0,
-      schoolClass: 0,
+      schoolClass: "defaultItem",
       name: 0,
       score: 0,
     },
@@ -135,6 +140,7 @@ export default {
       this.tasks = response.data
     })
   },
+
 
   computed: {
     formTitle() {
@@ -162,15 +168,7 @@ export default {
     },
   },
 
-  created() {
-    this.initialize()
-  },
-
   methods: {
-
-    initialize() {
-    },
-
     editItem(item) {
       this.editedIndex = this.tasks.indexOf(item)
       this.editedItem = Object.assign(this.tasks[this.editedIndex], this.tasks[this.editedIndex])

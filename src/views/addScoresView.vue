@@ -83,10 +83,9 @@ export default {
 .pageA4W {
     margin: auto;
     margin-top: 2%;
-    /* width: 50%; */
     color: rgb(0, 0, 0);
     background-color: #ffffff;
-    border-radius: 20px;
+
 }
 
 .containerW {

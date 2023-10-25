@@ -72,9 +72,9 @@ const router = createRouter({
       component: () => import('../views/DeleteScoresView.vue')
     },
     {
-      path: '/editScores',
-      name: 'editScoresView',
-      component: () => import('../views/EditScoresView.vue')
+      path: '/editProfile',
+      name: 'editProfileView',
+      component: () => import('../views/EditProfileView.vue')
     }
   ]
 })

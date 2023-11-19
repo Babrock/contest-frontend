@@ -37,7 +37,6 @@ export default {
       addressRules: [(v) => !!v || "Nr budynku"],
       postRules: [(v) => !!v || "Miejscowość jest wymagana"],
       zipCodeRules: [(v) => !!v || "Kod pocztowy jest wymagany"],
-      complexRules: [(v) => !!v || "Zespół szkół jest wymagany"],
       passwordRules: [
         (v) => !!v || "Hasło jest wymagane",
         (v) => (v && v.length >= 5) || "Hasło musi mieć minimum 5 znaków",
@@ -57,11 +56,12 @@ export default {
       cities: [],
       schools: [],
       schoolTypes: [],
-      headmastersNameAndLastname: [],
       schoolsDictionary: [],
       categories: [],
       titles: [],
       languages: [],
+      formResponse: null,
+      formattedDate: null,
       form: {
         schoolData: {
           voivodeship: null,
@@ -69,20 +69,20 @@ export default {
           community: null,
           city: null,
           school: null,
+          category: null,
+          complex: "",
+          schoolType: "",
+          phone: "",
+          email: "",
           street: "",
           address: "",
           apartmentNumber: "",
           zipCode: "",
           post: "",
-          phone: "",
-          email: "",
-          category: null,
-          complex: "",
-          schoolType: "",
           headmaster: {
             title: null,
-            firstnameHeadmaster: null,
-            lastnameHeadmaster: null,
+            firstname: null,
+            lastname: null,
             email: "",
           },
         },
@@ -161,7 +161,6 @@ export default {
         });
     },
   },
-
   methods: {
     print() {
       this.shouldShowSignature = true;
@@ -174,6 +173,9 @@ export default {
           .post("http://localhost:8080/form", this.form)
           .then((response) => {
             alert("Formularz został zgłoszony.");
+            this.formResponse = response.data
+            var dateStr = new Date(this.formResponse.uploadDate)
+            this.formattedDate = dateStr.toLocaleString().slice(0, 20).replace(/[/:, ]/g, "")
           })
           .catch((err) => {
             alert("Wystąpił nieoczekiwany błąd.");
@@ -202,18 +204,24 @@ export default {
     },
     getSchoolDetails(id) {
       this.axios.get(`http://localhost:8080/schools/${id}`).then((response) => {
-        let data = response.data;
-        this.form.schoolData.street = data.street;
-        this.form.schoolData.address = data.address;
-        this.form.schoolData.apartmentNumber = data.apartmentNumber;
-        this.form.schoolData.zipCode = data.zipCode;
-        this.form.schoolData.post = data.post;
-        this.form.schoolData.phone = data.phone;
-        this.form.schoolData.email = data.email;
-        this.form.schoolData.headmaster.firstnameHeadmaster =
-          data.firstnameHeadmaster;
-        this.form.schoolData.headmaster.lastnameHeadmaster =
-          data.lastnameHeadmaster;
+        let data = response.data
+
+        this.form.schoolData.category = data.category
+        this.form.schoolData.complex = data.complex
+        this.form.schoolData.schoolType = data.schoolType
+
+        this.form.schoolData.phone = data.phone
+        this.form.schoolData.email = data.email
+        this.form.schoolData.street = data.street
+        this.form.schoolData.address = data.address
+        this.form.schoolData.apartmentNumber = data.apartmentNumber
+        this.form.schoolData.zipCode = data.zipCode
+        this.form.schoolData.post = data.post
+
+        this.form.schoolData.headmaster.title = data.headmaster.title
+        this.form.schoolData.headmaster.firstname = data.headmaster.firstname
+        this.form.schoolData.headmaster.lastname = data.headmaster.lastname
+        this.form.schoolData.headmaster.email = data.headmaster.email
       });
     },
     addSchoolClass() {
@@ -235,16 +243,12 @@ export default {
 <template>
   <v-sheet class="mx-auto">
     <div class="pageA4">
-      <v-Form ref="form" @submit="onSubmit" :validationSchema="schema">
-        <h2
-          style="
-            text-align: center;
-            background-color: rgb(var(--v-theme-on-surface-variant));
-          "
-        >
+      <v-Form ref="form" @submit.prevent="onSubmit" :validationSchema="schema">
+        <h2  style="text-align: center;margin-top: 0.5%; background-color: rgb(var(--v-theme-on-surface-variant));">
           Formularz Zgłoszeniowy
         </h2>
-        {{ form }}
+        <h4 v-if="formResponse">{{ formResponse.id }}{{ formattedDate }}</h4>
+        <!-- {{ form }} -->
         <div>
           <legend>Dane Szkoły:</legend>
           <div style="width: auto; display: flex">
@@ -282,6 +286,7 @@ export default {
             ></v-autocomplete>
             <v-autocomplete
               v-model="form.schoolData.city"
+              @update:modelValue="form.schoolData.school = null"
               :disabled="cities.length < 1"
               :items="cities"
               item-value="id"
@@ -313,7 +318,6 @@ export default {
             ></v-select>
             <v-text-field
               v-model="form.schoolData.complex"
-              :rules="complexRules"
               label="Zespołu szkół"
               required
             ></v-text-field>
@@ -351,37 +355,32 @@ export default {
             <v-text-field
               v-model="form.schoolData.street"
               :rules="streetRules"
-              readonly
               label="Ulica"
               required
             ></v-text-field>
             <v-text-field
               v-model="form.schoolData.address"
               :rules="addressRules"
-              readonly
               label="Nr budynku"
               required
             ></v-text-field>
             <v-text-field
               v-model="form.schoolData.apartmentNumber"
-              readonly
               label="Nr lokalu"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="form.schoolData.post"
-              :rules="postRules"
-              readonly
-              label="Miejscowość"
               required
             ></v-text-field>
             <v-text-field
               v-model="form.schoolData.zipCode"
               :rules="zipCodeRules"
-              readonly
               label="Kod pocztowy"
               required
               placeholder="00-000"
+            ></v-text-field>
+            <v-text-field
+              v-model="form.schoolData.post"
+              :rules="postRules"
+              label="Miejscowość"
+              required
             ></v-text-field>
           </div>
         </div>
@@ -401,14 +400,14 @@ export default {
             ></v-select>
             <v-text-field
               class="width20per"
-              v-model="form.schoolData.headmaster.firstnameHeadmaster"
+              v-model="form.schoolData.headmaster.firstname"
               :rules="firstnameRules"
               label="Imię"
               required
             ></v-text-field>
             <v-text-field
               class="width20per"
-              v-model="form.schoolData.headmaster.lastnameHeadmaster"
+              v-model="form.schoolData.headmaster.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
               required
@@ -463,6 +462,7 @@ export default {
           </div>
           <div style="width: 100%; display: flex">
             <v-text-field
+              class="passoword"
               v-model="form.coordinator.password"
               :rules="passwordRules"
               label="Hasło"
@@ -473,6 +473,7 @@ export default {
               required
             ></v-text-field>
             <v-text-field
+              class="passoword"
               v-model="form.coordinator.confirmPassword"
               :rules="confirmPasswordRules"
               label="Potwierdź hasło"
@@ -508,10 +509,6 @@ export default {
           ></v-checkbox>
         </div>
 
-
-
-
-
         <!-- <div class="w-50">
           <label for="coordinatorEmail">E-email:</label>
           <Field :validateOnInput="true" v-model="form.coordinator.email" type="email" name="coordinatorEmail" placeholder="Adres@strona.pl"/>
@@ -528,17 +525,11 @@ export default {
             type="password" name="passwordConfirmation" placeholder="Potwierdź hasło" /> -->
         <!-- <ErrorMessage name="passwordConfirmation" />   -->
 
-        <!-- <label for="tel">Telefon:</label>
-          <input v-model="form.coordinator.phone" type="number" name="tel" placeholder="+48 000 000 000"> -->
-
-        <!-- <input type="checkbox" id="wantsToRate" v-model="form.coordinator.wantsToRate" /> -->
-
-
-          <div style="width: 100%; display: flex">
+          <div style="width: 100%; display: flex; justify-content: space-between;">
             <legend style="width: 50%">Dane dotyczace Nauczyciela:</legend>
             <legend style="width: 20%">Dane dotyczace klasy:</legend>
-            <v-btn @click="addSchoolClass" style="width: 12.5%">Dodaj klasę</v-btn>
-            <v-btn @click="deleteSchoolClass()" style="width: 17.5%">Usuń ostatnią klasę</v-btn>
+            <v-btn @click="addSchoolClass" style="width: 11%; border: 1px solid #00BFFF; ">Dodaj klasę</v-btn>
+            <v-btn @click="deleteSchoolClass()" style="width: 18%; border: 1px solid #00BFFF;">Usuń ostatnią klasę</v-btn>
           </div>
           <v-list>
             <v-list-item v-for="(schoolClass) in form.schoolClasses">
@@ -592,16 +583,13 @@ export default {
               </div>
             </v-list-item>
           </v-list>
-
-        <div style="width: 25%; display: flex">
-          <v-btn color="success" block @click="validate"> Sprawdzenie </v-btn>
+          <small class="visible-on-print" :class="{ 'visible-on-print': shouldShowSignature }"><hr> Data i podpis Dyrektora szkoły </small>
+        <div style="width: 20%; display: flex">
+          <v-btn color="grey" block @click="validate"> Sprawdzenie </v-btn>
+          <v-btn color="warning" block @click="resetValidation">Zrestartuj sprawdzenie</v-btn>
           <v-btn color="error" block @click="reset"> Wyczyść formularz </v-btn>
-          <v-btn color="warning" block @click="resetValidation">
-            Zrestartuj sprawdzenie
-          </v-btn>
-          <v-btn color="grey" block type="submit" onclick="print()"
-            >drukuj i wyślij</v-btn
-          >
+          <v-btn color="success" block type="submit">wyślij</v-btn>
+          <v-btn color="blue" block onclick="print()">drukuj</v-btn>
         </div>
       </v-Form>
     </div>
@@ -609,12 +597,6 @@ export default {
 </template>
 
 <style>
-.pageA4 {
-  color: rgb(0, 0, 0);
-  background-color: #ffffff;
-  margin: 1%;
-}
-
 .err {
   float: right;
 }
@@ -635,14 +617,15 @@ hr {
 @media print {
   #buttonDisplayNone,
   .v-field__append-inner,
-  .v-input__details {
+  .v-input__details,
+  .passoword {
     display: none;
   }
   .v-btn {
     visibility: hidden;
   }
   #labelPrintSize {
-    font-size: 12px;
+    font-size: 10px;
   }
   .Signature {
     visibility: visible;

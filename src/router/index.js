@@ -62,16 +62,6 @@ const router = createRouter({
       component: () => import('../views/AllScoresView.vue')
     },
     {
-      path: '/addScores',
-      name: 'addScoresView',
-      component: () => import('../views/addScoresView.vue')
-    },
-    {
-      path: '/deleteScores',
-      name: 'deleteScoresView',
-      component: () => import('../views/DeleteScoresView.vue')
-    },
-    {
       path: '/editProfile',
       name: 'editProfileView',
       component: () => import('../views/EditProfileView.vue')

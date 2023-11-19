@@ -8,39 +8,36 @@
   margin: 0 auto;
   font-weight: normal;
 }
-
 a,
-
 .green {
   text-decoration: none;
   color: white;
   transition: 0.4s;
 }
-
-legend {
-  width: 100%;
+.pageA4 {
+  color: rgb(0, 0, 0);
+  background-color: #ffffff;
+  margin: 1%;
 }
-
 .w-100 {
   width: 100%;
 }
-
 .w-50 {
   width: 50%;
 }
-
 h1,h2 {
   color: black;
 }
 h3{
   color: red;
 }
-
 input {
   padding: 1mm;
   float: right;
 }
-
+legend {
+  width: 100%;
+}
 span[role = alert]{
   color: red;
   font-size: smaller;

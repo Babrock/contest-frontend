@@ -24,16 +24,16 @@ export default {
     <header id="buttonDisplayNone">
       <nav>
         <RouterLink v-if="role=='ROLE_ADMIN'" to="/register">Rejestracja</RouterLink>
-        <RouterLink to="/">Strona Główna</RouterLink>
-        <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
-        <RouterLink to="/form">Formularz</RouterLink>
         <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Edycja punktów</RouterLink>
+        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/editProfile">Akceptacja</RouterLink>
+        <RouterLink to="/">Strona Główna</RouterLink>
+        <RouterLink to="/form">Formularz</RouterLink>
         <!-- <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/addScores">Dodaj punkty</RouterLink>
         <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/deleteScores">Usuń punkty</RouterLink> -->
-        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/editProfile">Użytkownicy</RouterLink>
         <RouterLink to="/scores">Wyniki</RouterLink>
         <RouterLink to="/informations/statute">Informacje o konkursie</RouterLink>
         <RouterLink to="/location">Lokalizacja</RouterLink>
+        <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
         <a v-if="isAuthenticated" @click="logout">wyloguj</a>
       </nav>
     </header>

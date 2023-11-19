@@ -1,228 +1,179 @@
 <script>
+import { toHandlers } from 'vue';
 
 export default {
-  data: () => ({
-    users: [],
-    schoolClasses: [],
-    selectedSchoolId: null,
-    schoolClass: "tu",
-    school: 0,
-    tasks: [],
-    itemsPerPage: 15,
-    dialog: false,
-    dialogDelete: false,
-    headers: [
-      {
-        title: 'E-mail',
-        align: 'start',
-        sortable: false,
-        key: 'email',
+  data() {
+    return {
+      form: {
+        id: null,
       },
-      { title: 'Imię', key: 'firstname' },
-      { title: 'Nazwisko', key: 'lastname' },
-      { title: 'Telefon', key: 'phone' },
-      { title: 'Zaakceptowany', key: 'isAccepted', formatter: (value) => (value ? 'Tak' : 'Nie')},
-      { title: 'Opcje', key: 'actions', sortable: false },
-    ],
-    editedIndex: -1,
-    editedItem: {
-        id: 1,
-        email: 'user1@example.com',
-        firstname: 'John',
-        lastname: 'Doe',
-        phone: '123-456-7890',
-        isAccepted: false, // Dodaj to pole
-    },
-    defaultItem: {
-        id: 1,
-        email: 'user1@example.com',
-        firstname: 'John',
-        lastname: 'Doe',
-        phone: '123-456-7890',
-        isAccepted: false, // Dodaj to pole
-    },
-  }),
-  beforeMount() {
-    this.axios.get(`http://localhost:8080/voivodeships`).then((response) => {
-      this.voivodeships = response.data
-    })
-  },
-
-  mounted() {
-    this.axios.get(`http://localhost:8080/users`).then((response) => {
-        this.users = response.data.map(user => {
-        // Przekształć wartość logiczną na łańcuch znaków
-        user.isAccepted = String(user.isAccepted? 'tak' : 'nie');
-        return user;
-    });
-    })
-  },
-
-
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? 'Nowy wynik' : 'Edit Item'
-    },
-    schoolOptions() {
-      return this.schools.map(school => school.name)
-    },
-    taskId(){
-      return this.tasks.map(tasks => tasks.id)
-    },
-  },
-
-  watch: {
-    dialog(val) {
-      val || this.close()
-    },
-    dialogDelete(val) {
-      val || this.closeDelete()
-    },
-    "selectedSchoolId"(value) {
-      this.axios.get(`http://localhost:8080/classes?school_id=${value}`).then((response) => {
-        this.schoolClasses = response.data
-      })
-    },
-  },
-
-  methods: {
-    editItem(item) {
-      this.editedIndex = this.users.indexOf(item)
-      this.editedItem = Object.assign(this.users[this.editedIndex], this.users[this.editedIndex])
-      this.dialog = true
-    },
-
-    deleteItem(item) {
-      this.editedIndex = this.users.indexOf(item)
-      this.editedItem = Object.assign({}, this.users[this.editedIndex])
-      this.dialogDelete = true
-    },
-
-    deleteItemConfirm() {
-      this.users.splice(this.editedIndex, 1)
-      this.axios.delete(`http://localhost:8080/users/${this.editedItem.id}`)
-      this.closeDelete()
-    },
-
-    close() {
-      this.dialog = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
-
-    closeDelete() {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
-
-    save() {
-      if (this.editedIndex > -1) {
-          this.axios.put(`http://localhost:8080/users/${this.editedItem.id}`, this.editedItem)
-        } else {
-          this.axios.post('http://localhost:8080/users/add', this.editedItem)
+      school: {
+        name: "",
+        city: "",
+        community: "",
+        county: "",
+        voivodeship:"",
+        address: "",
+        apartmentNumber: "",
+        email: "",
+        phone: "",
+        street: "",
+        post: "",
+        zipCode: "",
+        headmaster:{
+          title: "",
+          firstname: "",
+          lastname: "",
+          email: ""
         }
-        this.close()
+      },
+      user: null,
+      schoolClasses: {},
+      schoolKeyNames: {
+        name: "Nazwa szkoły",
+        city: "Miasto",
+        address: "Numer budynku",
+        apartmentNumber: "Numer lokalu",
+        email: "E-mail",
+        phone: "Telefon",
+        street: "Ulica",
+        post: "Miejscowość",
+        zipCode: "Kod pocztowy",
+        headmaster:{
+          title: "Tytuł Dyrektora",
+          firstname: "Imie Dyrektora",
+          lastname: "Nazwisko Dyrektora",
+          email: "E-mail Dyrektora"
+        }
+      },
+      userKeyNames: {
+        email: "E-mail",
+        title: "Tytuł",
+        firstname: "Imie Koordynatora",
+        lastname: "Nazwisko Koordynatora",
+        phone: "Telefon",
+        wantsToRate: "Chęć udziału Koordynatora w pracach Komisji Sprawdzającej",
+      },
+    };
+  },
+  methods: {
+    onSubmit() {
+      if (!this.form.id) {
+        window.alert("Wprowadź poprawdny kod formularza");
+        return;
+      }
+
+      this.axios
+        .get(`http://localhost:8080/form/${this.form.id}`)
+        .then((response) => {
+          let data = response.data
+          this.school.name = data.school.name
+          this.school.city = data.school.city.name
+          this.school.community = data.school.city.community.name
+          this.school.county = data.school.city.community.county.name
+          this.school.voivodeship = data.school.city.community.county.voivodeship.name
+          this.school.address = data.school.address
+          this.school.apartmentNumber = data.school.apartmentNumber
+          this.school.email = data.school.email
+          this.school.street = data.school.street
+          this.school.post = data.school.post
+          this.school.zipCode = data.school.zipCode
+
+          this.school.headmaster.title = data.school.headmaster.title
+          this.school.headmaster.firstname = data.school.headmaster.firstname
+          this.school.headmaster.lastname = data.school.headmaster.lastname
+          this.school.headmaster.email = data.school.headmaster.email
+
+          this.user = data.user
+          this.user.title = data.user.title.name
+          this.user.wantsToRate = data.user.wantsToRate
+            ? "Tak"
+            : "Nie";
+        })
+        .catch((error) => {
+          window.alert("Nie ma takiego formularza!");
+        });
+      this.axios
+        .get(`http://localhost:8080/classes?form_id=${this.form.id}`)
+        .then((response) => {
+          this.schoolClasses = response.data;
+        });
     },
   },
-}
+};
 </script>
+
 <template>
-    <v-data-table v-model:items-per-page="itemsPerPage" :headers="headers" :items="users" item-value="name"
-      :sort-by="[{ key: 'email', order: 'asc' }]" class="elevation-1">
-  
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title>Użytkownicy  </v-toolbar-title>
-          <v-divider class="mx-4" inset vertical></v-divider>
-          <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
-            <template v-slot:activator="{ props }">
-              <v-btn color="primary" dark class="mb-2" v-bind="props">
-                Nowy wynik
-              </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="text-h5">{{ formTitle }}</span>
-              </v-card-title>
-  
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-select 
-                        label="Wybierz szkołe" 
-                        v-model="selectedSchoolId" 
-                        :items="schools" 
-                        item-value="id"
-                        item-title="name"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-select label="Wybierz klasę" v-model="editedItem.schoolClass" :items="schoolClasses" item-value="id"
-                        item-title="name" no-data-text="Nie wybrano szkoły">
-                      </v-select>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.name" type="number"  min="0" max="100" label="Numer zadania"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.score" type="number"  min="0" max="100" step="0.5" label="Liczba punktów" ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-  
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue-darken-1" variant="text" @click="close">
-                  Anuluj
-                </v-btn>
-                <v-btn color="blue-darken-1" variant="text" @click="save">
-                  Zapisz
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <v-dialog v-model="dialogDelete" max-width="500px">
-            <v-card>
-              <v-card-title class="text-h5">Czy na pewno chcesz usunąć ten wynik?</v-card-title>
-  
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Nie</v-btn>
-                <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">Tak</v-btn>
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-  
-          </v-dialog>
-        </v-toolbar>
-      </template>
-      <template v-slot:item.actions="{ item }">
-        <v-icon size="small" class="me-2" @click="editItem(item.raw)">
-          mdi-pencil
-        </v-icon>
-        <v-icon size="small" @click="deleteItem(item.raw)">
-          mdi-delete
-        </v-icon>
-      </template>
-      <template v-slot:no-data>
-      </template>
-    </v-data-table>
-    <!-- {{ users[1] }} -->
-    {{ defaultItem }}
-  </template>
-<style>
-.pageA4W {
-    margin: auto;
-    margin-top: 2%;
-    color: rgb(0, 0, 0);
-    background-color: #ffffff;
-}
-</style>
+  <div class="pageA4">
+    <v-Form ref="form" @submit.prevent="onSubmit">
+      <h2
+        style="
+          text-align: center;
+          margin-top: 0.5%;
+          background-color: rgb(var(--v-theme-on-surface-variant));
+        "
+      >
+        Akceptacja formularza
+      </h2>
+      <v-text-field
+        v-model="form.id"
+        label="Kod formularza"
+        type="number"
+        min="0"
+        required
+      ></v-text-field>
+      <div style="width: 100%; display: flex; justify-content: space-between">
+        <v-btn color="grey" type="submit">Pobierz formularz</v-btn>
+        <v-btn color="success">Akceptuj formularz</v-btn>
+        <v-btn color="warning">Wycofaj formularz</v-btn>
+        <v-btn color="error">Usuń formularz</v-btn>
+      </div>
+      
+      <div class="mt-4" style="width: 100%; display: flex; flex-wrap: wrap">
+        <legend>Dane Szkoły:</legend>
+        <!-- <v-text-field v-for="(value, key) in school" :key="key" readonly>
+          <strong>{{ schoolKeyNames[key] }}: &nbsp; </strong> {{ school }}
+        </v-text-field> -->
+        <v-text-field readonly><strong>Województwo: &nbsp;</strong>{{ school.voivodeship }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Powiat: &nbsp;</strong>{{ school.county }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Gmina: &nbsp;</strong>{{ school.community }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Miasto: &nbsp;</strong>{{ school.city }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Nazwa szkoły: &nbsp;</strong> {{ school.name }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Numer budynku: &nbsp;</strong>{{ school.address }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Telefon: &nbsp;</strong>{{ school.phone }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>E-mail: &nbsp;</strong> {{ school.email }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Ulica: &nbsp;</strong>{{ school.street }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Numer lokalu: &nbsp;</strong>{{ school.apartmentNumber }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Kod pocztowy: &nbsp;</strong> {{ school.zipCode }} &nbsp;</v-text-field>
+        <v-text-field readonly><strong>Miejscowośc: &nbsp;</strong>{{ school.post }} &nbsp;</v-text-field>
+        <legend >Dane Dyrektora Szkoły:</legend>
+        <v-text-field v-for="(value, key) in school.headmaster" :key="key" readonly>
+          <strong>{{ schoolKeyNames.headmaster[key] }}: &nbsp; </strong> {{ value }}
+        </v-text-field>
+      </div>
+      <div style="width: 100%; display: flex; flex-wrap: wrap">
+        <legend>Dane dotyczace Nauczyciela koordynujacego przebieg konkursu wszkole:</legend>
+        <v-text-field v-for="(value, key) in user" :key="key" readonly>
+          <strong>{{ userKeyNames[key] }}: &nbsp; </strong> {{ value }}
+        </v-text-field>
+      </div>
+      <div style="width: 100%; display: flex; flex-wrap: wrap">
+        <legend style="width: 50%">Dane dotyczace Nauczyciela:</legend>
+        <legend style="width: 50%">Dane dotyczace klasy:</legend>
+        <v-text-field v-for="(schoolClass, index) in schoolClasses" :key="index" readonly>
+        <div style="width: 50%; display: flex; flex-wrap: wrap">
+          <strong>Tytuł: &nbsp;</strong> {{ schoolClass.title.name }} &nbsp;
+          <strong>Imie: &nbsp;</strong>{{ schoolClass.firstname }} &nbsp;
+          <strong>Nazwisko: &nbsp;</strong>{{ schoolClass.lastname }} &nbsp;
+        </div>
+        <div style="width: 50%; display: flex; flex-wrap: wrap">
+          <strong>Nazwa klasy: &nbsp;</strong> {{ schoolClass.name }} &nbsp;
+          <strong>Ilość uczniów: &nbsp;</strong>{{ schoolClass.students }} &nbsp;
+          <strong>Język: &nbsp;</strong>{{ schoolClass.language.name }} &nbsp;
+        </div>
+        </v-text-field>
+      </div>
+    </v-Form>
+  </div>
+</template>
+<style></style>

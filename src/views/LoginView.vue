@@ -59,30 +59,4 @@ export default {
   text-decoration: none;
   cursor: pointer;
 }
-
-
-.buttonContinue span {
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  transition: 0.5s;
-}
-
-.buttonContinue span:after {
-  content: '\00bb';
-  position: absolute;
-  opacity: 0;
-  top: 0;
-  right: -20px;
-  transition: 0.5s;
-}
-
-.buttonContinue:hover span {
-  padding-right: 30px;
-}
-
-.buttonContinue:hover span:after {
-  opacity: 1;
-  right: 0;
-}
 </style>

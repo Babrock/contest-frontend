@@ -16,7 +16,7 @@
 <style>
 .side-bar {
     color: black;
-    font-size: 16px;
+    font-size: 14px;
     text-align: center;
     display: flex;
     flex-wrap: wrap;
@@ -25,7 +25,7 @@
 
 nav {
   width: auto;
-  font-size: 16px;
+  font-size: 14px;
   text-align: center;
   display: flex;
   flex-wrap: wrap;

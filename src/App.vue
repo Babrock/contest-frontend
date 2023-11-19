@@ -24,16 +24,16 @@ export default {
     <header id="buttonDisplayNone">
       <nav>
         <RouterLink v-if="role=='ROLE_ADMIN'" to="/register">Rejestracja</RouterLink>
+        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Edycja punktów</RouterLink>
+        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/editProfile">Akceptacja</RouterLink>
         <RouterLink to="/">Strona Główna</RouterLink>
-        <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
         <RouterLink to="/form">Formularz</RouterLink>
-        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Punty</RouterLink>
         <!-- <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/addScores">Dodaj punkty</RouterLink>
-        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/deleteScores">Usuń punkty</RouterLink>
-        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/editScores">Edytuj punkty</RouterLink> -->
+        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/deleteScores">Usuń punkty</RouterLink> -->
         <RouterLink to="/scores">Wyniki</RouterLink>
         <RouterLink to="/informations/statute">Informacje o konkursie</RouterLink>
         <RouterLink to="/location">Lokalizacja</RouterLink>
+        <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
         <a v-if="isAuthenticated" @click="logout">wyloguj</a>
       </nav>
     </header>
@@ -60,7 +60,7 @@ main {
 
 nav {
   width: auto;
-  font-size: 16px;
+  font-size: 14px;
   text-align: center;
   display: flex;
   flex-wrap: wrap;
@@ -93,33 +93,4 @@ nav a:hover {
 nav a:first-of-type {
   border: 0;
 }
-
-
-
-/* @media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-} */
 </style>

@@ -33,7 +33,7 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: yellow;
+  color: grey;
 }
 
 nav a.router-link-exact-active:hover {

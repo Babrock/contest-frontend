@@ -67,10 +67,10 @@ export default {
           voivodeship: null,
           county: null,
           community: null,
-          city: null,
+          city: "",
           school: null,
           category: null,
-          complex: "",
+          schoolComplex: "",
           schoolType: "",
           phone: "",
           email: "",
@@ -81,7 +81,7 @@ export default {
           post: "",
           headmaster: {
             title: null,
-            firstname: null,
+            fullName: null,
             lastname: null,
             email: "",
           },
@@ -149,7 +149,7 @@ export default {
       this.axios
         .get(`http://localhost:8080/cities?community=${value}`)
         .then((response) => {
-          this.cities = response.data;
+          this.cities = response.data.map(city => city.name);
         });
     },
     "form.schoolData.city"(value) {
@@ -207,7 +207,7 @@ export default {
         let data = response.data
 
         this.form.schoolData.category = data.category
-        this.form.schoolData.complex = data.complex
+        this.form.schoolData.schoolComplex = data.schoolComplex
         this.form.schoolData.schoolType = data.schoolType
 
         this.form.schoolData.phone = data.phone
@@ -218,8 +218,8 @@ export default {
         this.form.schoolData.zipCode = data.zipCode
         this.form.schoolData.post = data.post
 
-        this.form.schoolData.headmaster.title = data.headmaster.title
-        this.form.schoolData.headmaster.firstname = data.headmaster.firstname
+        // this.form.schoolData.headmaster.title = data.headmaster.title
+        this.form.schoolData.headmaster.fullName = data.headmasterFullName
         this.form.schoolData.headmaster.lastname = data.headmaster.lastname
         this.form.schoolData.headmaster.email = data.headmaster.email
       });
@@ -244,13 +244,14 @@ export default {
   <v-sheet class="mx-auto">
     <div class="pageA4">
       <v-Form ref="form" @submit.prevent="onSubmit" :validationSchema="schema">
-        <h2  style="text-align: center;margin-top: 0.5%; background-color: rgb(var(--v-theme-on-surface-variant));">
-          Formularz Zgłoszeniowy
+        <h2 v-if="formResponse" style="text-align: center;margin-top: 0.5%; background-color: rgb(var(--v-theme-on-surface-variant));">
+          Formularz Zgłoszeniowy {{ formResponse.id }}{{ formattedDate }}
         </h2>
-        <h4 v-if="formResponse">{{ formResponse.id }}{{ formattedDate }}</h4>
+        
         <!-- {{ form }} -->
         <div>
           <legend>Dane Szkoły:</legend>
+          {{form}}
           <div style="width: auto; display: flex">
             <v-select
               v-model="form.schoolData.voivodeship"
@@ -317,7 +318,7 @@ export default {
               required
             ></v-select>
             <v-text-field
-              v-model="form.schoolData.complex"
+              v-model="form.schoolData.schoolComplex"
               label="Zespołu szkół"
               required
             ></v-text-field>
@@ -400,18 +401,18 @@ export default {
             ></v-select>
             <v-text-field
               class="width20per"
-              v-model="form.schoolData.headmaster.firstname"
+              v-model="form.schoolData.headmaster.fullName"
               :rules="firstnameRules"
-              label="Imię"
+              label="Imię i Nazwisko"
               required
             ></v-text-field>
-            <v-text-field
+            <!-- <v-text-field
               class="width20per"
               v-model="form.schoolData.headmaster.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
               required
-            ></v-text-field>
+            ></v-text-field> -->
             <v-text-field
               v-model="form.schoolData.headmaster.email"
               :rules="emailRules"
@@ -635,7 +636,7 @@ hr {
     margin-left: 75% !important;
   }
   .pageA4 {
-    margin-top: -3% !important;
+    margin-top: -2.9% !important;
   }
   .width20per {
     max-width: 20% !important;

@@ -20,7 +20,7 @@ export default {
         this.$router.push('/')
       }).catch(err => {
         if (err.response.status === 401) {
-          alert('bledny login lub haslo')
+          alert('Zły login lub hasło lub użytkownik nie został aktywowany.')
         }
       })
     }

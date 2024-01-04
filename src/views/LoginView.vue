@@ -14,6 +14,7 @@ export default {
       formData.append("username", this.username)
       formData.append("password", this.password)
       this.axios.post("http://localhost:8080/login", formData).then(response => {
+        console.log(response.firstname)
         this.authStore.isAuthenticated = true
         this.authStore.role = response.data
         this.axios.get('http://localhost:8080/tasks')

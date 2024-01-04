@@ -44,7 +44,7 @@ export default {
       confirmPasswordRules: [
         (v) => !!v || "Potwierdzenie hasła jest wymagane",
         (v) =>
-          (v && v == this.form.coordinator.password) || "Hasła nie są zgodne",
+          (v && v == this.coordinator.password) || "Hasła nie są zgodne",
       ],
       schoolClassNameRules: [(v) => !!v || "Nazwa klasy jest wymagana"],
       schoolClassstudentsRules: [(v) => !!v || "Ilość uczniów jest wymagana"],
@@ -62,31 +62,7 @@ export default {
       languages: [],
       formResponse: null,
       formattedDate: null,
-      form: {
-        schoolData: {
-          voivodeship: null,
-          county: null,
-          community: null,
-          city: "",
-          school: null,
-          category: null,
-          schoolComplex: "",
-          schoolType: "",
-          phone: "",
-          email: "",
-          street: "",
-          address: "",
-          apartmentNumber: "",
-          zipCode: "",
-          post: "",
-          headmaster: {
-            title: null,
-            fullName: null,
-            lastname: null,
-            email: "",
-          },
-        },
-        coordinator: {
+      coordinator: {
           title: null,
           role: 2,
           firstname: "",
@@ -96,6 +72,33 @@ export default {
           confirmPassword: "",
           phone: "",
           wantsToRate: 0,
+        },
+      form: {
+        schoolData: {
+          voivodeship: null,
+          county: null,
+          community: null,
+          city: "",
+          school: null,
+
+          phone: "",
+          email: "",
+          street: "",
+          address: "",
+          apartmentNumber: "",
+          zipCode: "",
+          post: "",
+          headmaster: {
+            firstname: null,
+            lastname: null,
+          },
+        },
+        schoolDetailsInfo: {
+          category: null,
+          schoolComplex: "",
+          schoolType: null,
+          title: null,
+          email: "",
         },
         schoolClasses: [
            {
@@ -186,7 +189,7 @@ export default {
       if (!value) {
         return "Hasło jest wymagane";
       }
-      if (this.form.coordinator.confirmPassword != value) {
+      if (this.coordinator.confirmPassword != value) {
         return "Hasła nie są zgodne";
       }
       return true;
@@ -205,11 +208,6 @@ export default {
     getSchoolDetails(id) {
       this.axios.get(`http://localhost:8080/schools/${id}`).then((response) => {
         let data = response.data
-
-        this.form.schoolData.category = data.category
-        this.form.schoolData.schoolComplex = data.schoolComplex
-        this.form.schoolData.schoolType = data.schoolType
-
         this.form.schoolData.phone = data.phone
         this.form.schoolData.email = data.email
         this.form.schoolData.street = data.street
@@ -217,12 +215,25 @@ export default {
         this.form.schoolData.apartmentNumber = data.apartmentNumber
         this.form.schoolData.zipCode = data.zipCode
         this.form.schoolData.post = data.post
-
-        // this.form.schoolData.headmaster.title = data.headmaster.title
-        this.form.schoolData.headmaster.fullName = data.headmasterFullName
-        this.form.schoolData.headmaster.lastname = data.headmaster.lastname
-        this.form.schoolData.headmaster.email = data.headmaster.email
+        var fullName = data.headmasterFullName
+        var nameParts = fullName.split(" ")
+        this.form.schoolData.headmaster.firstname = nameParts[0]
+        this.form.schoolData.headmaster.lastname = nameParts.slice(1).join(" ")
       });
+    },
+    getUserDetails(){
+      this.axios.get(`http://localhost:8080/users/details`).then((response) => {
+        let data = response.data
+        this.coordinator.title = data.title
+        this.coordinator.firstname = data.firstname
+        this.coordinator.lastname = data.lastname
+        this.coordinator.phone = data.phone
+        this.coordinator.email = data.email
+      });
+    },
+    updateValues(id) {
+      this.getSchoolDetails(id);
+      this.getUserDetails();
     },
     addSchoolClass() {
       const schoolClass = {
@@ -247,8 +258,6 @@ export default {
         <h2 v-if="formResponse" style="text-align: center;margin-top: 0.5%; background-color: rgb(var(--v-theme-on-surface-variant));">
           Formularz Zgłoszeniowy {{ formResponse.id }}{{ formattedDate }}
         </h2>
-        
-        <!-- {{ form }} -->
         <div>
           <legend>Dane Szkoły:</legend>
           {{form}}
@@ -302,14 +311,14 @@ export default {
             :items="schools"
             item-value="id"
             item-title="name"
-            @update:modelValue="getSchoolDetails"
+            @update:modelValue="updateValues"
             :rules="nameRules"
             label="Nazwa szkoły"
             required
           ></v-autocomplete>
           <div style="width: 100%; display: flex">
             <v-select
-              v-model="form.schoolData.category"
+              v-model="form.schoolDetailsInfo.category"
               :items="categories"
               item-value="id"
               item-title="name"
@@ -318,12 +327,12 @@ export default {
               required
             ></v-select>
             <v-text-field
-              v-model="form.schoolData.schoolComplex"
+              v-model="form.schoolDetailsInfo.schoolComplex"
               label="Zespołu szkół"
               required
             ></v-text-field>
             <v-select
-              v-model="form.schoolData.schoolType"
+              v-model="form.schoolDetailsInfo.schoolType"
               :items="schoolTypes"
               item-value="id"
               item-title="name"
@@ -391,7 +400,7 @@ export default {
           <div style="width: 100%; display: flex">
             <v-select
               class="width20per"
-              v-model="form.schoolData.headmaster.title"
+              v-model="form.schoolDetailsInfo.title"
               :rules="titleRules"
               :items="titles"
               item-value="id"
@@ -401,20 +410,20 @@ export default {
             ></v-select>
             <v-text-field
               class="width20per"
-              v-model="form.schoolData.headmaster.fullName"
+              v-model="form.schoolData.headmaster.firstname"
               :rules="firstnameRules"
-              label="Imię i Nazwisko"
+              label="Imię"
               required
             ></v-text-field>
-            <!-- <v-text-field
+            <v-text-field
               class="width20per"
               v-model="form.schoolData.headmaster.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
               required
-            ></v-text-field> -->
+            ></v-text-field>
             <v-text-field
-              v-model="form.schoolData.headmaster.email"
+              v-model="form.schoolDetailsInfo.email"
               :rules="emailRules"
               label="E-mail"
               placeholder="adres@strona.pl"
@@ -430,39 +439,43 @@ export default {
           <div style="width: 100%; display: flex">
             <v-select
               class="width20per"
-              v-model="form.coordinator.title"
+              v-model="coordinator.title"
               :items="titles"
               :rules="titleRules"
               item-value="id"
               item-title="name"
               label="Tytuł"
               required
+              readonly
             ></v-select>
             <v-text-field
               class="width20per"
-              v-model="form.coordinator.firstname"
+              v-model="coordinator.firstname"
               :rules="firstnameRules"
               label="Imię"
               required
+              readonly
             ></v-text-field>
             <v-text-field
               class="width20per"
-              v-model="form.coordinator.lastname"
+              v-model="coordinator.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
               required
+              readonly
             ></v-text-field>
             <v-text-field
-              v-model="form.coordinator.email"
+              v-model="coordinator.email"
               :rules="emailRules"
               label="E-mail"
               type="email"
               placeholder="adres@strona.pl"
               required
+              readonly
             ></v-text-field>
           </div>
           <div style="width: 100%; display: flex">
-            <v-text-field
+            <!-- <v-text-field
               class="passoword"
               v-model="form.coordinator.password"
               :rules="passwordRules"
@@ -483,13 +496,14 @@ export default {
               Field
               :validateOnInput="true"
               required
-            ></v-text-field>
+            ></v-text-field> -->
             <v-text-field
-              v-model="form.coordinator.phone"
+              v-model="coordinator.phone"
               :rules="phoneRules"
               label="Telefon"
               placeholder="+48 000 000 000"
               required
+              :maxlength="9"
             ></v-text-field>
           </div>
           <label id="labelPrintSize" for="wantsToRate"
@@ -506,7 +520,7 @@ export default {
           </label>
           <v-checkbox
             style="--v-input-control-height: 0px; height: 30px; margin-top: -1%"
-            v-model="form.coordinator.wantsToRate"
+            v-model="coordinator.wantsToRate"
           ></v-checkbox>
         </div>
 

@@ -23,11 +23,12 @@ export default {
 <template>
     <header id="buttonDisplayNone">
       <nav>
-        <RouterLink v-if="role=='ROLE_ADMIN'" to="/register">Rejestracja</RouterLink>
+        <RouterLink v-if="role=='ROLE_ADMIN'" to="/authPersonRegister">RejestracjaOsóbUpoważnionych</RouterLink>
         <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Edycja punktów</RouterLink>
         <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/editProfile">Akceptacja</RouterLink>
+        <RouterLink to="/register">Rejestracja</RouterLink>
         <RouterLink to="/">Strona Główna</RouterLink>
-        <RouterLink to="/form">Formularz</RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/form">Formularz</RouterLink>
         <!-- <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/addScores">Dodaj punkty</RouterLink>
         <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/deleteScores">Usuń punkty</RouterLink> -->
         <RouterLink to="/scores">Wyniki</RouterLink>
@@ -45,7 +46,7 @@ export default {
 header {
   width: 100%;
   line-height: 3;
-  background: rgb(0, 0, 0);
+  background: rgba(4, 0, 255, 0.651);
   box-shadow: 0px 0px 10px 5px rgba(0, 13, 255, 0.5);
 }
 
@@ -70,7 +71,7 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: yellow;
+  color: lightgray;
 }
 
 nav a.router-link-exact-active:hover {

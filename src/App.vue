@@ -35,7 +35,8 @@ export default {
         <RouterLink to="/informations/statute">Informacje o konkursie</RouterLink>
         <RouterLink to="/location">Lokalizacja</RouterLink>
         <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
-        <a v-if="isAuthenticated" @click="logout">wyloguj</a>
+        <RouterLink v-if="isAuthenticated" to="/exportCsv">Export CSV</RouterLink>
+        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="" @click="logout">wyloguj</RouterLink>
       </nav>
     </header>
     <main>

@@ -1,6 +1,15 @@
-import { formToJSON } from 'axios'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useAuthStore } from '../store/auth.js'
+
+const checkAuthentication = (to, from, next) => {
+  const isAuthenticated = useAuthStore().isAuthenticated; 
+  if (isAuthenticated) {
+    next();
+  } else {
+    next('/login');
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,17 +27,19 @@ const router = createRouter({
     {
       path: '/authPersonRegister',
       name: 'AuthPersonRegisterView',
-      component: () => import('../views/AuthPersonRegisterView.vue') 
+      component: () => import('../views/AuthPersonRegisterView.vue'),
+      beforeEnter: checkAuthentication,
     },
     {
       path: '/login',
       name: 'loginView',
-      component: () => import('../views/LoginView.vue')
+      component: () => import('../views/LoginView.vue'),
     },
     {
       path: '/form',
       name: 'formView',
-      component: () => import('../views/FormView.vue')
+      component: () => import('../views/FormView.vue'),
+      beforeEnter: checkAuthentication,
     },
     {
       path: '/scores',
@@ -59,17 +70,26 @@ const router = createRouter({
         { path: 'specification',component: () => import('../views/information/SpecificationContentTasksView.vue') },
         { path: 'conditions',component: () => import('../views/information/ConditionsOfParticipationView.vue') },
         { path: 'rules',component: () => import('../views/information/RulesView.vue') },
+      
       ],
     },
     {
       path: '/allScores',
       name: 'allScoresView',
-      component: () => import('../views/AllScoresView.vue')
+      component: () => import('../views/AllScoresView.vue'),
+      beforeEnter: checkAuthentication,
     },
     {
       path: '/editProfile',
       name: 'editProfileView',
-      component: () => import('../views/EditProfileView.vue')
+      component: () => import('../views/EditProfileView.vue'),
+      beforeEnter: checkAuthentication,
+    },
+    {
+      path: '/exportCsv',
+      name: 'exportCsvView',
+      component: () => import('../views/ExportCsvView.vue'),
+      beforeEnter: checkAuthentication,
     }
   ]
 })

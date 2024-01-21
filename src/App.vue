@@ -36,6 +36,7 @@ export default {
         <RouterLink to="/location">Lokalizacja</RouterLink>
         <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
         <RouterLink v-if="isAuthenticated" to="/exportCsv">Export CSV</RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/editRegion">Edytuj Regiony</RouterLink>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="" @click="logout">wyloguj</RouterLink>
       </nav>
     </header>

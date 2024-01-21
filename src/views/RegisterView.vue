@@ -17,7 +17,7 @@ export default {
           confirmPasswordRules: [
             (v) => !!v || "Potwierdzenie hasła jest wymagane",
             (v) =>
-              (v && v == this.form.coordinator.password) || "Hasła nie są zgodne",
+              (v && v == this.form.password) || "Hasła nie są zgodne",
           ],
           titleRules: [(v) => !!v || "Tytuł jest wymagany"],
           titles: [],
@@ -43,6 +43,7 @@ export default {
   },
   methods: {
     onSubmit() {
+      alert("Trwa przetwarzanie Twojej prośby. Prosimy o chwilę cierpliwości...");
       this.axios
         .post("http://localhost:8080/send", this.form)
         .then((response) => {

@@ -1,6 +1,5 @@
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
-import { object, string, ref } from "yup";
 export default {
   components: {
     Form,
@@ -9,47 +8,22 @@ export default {
   },
   data() {
     return {
-      schema: object({
-        schoolEmail: string()
-          .email("To musi być e-mail")
-          .required("Pole jest wymagane"),
-        headmasterEmail: string()
-          .email("To musi być e-mail")
-          .required("Pole jest wymagane"),
-        coordinatorEmail: string()
-          .email("To musi być e-mail")
-          .required("Pole jest wymagane"),
-        password: string()
-          .min(5, "Hasło musi mieć minimum 5 znaków")
-          .required("Pole jest wymagane"),
-        passwordConfirmation: string()
-          .required("Pole jest wymagane")
-          .oneOf([ref("password")], "Hasło nie pasuje"),
-      }),
-      firstnameRules: [(v) => !!v || "Imię jest wymagane"],
-      lastnameRules: [(v) => !!v || "Nazwisko jest wymagane"],
-      cityRules: [(v) => !!v || "Miasto jest wymagane"],
-      nameRules: [(v) => !!v || "Nazwa szkoły jest wymagana"],
-      schoolTypesRules: [(v) => !!v || "Typ szkoły jest wymagany"],
-      phoneRules: [(v) => !!v || "Numer telefonu jest wymagany"],
-      emailRules: [(v) => !!v || "E-mail jest wymagany"],
-      streetRules: [(v) => !!v || "Ulica jest wymagana"],
-      addressRules: [(v) => !!v || "Nr budynku"],
-      postRules: [(v) => !!v || "Miejscowość jest wymagana"],
-      zipCodeRules: [(v) => !!v || "Kod pocztowy jest wymagany"],
-      passwordRules: [
-        (v) => !!v || "Hasło jest wymagane",
-        (v) => (v && v.length >= 5) || "Hasło musi mieć minimum 5 znaków",
-      ],
-      confirmPasswordRules: [
-        (v) => !!v || "Potwierdzenie hasła jest wymagane",
-        (v) =>
-          (v && v == this.coordinator.password) || "Hasła nie są zgodne",
-      ],
-      schoolClassNameRules: [(v) => !!v || "Nazwa klasy jest wymagana"],
-      schoolClassstudentsRules: [(v) => !!v || "Ilość uczniów jest wymagana"],
-      titleRules: [(v) => !!v || "Tytuł jest wymagany"],
+        firstnameRules: [(v) => !!v || "Imię jest wymagane"],
+        lastnameRules: [(v) => !!v || "Nazwisko jest wymagane"],
+        cityRules: [(v) => !!v || "Miasto jest wymagane"],
+        nameRules: [(v) => !!v || "Nazwa szkoły jest wymagana"],
+        schoolComplexRules: [(v) => !!v || "Zespół szkół jest wymagany"],
+        schoolTypesRules: [(v) => !!v || "Typ szkoły jest wymagany"],
+        phoneRules: [(v) => !!v || "Numer telefonu jest wymagany"],
+        emailRules: [(v) => !!v || "E-mail jest wymagany", (v) => /.+@.+\..+/.test(v) || "Wprowadź poprawny adres e-mail"],
+        addressRules: [(v) => !!v || "Nr budynku"],
+        postRules: [(v) => !!v || "Miejscowość jest wymagana"],
+        zipCodeRules: [(v) => !!v || "Kod pocztowy jest wymagany"],
+        schoolClassNameRules: [(v) => !!v || "Nazwa klasy jest wymagana"],
+        schoolClassstudentsRules: [(v) => !!v || "Ilość uczniów jest wymagana"], isFormValid: false,
+        titleRules: [(v) => !!v || "Tytuł jest wymagany"],
       shouldShowSignature: false,
+      valid: false,
       voivodeships: [],
       counties: [],
       communities: [],
@@ -61,7 +35,6 @@ export default {
       titles: [],
       languages: [],
       formResponse: null,
-      formattedDate: null,
       coordinator: {
           title: null,
           role: 2,
@@ -78,7 +51,7 @@ export default {
           voivodeship: null,
           county: null,
           community: null,
-          city: "",
+          city: null,
           school: null,
 
           phone: "",
@@ -88,17 +61,17 @@ export default {
           apartmentNumber: "",
           zipCode: "",
           post: "",
-          headmaster: {
-            firstname: null,
-            lastname: null,
-          },
         },
         schoolDetailsInfo: {
           category: null,
           schoolComplex: "",
           schoolType: null,
-          title: null,
-          email: "",
+          headmaster: {
+            title: null,
+            firstname: "",
+            lastname: "",
+            email: "",
+          },
         },
         schoolClasses: [
            {
@@ -131,6 +104,10 @@ export default {
     });
   },
   watch: {
+    '$refs.form.formData': {
+      handler: 'validate',
+      deep: true,
+    },
     "form.schoolData.voivodeship"(value) {
       if (value === null) return;
       this.axios
@@ -177,27 +154,16 @@ export default {
           .then((response) => {
             alert("Formularz został zgłoszony.");
             this.formResponse = response.data
-            var dateStr = new Date(this.formResponse.uploadDate)
-            this.formattedDate = dateStr.toLocaleString().slice(0, 20).replace(/[/:, ]/g, "")
+
           })
           .catch((err) => {
             alert("Wystąpił nieoczekiwany błąd.");
           });
       }
     },
-    validatePassword(value) {
-      if (!value) {
-        return "Hasło jest wymagane";
-      }
-      if (this.coordinator.confirmPassword != value) {
-        return "Hasła nie są zgodne";
-      }
-      return true;
-    },
     async validate() {
       const { valid } = await this.$refs.form.validate();
-
-      if (valid) alert("Formularz został poprawnie wypełniony");
+      this.valid = valid;
     },
     reset() {
       this.$refs.form.reset();
@@ -217,8 +183,8 @@ export default {
         this.form.schoolData.post = data.post
         var fullName = data.headmasterFullName
         var nameParts = fullName.split(" ")
-        this.form.schoolData.headmaster.firstname = nameParts[0]
-        this.form.schoolData.headmaster.lastname = nameParts.slice(1).join(" ")
+        this.form.schoolDetailsInfo.headmaster.firstname = nameParts[0]
+        this.form.schoolDetailsInfo.headmaster.lastname = nameParts.slice(1).join(" ")
       });
     },
     getUserDetails(){
@@ -234,6 +200,7 @@ export default {
     updateValues(id) {
       this.getSchoolDetails(id);
       this.getUserDetails();
+      this.validate();
     },
     addSchoolClass() {
       const schoolClass = {
@@ -254,13 +221,13 @@ export default {
 <template>
   <v-sheet class="mx-auto">
     <div class="pageA4">
-      <v-Form ref="form" @submit.prevent="onSubmit" :validationSchema="schema">
+      <v-Form ref="form" @input="validate" @submit.prevent="onSubmit">
         <h2 v-if="formResponse" style="text-align: center;margin-top: 0.5%; background-color: rgb(var(--v-theme-on-surface-variant));">
-          Formularz Zgłoszeniowy {{ formResponse.id }}{{ formattedDate }}
+          Formularz Zgłoszeniowy {{ formResponse.id }}
         </h2>
         <div>
           <legend>Dane Szkoły:</legend>
-          {{form}}
+          <!-- {{form}} -->
           <div style="width: auto; display: flex">
             <v-select
               v-model="form.schoolData.voivodeship"
@@ -275,11 +242,11 @@ export default {
             <v-select
               v-model="form.schoolData.county"
               @update:modelValue="form.schoolData.community = null"
+              :disabled="counties.length < 1"
               :items="counties"
               item-value="id"
               item-title="name"
               label="Powiat"
-              :disabled="counties.length < 1"
               :rules="[(v) => !!v || 'Powiat jest wymagany']"
               required
             ></v-select>
@@ -308,6 +275,7 @@ export default {
           </div>
           <v-autocomplete
             v-model="form.schoolData.school"
+            :disabled="schools.length < 1"
             :items="schools"
             item-value="id"
             item-title="name"
@@ -318,6 +286,7 @@ export default {
           ></v-autocomplete>
           <div style="width: 100%; display: flex">
             <v-select
+              @update:modelValue="validate"
               v-model="form.schoolDetailsInfo.category"
               :items="categories"
               item-value="id"
@@ -328,10 +297,12 @@ export default {
             ></v-select>
             <v-text-field
               v-model="form.schoolDetailsInfo.schoolComplex"
-              label="Zespołu szkół"
+              :rules="schoolComplexRules"
+              label="Zespół szkół"
               required
             ></v-text-field>
             <v-select
+              @update:modelValue="validate"
               v-model="form.schoolDetailsInfo.schoolType"
               :items="schoolTypes"
               item-value="id"
@@ -340,7 +311,9 @@ export default {
               label="Typ szkoły"
               required
             ></v-select>
-            <v-text-field
+          </div>
+          <div style="display: flex;">
+              <v-text-field
               v-model="form.schoolData.phone"
               readonly
               :counter="12"
@@ -357,27 +330,28 @@ export default {
               placeholder="adres@poczta.pl"
               required
             ></v-text-field>
-          </div>
+            </div>
           <legend>
             Dokładny adres szkoły (tak jak na kopercie, bez nazwy szkoły):
           </legend>
           <div style="width: 100%; display: flex">
             <v-text-field
               v-model="form.schoolData.street"
-              :rules="streetRules"
               label="Ulica"
-              required
+              readonly
             ></v-text-field>
             <v-text-field
               v-model="form.schoolData.address"
               :rules="addressRules"
               label="Nr budynku"
               required
+              readonly
             ></v-text-field>
             <v-text-field
               v-model="form.schoolData.apartmentNumber"
               label="Nr lokalu"
               required
+              readonly
             ></v-text-field>
             <v-text-field
               v-model="form.schoolData.zipCode"
@@ -385,12 +359,14 @@ export default {
               label="Kod pocztowy"
               required
               placeholder="00-000"
+              readonly
             ></v-text-field>
             <v-text-field
               v-model="form.schoolData.post"
               :rules="postRules"
               label="Miejscowość"
               required
+              readonly
             ></v-text-field>
           </div>
         </div>
@@ -400,7 +376,8 @@ export default {
           <div style="width: 100%; display: flex">
             <v-select
               class="width20per"
-              v-model="form.schoolDetailsInfo.title"
+              @update:modelValue="validate"
+              v-model="form.schoolDetailsInfo.headmaster.title"
               :rules="titleRules"
               :items="titles"
               item-value="id"
@@ -410,20 +387,20 @@ export default {
             ></v-select>
             <v-text-field
               class="width20per"
-              v-model="form.schoolData.headmaster.firstname"
               :rules="firstnameRules"
+              v-model="form.schoolDetailsInfo.headmaster.firstname"
               label="Imię"
               required
             ></v-text-field>
             <v-text-field
               class="width20per"
-              v-model="form.schoolData.headmaster.lastname"
+              v-model="form.schoolDetailsInfo.headmaster.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
               required
             ></v-text-field>
             <v-text-field
-              v-model="form.schoolDetailsInfo.email"
+              v-model="form.schoolDetailsInfo.headmaster.email"
               :rules="emailRules"
               label="E-mail"
               placeholder="adres@strona.pl"
@@ -433,8 +410,7 @@ export default {
         </div>
         <div>
           <legend>
-            Dane dotyczace Nauczyciela koordynujacego przebieg konkursu w
-            szkole:
+            Dane dotyczace Nauczyciela koordynujacego przebieg konkursu w szkole:
           </legend>
           <div style="width: 100%; display: flex">
             <v-select
@@ -450,8 +426,8 @@ export default {
             ></v-select>
             <v-text-field
               class="width20per"
-              v-model="coordinator.firstname"
               :rules="firstnameRules"
+              v-model="coordinator.firstname"
               label="Imię"
               required
               readonly
@@ -464,6 +440,8 @@ export default {
               required
               readonly
             ></v-text-field>
+          </div>
+          <div style="width: 100%; display: flex">
             <v-text-field
               v-model="coordinator.email"
               :rules="emailRules"
@@ -473,30 +451,6 @@ export default {
               required
               readonly
             ></v-text-field>
-          </div>
-          <div style="width: 100%; display: flex">
-            <!-- <v-text-field
-              class="passoword"
-              v-model="form.coordinator.password"
-              :rules="passwordRules"
-              label="Hasło"
-              type="password"
-              Field
-              :validateOnInput="true"
-              @click:append="show1 = !show1"
-              required
-            ></v-text-field>
-            <v-text-field
-              class="passoword"
-              v-model="form.coordinator.confirmPassword"
-              :rules="confirmPasswordRules"
-              label="Potwierdź hasło"
-              type="password"
-              name="passwordConfirmation"
-              Field
-              :validateOnInput="true"
-              required
-            ></v-text-field> -->
             <v-text-field
               v-model="coordinator.phone"
               :rules="phoneRules"
@@ -523,23 +477,6 @@ export default {
             v-model="coordinator.wantsToRate"
           ></v-checkbox>
         </div>
-
-        <!-- <div class="w-50">
-          <label for="coordinatorEmail">E-email:</label>
-          <Field :validateOnInput="true" v-model="form.coordinator.email" type="email" name="coordinatorEmail" placeholder="Adres@strona.pl"/>
-        </div>
-        <ErrorMessage name="coordinatorEmail" /> -->
-
-        <!-- <label for="password">Hasło:</label>
-          <Field :validateOnInput="true" v-model="form.coordinator.password" type="password"
-            name="password" placeholder="Haslo" /> -->
-        <!-- <ErrorMessage name="password" /> -->
-
-        <!-- <label for="passwordConfirmation">Potwierdź hasło:</label>
-          <Field  :validateOnInput="true" v-model="form.coordinator.confirmPassword"
-            type="password" name="passwordConfirmation" placeholder="Potwierdź hasło" /> -->
-        <!-- <ErrorMessage name="passwordConfirmation" />   -->
-
           <div style="width: 100%; display: flex; justify-content: space-between;">
             <legend style="width: 50%">Dane dotyczace Nauczyciela:</legend>
             <legend style="width: 20%">Dane dotyczace klasy:</legend>
@@ -550,6 +487,7 @@ export default {
             <v-list-item v-for="(schoolClass) in form.schoolClasses">
               <div style="width: 100%; display: flex">
                 <v-select
+                  @update:modelValue="validate"
                   class="width20per"
                   v-model="schoolClass.title"
                   :items="titles"
@@ -560,8 +498,8 @@ export default {
                   required
                 ></v-select>
                 <v-text-field
-                  v-model="schoolClass.firstname"
                   :rules="firstnameRules"
+                  v-model="schoolClass.firstname"
                   label="Imię"
                   required
                 ></v-text-field>
@@ -587,6 +525,7 @@ export default {
                   max="100"
                 ></v-text-field>
                 <v-select
+                  @update:modelValue="validate"
                   v-model="schoolClass.language"
                   :items="languages"
                   :rules="[(v) => !!v || 'Język jest wymagany']"
@@ -599,11 +538,9 @@ export default {
             </v-list-item>
           </v-list>
           <small class="visible-on-print" :class="{ 'visible-on-print': shouldShowSignature }"><hr> Data i podpis Dyrektora szkoły </small>
-        <div style="width: 20%; display: flex">
-          <v-btn color="grey" block @click="validate"> Sprawdzenie </v-btn>
-          <v-btn color="warning" block @click="resetValidation">Zrestartuj sprawdzenie</v-btn>
+        <div style="width: 33.3%; display: flex">
           <v-btn color="error" block @click="reset"> Wyczyść formularz </v-btn>
-          <v-btn color="success" block type="submit">wyślij</v-btn>
+          <v-btn color="success" block type="submit" :disabled="!valid">wyślij</v-btn>
           <v-btn color="blue" block onclick="print()">drukuj</v-btn>
         </div>
       </v-Form>

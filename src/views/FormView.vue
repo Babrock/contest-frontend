@@ -227,7 +227,7 @@ export default {
         </h2>
         <div>
           <legend>Dane Szkoły:</legend>
-          <!-- {{form}} -->
+          {{form}}
           <div style="width: auto; display: flex">
             <v-select
               v-model="form.schoolData.voivodeship"

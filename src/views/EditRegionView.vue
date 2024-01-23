@@ -17,7 +17,6 @@ export default {
         {
           title: 'Nazwa',
           align: 'start',
-          sortable: false,
           key: 'name',
         },
         { title: 'Województwa', key: 'voivodeships' },
@@ -39,17 +38,22 @@ export default {
   },
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? 'Nowy region' : 'Edit Item'
+      return this.editedIndex === -1 ? 'Nowy region' : 'Edytuj Region'
     },
   },
   beforeMount() {
     this.axios.get(`http://localhost:8080/regions`).then((response) => {
       this.regions = response.data;
-      console.log()
+      this.regions.forEach((region) => {
+          region.voivodeships = region.voivodeships.slice(1, -1)
+          region.counties = region.counties.slice(1, -1)
+        });
     });
     this.axios.get(`http://localhost:8080/voivodeships`).then((response) => {
-      this.voivodeships = response.data;
-    });
+    this.voivodeships = response.data;
+  }).catch((error) => {
+    console.error('Error fetching voivodeships:', error);
+  });
   },
   watch: {
     dialog(val) {
@@ -61,18 +65,28 @@ export default {
     "itemToEdit.voivodeships"(value) {
       if (value === null) return;
       this.axios
-        .get(`http://localhost:8080/counties/voivodeships/${value}`)
+        .get(`http://localhost:8080/counties/voivodeships-names/${value}`)
         .then((response) => {
           this.counties = response.data;
-        });
+        }).catch((error) => {
+        console.error('Error in GET request:', error);
+        // Handle the error, show a user-friendly message, etc.
+      });
     },
   },
   methods: {
     editItem(item) {
-      this.editedIndex = this.regions.indexOf(item)
-      this.itemToEdit = Object.assign(this.regions[this.editedIndex], this.regions[this.editedIndex])
-      this.dialog = true
-    },
+  this.editedIndex = this.regions.indexOf(item);
+  const regionsAtIndex = this.regions?.[this.editedIndex];
+  if ( regionsAtIndex) {
+    this.itemToEdit = Object.assign({}, regionsAtIndex);
+    this.dialog = true;
+  } else {
+    console.error("Invalid index or arrays are not properly defined.");
+  }
+},
+
+
 
     deleteItem(item) {
       this.editedIndex = this.regions.indexOf(item)
@@ -104,7 +118,12 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-          this.axios.put(`http://localhost:8080/regions/${this.itemToEdit.id}`, this.itemToEdit)
+          const { id, ...itemWithoutId } = this.itemToEdit;
+          itemWithoutId.voivodeships = itemWithoutId.voivodeships.split(',').map(item => item.trim());
+          itemWithoutId.counties = itemWithoutId.counties.split(',').map(item => item.trim());
+
+          this.axios.put(`http://localhost:8080/regions/${this.itemToEdit.id}`, itemWithoutId)
+          console.log(itemWithoutId)
         } else {
           this.axios.post('http://localhost:8080/regions', this.itemToEdit)
         }
@@ -136,6 +155,7 @@ export default {
         flat
       >
         <v-toolbar-title>REGIONY</v-toolbar-title>
+        {{ itemToEdit }}
         <v-divider
           class="mx-4"
           inset
@@ -162,7 +182,7 @@ export default {
             </v-card-title>
 
             <v-card-text>
-              {{ itemToEdit }}
+
               <v-container>
                 <v-row>
                   <v-col
@@ -187,16 +207,16 @@ export default {
                     sm="6"
                     md="4"
                   >
-                  <v-select
+                  <v-autocomplete
                     @update:modelValue="itemToEdit.counties = []"
                     v-model="itemToEdit.voivodeships"
                     :items="voivodeships"
-                    item-value="id"
+                    item-value="name"
                     item-title="name"
                     chips
                     label="Województwa"
                     multiple
-                  ></v-select>
+                  ></v-autocomplete>
                   </v-col>
                   <v-col
                     cols="12"
@@ -209,16 +229,16 @@ export default {
                     sm="6"
                     md="4"
                   >
-                  <v-select
+                  <v-autocomplete
                     :disabled="itemToEdit.voivodeships.length < 1"
                     v-model="itemToEdit.counties"
                     :items="counties"
-                    item-value="id"
+                    item-value="name"
                     item-title="name"
                     chips
                     label="Powiaty"
                     multiple
-                  ></v-select>  
+                  ></v-autocomplete>  
                   </v-col>
                 </v-row>
               </v-container>
@@ -265,6 +285,7 @@ export default {
       </v-icon>
     </template>
       </v-data-table>
+      
     </div>
   </v-sheet>
 </template>

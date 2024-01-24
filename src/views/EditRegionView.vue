@@ -26,13 +26,11 @@ export default {
       editedIndex: -1,
       itemToEdit:{
         name:"",
-        voivodeships:[],
-        counties:[],
+        countiesIds:[],
       },
       defaultItem:{
         name:"",
-        voivodeships:[],
-        counties:[],
+        countiesIds:[],
       },
     };
   },
@@ -44,16 +42,13 @@ export default {
   beforeMount() {
     this.axios.get(`http://localhost:8080/regions`).then((response) => {
       this.regions = response.data;
-      this.regions.forEach((region) => {
-          region.voivodeships = region.voivodeships.slice(1, -1)
-          region.counties = region.counties.slice(1, -1)
-        });
-    });
+      });
     this.axios.get(`http://localhost:8080/voivodeships`).then((response) => {
-    this.voivodeships = response.data;
-  }).catch((error) => {
-    console.error('Error fetching voivodeships:', error);
-  });
+      this.voivodeships = response.data;
+    });
+  },
+  mounted() {
+    this.fetchData();
   },
   watch: {
     dialog(val) {
@@ -62,31 +57,30 @@ export default {
     dialogDelete(val) {
       val || this.closeDelete()
     },
-    "itemToEdit.voivodeships"(value) {
-      if (value === null) return;
-      this.axios
-        .get(`http://localhost:8080/counties/voivodeships-names/${value}`)
-        .then((response) => {
-          this.counties = response.data;
-        }).catch((error) => {
-        console.error('Error in GET request:', error);
-        // Handle the error, show a user-friendly message, etc.
-      });
-    },
   },
   methods: {
+    selectAll(){
+      this.itemToEdit.countiesIds = this.counties.map(county => county.id);
+    },
+    
+    async fetchData() {
+      this.axios.get(`http://localhost:8080/regions`).then((response) => {
+      this.regions = response.data;
+      });
+    },
+
+    handleVoivodeshipChange(voivodeshipsIds){
+      voivodeshipsIds = voivodeshipsIds.join(',');
+      this.axios.get(`http://localhost:8080/counties/voivodeships/${voivodeshipsIds}`).then((response) => {
+        this.counties = response.data
+      })
+    },
+
     editItem(item) {
-  this.editedIndex = this.regions.indexOf(item);
-  const regionsAtIndex = this.regions?.[this.editedIndex];
-  if ( regionsAtIndex) {
-    this.itemToEdit = Object.assign({}, regionsAtIndex);
-    this.dialog = true;
-  } else {
-    console.error("Invalid index or arrays are not properly defined.");
-  }
-},
-
-
+      this.editedIndex = this.regions.indexOf(item)
+      this.itemToEdit = Object.assign(this.regions[this.editedIndex], this.regions[this.editedIndex])
+      this.dialog = true
+    },
 
     deleteItem(item) {
       this.editedIndex = this.regions.indexOf(item)
@@ -118,14 +112,9 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-          const { id, ...itemWithoutId } = this.itemToEdit;
-          itemWithoutId.voivodeships = itemWithoutId.voivodeships.split(',').map(item => item.trim());
-          itemWithoutId.counties = itemWithoutId.counties.split(',').map(item => item.trim());
-
-          this.axios.put(`http://localhost:8080/regions/${this.itemToEdit.id}`, itemWithoutId)
-          console.log(itemWithoutId)
+          this.axios.put(`http://localhost:8080/regions/${this.itemToEdit.id}`, this.itemToEdit)
         } else {
-          this.axios.post('http://localhost:8080/regions', this.itemToEdit)
+          this.axios.post('http://localhost:8080/regions/', this.itemToEdit)
         }
         this.close()
     },
@@ -149,13 +138,12 @@ export default {
 <template>
   <v-sheet class="mx-auto">
     <div class="pageA4">
-      <v-data-table :headers="headers" :items="regions" :sort-by="[{ key: 'voivodeships', order: 'asc' }]">
+      <v-data-table :headers="headers" :items="regions" :sort-by="[{ key: 'name', order: 'asc' }]">
         <template v-slot:top>
       <v-toolbar
         flat
       >
         <v-toolbar-title>REGIONY</v-toolbar-title>
-        {{ itemToEdit }}
         <v-divider
           class="mx-4"
           inset
@@ -207,16 +195,18 @@ export default {
                     sm="6"
                     md="4"
                   >
+                  
                   <v-autocomplete
-                    @update:modelValue="itemToEdit.counties = []"
+                    @update:modelValue="handleVoivodeshipChange"
                     v-model="itemToEdit.voivodeships"
                     :items="voivodeships"
-                    item-value="name"
+                    item-value="id"
                     item-title="name"
                     chips
                     label="Województwa"
                     multiple
                   ></v-autocomplete>
+                  
                   </v-col>
                   <v-col
                     cols="12"
@@ -229,11 +219,11 @@ export default {
                     sm="6"
                     md="4"
                   >
+                  <v-btn @click="selectAll" >Wszystkie</v-btn>
                   <v-autocomplete
-                    :disabled="itemToEdit.voivodeships.length < 1"
-                    v-model="itemToEdit.counties"
+                    v-model="itemToEdit.countiesIds"
                     :items="counties"
-                    item-value="name"
+                    item-value="id"
                     item-title="name"
                     chips
                     label="Powiaty"
@@ -265,11 +255,11 @@ export default {
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5">Czy na pewno chcesz usunąć ten region?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Nie</v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">TAK</v-btn>
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -285,7 +275,6 @@ export default {
       </v-icon>
     </template>
       </v-data-table>
-      
     </div>
   </v-sheet>
 </template>

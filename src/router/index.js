@@ -25,21 +25,9 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue') 
     },
     {
-      path: '/authPersonRegister',
-      name: 'AuthPersonRegisterView',
-      component: () => import('../views/AuthPersonRegisterView.vue'),
-      beforeEnter: checkAuthentication,
-    },
-    {
       path: '/login',
       name: 'loginView',
       component: () => import('../views/LoginView.vue'),
-    },
-    {
-      path: '/form',
-      name: 'formView',
-      component: () => import('../views/FormView.vue'),
-      beforeEnter: checkAuthentication,
     },
     {
       path: '/scores',
@@ -74,6 +62,18 @@ const router = createRouter({
       ],
     },
     {
+      path: '/form',
+      name: 'formView',
+      component: () => import('../views/FormView.vue'),
+      beforeEnter: checkAuthentication,
+    },
+    {
+      path: '/authPersonRegister',
+      name: 'AuthPersonRegisterView',
+      component: () => import('../views/AuthPersonRegisterView.vue'),
+      beforeEnter: checkAuthentication,
+    },
+    {
       path: '/allScores',
       name: 'allScoresView',
       component: () => import('../views/AllScoresView.vue'),
@@ -90,7 +90,13 @@ const router = createRouter({
       name: 'exportCsvView',
       component: () => import('../views/ExportCsvView.vue'),
       beforeEnter: checkAuthentication,
-    }
+    },
+    {
+      path: '/editRegion',
+      name: 'editRegionView',
+      component: () => import('../views/EditRegionView.vue'),
+      beforeEnter: checkAuthentication,
+    },
   ]
 })
 

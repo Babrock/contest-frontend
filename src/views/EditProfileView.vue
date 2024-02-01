@@ -6,7 +6,7 @@ export default {
   data() {
     return {
       form: {
-        id: null,
+        id: "",
       },
       school: {
         name: "",
@@ -67,15 +67,21 @@ export default {
   },
   methods: {
     onSubmit() {
-      if (this.form.id == null) {
-        window.alert("Nie wprowadziłeś numeru formularzu");
-        return;
-      }
+      let match = this.form.id.match(/\b\d+\b/);
+      let formNumber = this.form.id
+      this.form.id = match[0];
+      
+      console.log(this.form.id)
+
+      // if (this.form.id == null) {
+      //   window.alert("Nie wprowadziłeś numeru formularzu");
+      //   return;
+      // }
       this.axios.all([
-        this.axios.get(`http://localhost:8080/form/${this.form.id}`),
+        this.axios.get(`http://localhost:8080/form/combinedInfo/${formNumber}`),
         this.axios.get(`http://localhost:8080/classes?form_id=${this.form.id}`)
         ]).then((responses) => {
-          const [formResponse, classesResponse] = responses;
+          const [formResponse, classesResponse] = responses
           let dataFormResposne = formResponse.data
           this.schoolClasses = classesResponse.data
 
@@ -150,8 +156,7 @@ export default {
       <v-text-field
         v-model="form.id"
         label="Kod formularza"
-        type="number"
-        min="0"
+        type="text"
         required
       ></v-text-field>
       <div style="width: 100%; display: flex; justify-content: space-between">

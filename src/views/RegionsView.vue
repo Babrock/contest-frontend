@@ -15,10 +15,11 @@ export default {
       counties:[],
       headers: [
         {
-          title: 'Nazwa',
+          title: 'Numer',
           align: 'start',
-          key: 'name',
+          key: 'id',
         },
+        { title: 'Nazwa', key: 'name' },
         { title: 'Województwa', key: 'voivodeships' },
         { title: 'Powiaty', key: 'counties' },
         { title: '', key: 'actions', sortable: false },
@@ -64,9 +65,8 @@ export default {
     },
     
     async fetchData() {
-      this.axios.get(`http://localhost:8080/regions`).then((response) => {
+      const response = await this.axios.get(`http://localhost:8080/regions`);
       this.regions = response.data;
-      });
     },
 
     handleVoivodeshipChange(voivodeshipsIds){
@@ -76,11 +76,18 @@ export default {
       })
     },
 
-    editItem(item) {
-      this.editedIndex = this.regions.indexOf(item)
-      this.itemToEdit = Object.assign(this.regions[this.editedIndex], this.regions[this.editedIndex])
-      this.dialog = true
-    },
+    async editItem(item) {
+    // Pobierz szczegóły regionu z bazy danych na podstawie jego ID
+    const response = await this.axios.get(`http://localhost:8080/regions/${item.id}`);
+    this.itemToEdit = response.data;
+    const { id, ...itemWithoutId } = this.itemToEdit;
+
+    // Ustaw indeks edytowanego elementu
+    this.editedIndex = this.regions.indexOf(item);
+    console.log(itemWithoutId)
+    // Otwórz dialog edycji
+    this.dialog = true;
+  },
 
     deleteItem(item) {
       this.editedIndex = this.regions.indexOf(item)
@@ -110,13 +117,14 @@ export default {
       })
     },
 
-    save() {
+    async save() {
       if (this.editedIndex > -1) {
-          this.axios.put(`http://localhost:8080/regions/${this.itemToEdit.id}`, this.itemToEdit)
+        await  this.axios.put(`http://localhost:8080/regions/${this.itemToEdit.id}`, this.itemToEdit)
         } else {
-          this.axios.post('http://localhost:8080/regions/', this.itemToEdit)
+          await  this.axios.post('http://localhost:8080/regions/', this.itemToEdit)
         }
         this.close()
+        this.fetchData();
     },
 
     onSubmit(values) {
@@ -150,109 +158,59 @@ export default {
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="500px"
-        >
-          <template v-slot:activator="{ props }">
-            <v-btn
-              color="primary"
-              dark
-              class="mb-2"
-              v-bind="props"
-            >
-              Nowy Region
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5">{{ formTitle }}</span>
-            </v-card-title>
+        <v-dialog v-model="dialog" max-width="500px">
+  <template v-slot:activator="{ props }">
+    <v-btn color="primary" dark class="mb-2" v-bind="props">
+      Nowy Region
+    </v-btn>
+  </template>
+  <v-card>
+    <v-card-title>
+      <span class="text-h5">{{ formTitle }}</span>
+    </v-card-title>
 
-            <v-card-text>
+    <v-card-text>
+      <v-container>
+        <v-row>
+          <v-col cols="12" sm="6" md="6">
+            <v-text-field v-model="itemToEdit.name" label="Nazwa" required></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" md="6">
+            <!-- {{ itemToEdit }} -->
+            <v-autocomplete
+              @update:modelValue="handleVoivodeshipChange"
+              v-model="itemToEdit.voivodeships"
+              :items="voivodeships"
+              item-value="id"
+              item-title="name"
+              chips
+              label="Województwa"
+              multiple
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="12" sm="6" md="6">
+            <v-autocomplete
+              v-model="itemToEdit.countiesIds"
+              :items="counties"
+              item-value="id"
+              item-title="name"
+              chips
+              label="Powiaty"
+              multiple
+            ></v-autocomplete> 
+            <v-btn @click="selectAll" >Wszystkie Powiaty</v-btn> 
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
 
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                  <v-text-field
-                    v-model="itemToEdit.name"
-                    label="Nazwa"
-                    required
-                  ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                  
-                  <v-autocomplete
-                    @update:modelValue="handleVoivodeshipChange"
-                    v-model="itemToEdit.voivodeships"
-                    :items="voivodeships"
-                    item-value="id"
-                    item-title="name"
-                    chips
-                    label="Województwa"
-                    multiple
-                  ></v-autocomplete>
-                  
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="4"
-                  >
-                  <v-btn @click="selectAll" >Wszystkie</v-btn>
-                  <v-autocomplete
-                    v-model="itemToEdit.countiesIds"
-                    :items="counties"
-                    item-value="id"
-                    item-title="name"
-                    chips
-                    label="Powiaty"
-                    multiple
-                  ></v-autocomplete>  
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="close"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                color="blue-darken-1"
-                variant="text"
-                @click="save"
-              >
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="blue-darken-1" variant="text" @click="close">Cancel</v-btn>
+      <v-btn color="blue-darken-1" variant="text" @click="save">Save</v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5">Czy na pewno chcesz usunąć ten region?</v-card-title>

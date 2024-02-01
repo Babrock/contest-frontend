@@ -92,9 +92,9 @@ const router = createRouter({
       beforeEnter: checkAuthentication,
     },
     {
-      path: '/editRegion',
-      name: 'editRegionView',
-      component: () => import('../views/EditRegionView.vue'),
+      path: '/regions',
+      name: 'regionsView',
+      component: () => import('../views/RegionsView.vue'),
       beforeEnter: checkAuthentication,
     },
   ]

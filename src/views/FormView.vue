@@ -1,5 +1,6 @@
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
+import html2pdf, { f } from 'html2pdf.js';
 export default {
   components: {
     Form,
@@ -24,6 +25,7 @@ export default {
         titleRules: [(v) => !!v || "Tytuł jest wymagany"],
       shouldShowSignature: false,
       valid: false,
+      regions:[],
       voivodeships: [],
       counties: [],
       communities: [],
@@ -34,7 +36,7 @@ export default {
       categories: [],
       titles: [],
       languages: [],
-      formResponse: null,
+      formResponse: [],
       coordinator: {
           title: null,
           role: 2,
@@ -63,6 +65,7 @@ export default {
           post: "",
         },
         schoolDetailsInfo: {
+          region: null,
           category: null,
           schoolComplex: "",
           schoolType: null,
@@ -87,8 +90,8 @@ export default {
     };
   },
   beforeMount() {
-    this.axios.get(`http://localhost:8080/voivodeships`).then((response) => {
-      this.voivodeships = response.data;
+    this.axios.get(`http://localhost:8080/regions`).then((response) => {
+      this.regions = response.data;
     });
     this.axios.get(`http://localhost:8080/categories`).then((response) => {
       this.categories = response.data;
@@ -108,10 +111,10 @@ export default {
       handler: 'validate',
       deep: true,
     },
-    "form.schoolData.voivodeship"(value) {
+    "form.schoolDetailsInfo.region"(value) {
       if (value === null) return;
       this.axios
-        .get(`http://localhost:8080/counties?voivodeship=${value}`)
+        .get(`http://localhost:8080/counties/region/${value}`)
         .then((response) => {
           this.counties = response.data;
         });
@@ -142,11 +145,25 @@ export default {
     },
   },
   methods: {
+    saveAsPDF(formResponse) {
+      const element = this.$refs.form;
+      console.log(formResponse.combinedInfo)
+      const options = {
+        margin: 5,
+        filename: `FormularzZgłoszeniowy_${formResponse.combinedInfo}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      };
+      html2pdf().from(element).set(options).save();
+    },
+
     print() {
       this.shouldShowSignature = true;
-      window.print;
+      window.print();
       this.shouldShowSignature = false;
     },
+
     onSubmit(values) {
       if (window.confirm("Czy potwierdzasz zgodność danych?")) {
         this.axios
@@ -154,13 +171,14 @@ export default {
           .then((response) => {
             alert("Formularz został zgłoszony.");
             this.formResponse = response.data
-
+            this.saveAsPDF(this.formResponse);
           })
           .catch((err) => {
             alert("Wystąpił nieoczekiwany błąd.");
           });
       }
     },
+
     async validate() {
       const { valid } = await this.$refs.form.validate();
       this.valid = valid;
@@ -223,20 +241,20 @@ export default {
     <div class="pageA4">
       <v-Form ref="form" @input="validate" @submit.prevent="onSubmit">
         <h2 v-if="formResponse" style="text-align: center;margin-top: 0.5%; background-color: rgb(var(--v-theme-on-surface-variant));">
-          Formularz Zgłoszeniowy {{ formResponse.id }}
+          Formularz Zgłoszeniowy {{ formResponse.combinedInfo }}
         </h2>
         <div>
           <legend>Dane Szkoły:</legend>
-          {{form}}
+          <!-- {{form}} -->
           <div style="width: auto; display: flex">
             <v-select
-              v-model="form.schoolData.voivodeship"
-              @update:modelValue="form.schoolData.county = null"
-              :items="voivodeships"
+              v-model="form.schoolDetailsInfo.region"
+              @update:modelValue="form.schoolData.voivodeship = null"
+              :items="regions"
               item-value="id"
               item-title="name"
-              label="Województwo"
-              :rules="[(v) => !!v || 'Województwo jest wymagane']"
+              label="Region"
+              :rules="[(v) => !!v || 'Region jest wymagany']"
               required
             ></v-select>
             <v-select
@@ -540,8 +558,9 @@ export default {
           <small class="visible-on-print" :class="{ 'visible-on-print': shouldShowSignature }"><hr> Data i podpis Dyrektora szkoły </small>
         <div style="width: 33.3%; display: flex">
           <v-btn color="error" block @click="reset"> Wyczyść formularz </v-btn>
-          <v-btn color="success" block type="submit" :disabled="!valid">wyślij</v-btn>
-          <v-btn color="blue" block onclick="print()">drukuj</v-btn>
+          <v-btn color="blue" block onclick="print()">Zobacz podgląd</v-btn>
+          <v-btn color="success" block type="submit" :disabled="!valid">Zapisz i pobierz
+            <span class="additional-text">(plik do wydruku zapisał się do pobranych)</span></v-btn>
         </div>
       </v-Form>
     </div>
@@ -549,6 +568,11 @@ export default {
 </template>
 
 <style>
+.additional-text {
+  font-size: smaller; /* Możesz dostosować rozmiar czcionki według własnych preferencji */
+  display: block;
+  margin-top: 5px; /* Dodałem margines na górę dla lepszego odstępu */
+}
 .err {
   float: right;
 }

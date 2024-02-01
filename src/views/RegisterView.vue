@@ -3,10 +3,11 @@
 // import VueMask from 'v-mask';
 
 // Vue.use(VueMask);
+import { Form, Field, ErrorMessage } from "vee-validate";
 export default {
     data() {
         return {
-          phoneRules: [ v => !!v || 'Telefon is required', v => (v && v.replace(/\s/g, '').length === 9) || 'Telefon musi mieć 9 znaków' ],
+          phoneRules: [ v => !!v || 'Telefon jest wymagany', v => (v && v.replace(/\s/g, '').length === 9) || 'Telefon musi mieć 9 cyfer' ],
           firstnameRules: [(v) => !!v || "Imię jest wymagane"],
           lastnameRules: [(v) => !!v || "Nazwisko jest wymagane"],
           emailRules: [(v) => !!v || "E-mail jest wymagany"],
@@ -21,19 +22,20 @@ export default {
           ],
           titleRules: [(v) => !!v || "Tytuł jest wymagany"],
           titles: [],
-            form: {
-                title: null,
-                role: 2,
-                firstname: "",
-                lastname: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-                phone: "",
-                wantsToRate: 0,
-                enabled: 0,
-            },
-            
+          isAlertVisible: false,
+          valid: false,
+          form: {
+              title: null,
+              role: 2,
+              firstname: "",
+              lastname: "",
+              email: "",
+              password: "",
+              confirmPassword: "",
+              phone: "",
+              wantsToRate: 0,
+              enabled: 0,
+          },
         }
     },
     beforeMount() {
@@ -41,25 +43,49 @@ export default {
       this.titles = response.data;
     });
   },
-  methods: {
-    onSubmit() {
-      alert("Trwa przetwarzanie Twojej prośby. Prosimy o chwilę cierpliwości...");
-      this.axios
-        .post("http://localhost:8080/send", this.form)
-        .then((response) => {
-          alert("Potwierdź link w mailu.");
-        })
-        .catch((err) => {
-          alert("Wystąpił nieoczekiwany błąd.");
-        });
+  watch: {
+    '$refs.form': {
+      handler: 'validate',
+      deep: true,
     },
+  },
+  methods: {
+    async validate() {
+      const { valid } = await this.$refs.form.validate();
+      this.valid = valid;
+    },
+    showAlert() {
+      this.isAlertVisible = true;
+      setTimeout(() => {
+        this.isAlertVisible = false;
+      }, 3000);
+    },
+    onSubmit() {
+    this.showAlert()
+    setTimeout(() => {
+    this.axios
+      .post("http://localhost:8080/emails-verification/send", this.form)
+      .then((response) => {
+        alert("Potwierdź link w mailu.");
+      })
+      .catch((err) => {
+        if (err.response && err.response.status === 409 && err.response.data === "User with email " + this.form.email + " already exists") {
+        alert("Użytkownik o podanym adresie e-mail już istnieje.");
+        } else {
+          alert("Wystąpił nieoczekiwany błąd.");
+        }
+      });
+    }, 2000);
+    },
+
   },
 }
 </script>
 <template>
   <v-sheet class="mx-auto">
-    <div class="pageA4">
-      <v-Form ref="form" @submit.prevent="onSubmit" >
+      <v-Form ref="form"  @input="validate" @submit.prevent="onSubmit" >
+      <h1 style="text-align: center; margin: 3%;">Zarejestruj się</h1>
+      <h2 style="text-align: center;" v-if="isAlertVisible" class="alert">Prosimy o chwilę cierpliwości...</h2>
         <div style="width: 20vw; display: flex; flex-direction: column;">
           <v-select
             v-model="form.title"
@@ -118,12 +144,11 @@ export default {
             label="Telefon"
             placeholder="000 000 000"
             required
-            :maxlength="9"
+            :max="9"
           ></v-text-field>
-          <v-btn color="success" block type="submit">Zarejestruj</v-btn>
+          <v-btn  @click="showAlert" color="success" block type="submit" :disabled="!valid">Zarejestruj</v-btn>
         </div>
       </v-Form>
-    </div>
   </v-sheet>
 </template>
 <style></style>

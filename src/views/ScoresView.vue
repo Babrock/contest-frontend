@@ -1,7 +1,7 @@
 <template>
   <nav>
     <RouterLink to="/scores/currentStatistics">Bieżąca statystyka</RouterLink>
-    <RouterLink to="/scores/participantsByRegion">Uczestnicy konkursu wg regionu</RouterLink>
+    <RouterLink to="/scores/participantsByRegion">Uczestnicy konkursu wg regionu WIDOK SZKÓŁ ZAREJESTROWANYCH</RouterLink>
     <RouterLink to="/scores/participantsByVoivodeship">Uczestnicy konkursu wg województwa</RouterLink>
     <RouterLink to="/scores/resultsByRegion">Wyniki wg regionów</RouterLink>
     <RouterLink to="/scores/resultsByVoivodeship">Wyniki wg województw</RouterLink>

@@ -14,6 +14,7 @@ export default {
         { title: 'Województwo', key: 'form.school.voivodeship' },
         { title: 'Powiat', key: 'form.school.county' },
         { title: 'Gmina', key: 'form.school.community' },
+        
         { title: 'Miasto', key: 'form.school.city' },
         
         { title: 'Nazwa klasy', key: 'name' },

@@ -102,6 +102,7 @@ const router = createRouter({
       name: 'editProfile',
       component: () => import('../views/EditProfileView.vue'),
       beforeEnter: checkAuthentication,
+      
     },
   ]
 })

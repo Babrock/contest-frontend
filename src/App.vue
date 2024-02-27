@@ -25,7 +25,7 @@ export default {
       <nav>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/authPersonRegister">RejestracjaOsóbUpoważnionych</RouterLink>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Edycja punktów</RouterLink>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/editProfile">Zaakceptuj Formularz</RouterLink>
+        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/acceptForm">Zaakceptuj Formularz</RouterLink>
         <RouterLink to="/register">Rejestracja</RouterLink>
         <RouterLink to="/">Strona Główna</RouterLink>
         <RouterLink v-if="isAuthenticated" to="/form">Formularz</RouterLink>
@@ -37,6 +37,7 @@ export default {
         <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/exportCsv">Export CSV</RouterLink>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/regions">Edytuj Regiony</RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/editProfile">Edytuj Profil</RouterLink>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="" @click="logout">wyloguj</RouterLink>
       </nav>
     </header>

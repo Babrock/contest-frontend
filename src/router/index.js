@@ -80,9 +80,9 @@ const router = createRouter({
       beforeEnter: checkAuthentication,
     },
     {
-      path: '/editProfile',
-      name: 'editProfileView',
-      component: () => import('../views/EditProfileView.vue'),
+      path: '/acceptForm',
+      name: 'acceptFormView',
+      component: () => import('../views/AcceptFormView.vue'),
       beforeEnter: checkAuthentication,
     },
     {
@@ -95,6 +95,12 @@ const router = createRouter({
       path: '/regions',
       name: 'regionsView',
       component: () => import('../views/RegionsView.vue'),
+      beforeEnter: checkAuthentication,
+    },
+    {
+      path: '/editProfile',
+      name: 'editProfile',
+      component: () => import('../views/EditProfileView.vue'),
       beforeEnter: checkAuthentication,
     },
   ]

@@ -103,6 +103,12 @@ const router = createRouter({
       component: () => import('../views/EditProfileView.vue'),
       beforeEnter: checkAuthentication,
     },
+    {
+      path: '/sendEmail',
+      name: 'sendEmail',
+      component: () => import('../views/SendEmailView.vue'),
+      beforeEnter: checkAuthentication,
+    },
   ]
 })
 

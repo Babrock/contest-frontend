@@ -102,9 +102,9 @@ export default {
     this.axios.get(`http://localhost:8080/languages`).then((response) => {
       this.languages = response.data;
     });
-    this.axios.get(`http://localhost:8080/school-types`).then((response) => {
-      this.schoolTypes = response.data;
-    });
+    // this.axios.get(`http://localhost:8080/school-types`).then((response) => {
+    //   this.schoolTypes = response.data;
+    // });
   },
   watch: {
     '$refs.form.formData': {
@@ -141,6 +141,14 @@ export default {
         .get(`http://localhost:8080/schools?city=${value}`)
         .then((response) => {
           this.schools = response.data;
+        });
+    },
+    "form.schoolDetailsInfo.category"(value) {
+      if (value === null) return;
+      this.axios
+        .get(`http://localhost:8080/school-types/${value}`)
+        .then((response) => {
+          this.schoolTypes = response.data;
         });
     },
   },
@@ -322,6 +330,7 @@ export default {
             <v-select
               @update:modelValue="validate"
               v-model="form.schoolDetailsInfo.schoolType"
+              :disabled="schoolTypes.length < 1"
               :items="schoolTypes"
               item-value="id"
               item-title="name"

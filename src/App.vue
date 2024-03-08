@@ -25,12 +25,10 @@ export default {
       <nav>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/authPersonRegister">RejestracjaOsóbUpoważnionych</RouterLink>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Edycja punktów</RouterLink>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/acceptForm">Zaakceptuj Formularz</RouterLink>
+        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR' || role == 'ROLE_COORDINATOR_REGION'" to="/acceptForm">Zaakceptuj Formularz</RouterLink>
         <RouterLink to="/register">Rejestracja</RouterLink>
         <RouterLink to="/">Strona Główna</RouterLink>
         <RouterLink v-if="isAuthenticated" to="/form">Formularz</RouterLink>
-        <!-- <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/addScores">Dodaj punkty</RouterLink>
-        <RouterLink v-if="role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/deleteScores">Usuń punkty</RouterLink> -->
         <RouterLink to="/scores">Wyniki</RouterLink>
         <RouterLink to="/informations/statute">Informacje o konkursie</RouterLink>
         <RouterLink to="/location">Lokalizacja</RouterLink>

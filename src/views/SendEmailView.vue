@@ -18,10 +18,29 @@ export default {
         subject: "",
         text: "",
       },
+      user: {
+        role: null
+      },
     };
   },
-  beforeMount(){
-    this.axios.get(`http://localhost:8080/roles`).then((response) => {
+  mounted() {
+    this.getUserDetailsAndRoles();
+  },
+  methods: {
+    getUserDetailsAndRoles() {
+      this.getUserDetails();
+    setTimeout(() => {
+      this.getRoles();
+    }, 50);
+  },
+    getUserDetails(){
+      this.axios.get(`http://localhost:8080/users/details`).then((response) => {
+        let data = response.data
+        this.user.role = data.role
+      });
+    },
+    getRoles(){
+      this.axios.get(`http://localhost:8080/roles`).then((response) => {
       const mappedRoles = response.data.map(role => {
         switch (role.name) {
           case 'ROLE_ADMIN':
@@ -36,11 +55,19 @@ export default {
             return role;
         }
       });
-      this.to = mappedRoles;
+      if (this.user.role.id === 1) {
+        this.to = mappedRoles;
+      } else if (this.user.role.id === 2) {
+        this.to = mappedRoles.filter(role => role.id === 2 || role.id === 3 || role.id === 4);
+      } else if (this.user.role.id === 3) {
+        this.to = mappedRoles.filter(role => role.id === 3 || role.id === 4);
+      } else if (this.user.role.id === 4) {
+        this.to = mappedRoles.filter(role => role.id === 4);
+      }
     });
 
-  },
-  methods: {
+    },
+
     onSubmit(to, subject, text) {
       this.showAlert()
       setTimeout(() => {
@@ -97,6 +124,5 @@ export default {
             ></v-text-field>
           <v-btn color="success" block type="submit" :disabled="!valid">Wyślij</v-btn>
         </div>
-    {{ form }}
     </v-Form>
 </template>

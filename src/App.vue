@@ -2,42 +2,96 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { mapWritableState, mapState } from 'pinia'
 import {useAuthStore} from '@/store/auth.js'
+import { mergeProps } from 'vue'
 
 export default {
+  data() {
+    return {
+      itemsToEdit: [
+        { title: 'Edytuj Regiony', to: '/regions', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' },
+        { title: 'Edytuj Profil', to: '/editProfile', show: this.isAuthenticated },
+        { title: 'Edycja punktów', to: '/allScores', show: this.isAuthenticated || this.role=='ROLE_ADMIN' || this.role == 'ROLE_SCHOOL_COORDINATOR'},
+        { title: 'Edytuj Formularza', to: '/editForm', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' },
+      ],
+      other:[
+        { title: 'RejestracjaOsóbUpoważnionych', to: '/authPersonRegister', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' },
+        { title: 'Zaakceptuj Formularz', to: '/acceptForm', show: this.isAuthenticated || this.role=='ROLE_ADMIN' || this.role == 'ROLE_REGION_COORDINATOR'},
+        { title: 'Export CSV', to: '/exportCsv', show: this.isAuthenticated || this.role=='ROLE_ADMIN'},
+        { title: 'Wyślij wiadomość', to: '/sendEmail', show: this.isAuthenticated},
+      ],
+    }
+  },
   computed: {
     ...mapWritableState(useAuthStore, ['isAuthenticated']),
     ...mapState(useAuthStore, ['role'])
   },
   methods: {
+    mergeProps,
     logout() {
-      this.axios.post('logout').then( () => {
         this.isAuthenticated = false
-        this.$router.push('/login')
-      }).catch(err => {
-        alert('ups cos poszlo nie tak')
-      })
-    }
-  }
+        this.$router.push('/login') 
+    },
+  },
+
 }
 </script>
 <template>
     <header id="buttonDisplayNone">
       <nav>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/authPersonRegister">RejestracjaOsóbUpoważnionych</RouterLink>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Edycja punktów</RouterLink>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR' || role == 'ROLE_COORDINATOR_REGION'" to="/acceptForm">Zaakceptuj Formularz</RouterLink>
         <RouterLink to="/register">Rejestracja</RouterLink>
         <RouterLink to="/">Strona Główna</RouterLink>
-        <RouterLink v-if="isAuthenticated" to="/form">Formularz</RouterLink>
         <RouterLink to="/scores">Wyniki</RouterLink>
         <RouterLink to="/informations/statute">Informacje o konkursie</RouterLink>
         <RouterLink to="/location">Lokalizacja</RouterLink>
-        <RouterLink v-if="!isAuthenticated" to="/login">Logowanie</RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/form">Formularz</RouterLink>
+        <RouterLink to="/acceptedSchools">Zaakceptowane Szkoły</RouterLink>
+        <div class="text-center" v-if="role=='ROLE_ADMIN'">
+        <v-menu v-if="isAuthenticated">
+          <template v-slot:activator="{ props: menu }">
+            <v-tooltip location="top">
+              <template v-slot:activator="{ props: tooltip }">
+                <v-btn color="rgba(4, 0, 255, 0.651)" v-bind="mergeProps(menu, tooltip)">Edytuj</v-btn>
+              </template>
+              <span>Kliknij aby wysunąć listę edycji</span>
+            </v-tooltip>
+          </template>
+            <v-list>
+              <v-list-item v-for="(item, i) in itemsToEdit" :key="i" :to="item.to" to>
+                <v-list-item-title>{{item.title}}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+
+        <div class="text-center" v-if="role=='ROLE_ADMIN'">
+          <v-menu v-if="isAuthenticated">
+            <template v-slot:activator="{ props: menu }">
+              <v-tooltip location="top">
+                <template v-slot:activator="{ props: tooltip }">
+                  <v-btn color="rgba(4, 0, 255, 0.651)"  v-bind="mergeProps(menu, tooltip)" > Inne </v-btn>
+                </template>
+                <span>Kliknij aby wysunąć listę innych opcji</span>
+              </v-tooltip>
+            </template>
+            <v-list>
+              <v-list-item v-for="(item, i) in other" :key="i" :to="item.to" to>
+              <v-list-item-title>{{item.title}}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+
+        <!-- <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/authPersonRegister">RejestracjaOsóbUpoważnionych</RouterLink>
+        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR' || role == 'ROLE_COORDINATOR_REGION'" to="/acceptForm">Zaakceptuj Formularz</RouterLink>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/exportCsv">Export CSV</RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/sendEmail">Wyślij wiadomość</RouterLink> -->
+<!-- 
+        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Edycja punktów</RouterLink>
         <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/regions">Edytuj Regiony</RouterLink>
-        <RouterLink v-if="isAuthenticated" to="/sendEmail">Wyślij wiadomość</RouterLink>
-        <RouterLink v-if="isAuthenticated" to="/editProfile">Edytuj Profil</RouterLink>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="" @click="logout">wyloguj</RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/editProfile">Edytuj Profil</RouterLink> -->
+
+        <RouterLink v-if="!isAuthenticated" to="/login">Zaloguj</RouterLink>
+        <RouterLink v-if="isAuthenticated" to="/login" @click="logout">wyloguj</RouterLink>
       </nav>
     </header>
     <main>

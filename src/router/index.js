@@ -109,6 +109,17 @@ const router = createRouter({
       component: () => import('../views/SendEmailView.vue'),
       beforeEnter: checkAuthentication,
     },
+    {
+      path: '/editForm',
+      name: 'editForm',
+      component: () => import('../views/EditFormView.vue'),
+      beforeEnter: checkAuthentication,
+    },
+    {
+      path: '/acceptedSchools',
+      name: 'acceptedSchools',
+      component: () => import('../views/AcceptedSchoolsView.vue'),
+    },
   ]
 })
 

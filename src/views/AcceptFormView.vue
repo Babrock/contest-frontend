@@ -23,6 +23,7 @@ export default {
         zipCode: "",
       },
       schoolDetails:{
+        region:"",
         category: "",
         schoolComplex:"",
         schoolType:"",
@@ -98,6 +99,7 @@ export default {
           this.school.phone = dataFormResposne.school.phone
           this.school.email = dataFormResposne.school.email
 
+          this.schoolDetails.region = dataFormResposne.schoolDetails.region
           this.schoolDetails.category = dataFormResposne.schoolDetails.category
           this.schoolDetails.schoolComplex = dataFormResposne.schoolDetails.schoolComplex
           this.schoolDetails.schoolType = dataFormResposne.schoolDetails.schoolType
@@ -166,6 +168,7 @@ export default {
         <v-btn v-if="role=='ROLE_ADMIN'" color="error" @click="deleteForm" >Usuń formularz</v-btn>
       </div>
       <div class="mt-4" style="width: 100%; display: flex; flex-wrap: wrap">
+        <v-text-field readonly v-model="schoolDetails.region.name" label="Region"></v-text-field>
         <legend>Dane Szkoły:</legend>
         <v-text-field readonly v-model="school.voivodeship" label="Województwo"></v-text-field>
         <v-text-field readonly v-model="school.county" label="Powiat"></v-text-field>

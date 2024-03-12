@@ -49,23 +49,27 @@ export default {
           wantsToRate: 0,
         },
       form: {
-        schoolData: {
-          voivodeship: null,
-          county: null,
-          community: null,
-          city: null,
-          school: null,
+        id:"",
+        schoolInfo: {
+            // voivodeship: null,
+            // county: null,
+            // community: null,
+            city:{
+                id: null,
+                name:"",
+            },
+            school: null,
 
-          phone: "",
-          email: "",
-          street: "",
-          address: "",
-          apartmentNumber: "",
-          zipCode: "",
-          post: "",
+            phone: "",
+            email: "",
+            street: "",
+            address: "",
+            apartmentNumber: "",
+            zipCode: "",
+            post: "",
         },
         schoolDetailsInfo: {
-          region: null,
+          region: "",
           category: null,
           schoolComplex: "",
           schoolType: null,
@@ -86,7 +90,43 @@ export default {
             language: null,
           },
         ],
+        user:{
+            title: null,
+            firstname: "",
+            lastname: "",
+            phone: "",
+            email: "",
+            wantsToRate: null,
+        }
       },
+      updatedForm:{
+            schoolInfo: {
+                voivodeship: null,
+                county: null,
+                community: null,
+                city: null,
+                school: null,
+
+                phone: "",
+                email: "",
+                street: "",
+                address: "",
+                apartmentNumber: "",
+                zipCode: "",
+                post: "",
+            },
+            
+            schoolClasses: [
+           {
+            title: null,
+            firstname: "",
+            lastname: "",
+            name: "",
+            students: null,
+            language: null,
+          },
+        ],
+        },
     };
   },
   beforeMount() {
@@ -122,7 +162,7 @@ export default {
     //       this.voivodeships = response.data;
     //     });
     // },
-    "form.schoolData.voivodeship"(value) {
+    "form.schoolInfo.voivodeship"(value) {
       if (value === null) return;
       this.axios
         .get(`http://localhost:8080/counties?voivodeship=${value}`)
@@ -130,7 +170,7 @@ export default {
           this.counties = response.data;
         });
     },
-    "form.schoolData.county"(value) {
+    "form.schoolInfo.county"(value) {
       if (value === null) return;
       this.axios
         .get(`http://localhost:8080/communities?county=${value}`)
@@ -138,7 +178,7 @@ export default {
           this.communities = response.data;
         });
     },
-    "form.schoolData.community"(value) {
+    "form.schoolInfo.community"(value) {
       if (value === null) return;
       this.axios
         .get(`http://localhost:8080/cities?community=${value}`)
@@ -146,7 +186,7 @@ export default {
           this.cities = response.data;
         });
     },
-    "form.schoolData.city"(value) {
+    "form.schoolInfo.city.id"(value) {
       if (value === null) return;
       this.axios
         .get(`http://localhost:8080/schools?city=${value}`)
@@ -208,35 +248,35 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation();
     },
-    getSchoolDetails(id) {
-      this.axios.get(`http://localhost:8080/schools/${id}`).then((response) => {
-        let data = response.data
-        this.form.schoolData.phone = data.phone
-        this.form.schoolData.email = data.email
-        this.form.schoolData.street = data.street
-        this.form.schoolData.address = data.address
-        this.form.schoolData.apartmentNumber = data.apartmentNumber
-        this.form.schoolData.zipCode = data.zipCode
-        this.form.schoolData.post = data.post
-        var fullName = data.headmasterFullName
-        var nameParts = fullName.split(" ")
-        this.form.schoolDetailsInfo.headmaster.firstname = nameParts[0]
-        this.form.schoolDetailsInfo.headmaster.lastname = nameParts.slice(1).join(" ")
-      });
-    },
-    getUserDetails(){
-      this.axios.get(`http://localhost:8080/users/details`).then((response) => {
-        let data = response.data
-        this.coordinator.title = data.title
-        this.coordinator.firstname = data.firstname
-        this.coordinator.lastname = data.lastname
-        this.coordinator.phone = data.phone
-        this.coordinator.email = data.email
-      });
-    },
+    // getSchoolDetails(id) {
+    //   this.axios.get(`http://localhost:8080/schools/${id}`).then((response) => {
+    //     let data = response.data
+    //     this.form.schoolData.phone = data.phone
+    //     this.form.schoolData.email = data.email
+    //     this.form.schoolData.street = data.street
+    //     this.form.schoolData.address = data.address
+    //     this.form.schoolData.apartmentNumber = data.apartmentNumber
+    //     this.form.schoolData.zipCode = data.zipCode
+    //     this.form.schoolData.post = data.post
+    //     var fullName = data.headmasterFullName
+    //     var nameParts = fullName.split(" ")
+    //     this.form.schoolDetailsInfo.headmaster.firstname = nameParts[0]
+    //     this.form.schoolDetailsInfo.headmaster.lastname = nameParts.slice(1).join(" ")
+    //   });
+    // },
+    // getUserDetails(){
+    //   this.axios.get(`http://localhost:8080/users/details`).then((response) => {
+    //     let data = response.data
+    //     this.coordinator.title = data.title
+    //     this.coordinator.firstname = data.firstname
+    //     this.coordinator.lastname = data.lastname
+    //     this.coordinator.phone = data.phone
+    //     this.coordinator.email = data.email
+    //   });
+    // },
     updateValues(id) {
-      this.getSchoolDetails(id);
-      this.getUserDetails();
+    //   this.getSchoolDetails(id);
+    //   this.getUserDetails();
       this.validate();
     },
     addSchoolClass() {
@@ -251,6 +291,72 @@ export default {
         alert("W zgłoszeniu musi być podana co najmniej jedna klasa!");
       }
     },
+    getForm() {
+      let match = this.form.id.match(/\b\d+\b/);
+      let formNumber = this.form.id
+      this.form.id = match[0];
+      
+      console.log("id formularza", formNumber)
+
+      // if (this.form.id == null) {
+      //   window.alert("Nie wprowadziłeś numeru formularzu");
+      //   return;
+      // }
+      this.axios.all([
+        this.axios.get(`http://localhost:8080/form/combinedInfo/${formNumber}`),
+        this.axios.get(`http://localhost:8080/classes?form_id=${this.form.id}`)
+        ]).then((responses) => {
+          const [formResponse, classesResponse] = responses
+          let dataFormResposne = formResponse.data
+          this.form.schoolClasses = classesResponse.data
+
+          this.form.schoolDetailsInfo.region = dataFormResposne.schoolDetails.region.id
+
+          this.form.schoolInfo.voivodeship = dataFormResposne.school.city.community.county.voivodeship.id
+          this.form.schoolInfo.county = dataFormResposne.school.city.community.county.id
+          this.form.schoolInfo.community = dataFormResposne.school.city.community.id
+          this.form.schoolInfo.city.id = dataFormResposne.school.city.id
+          this.form.schoolInfo.city.name = dataFormResposne.school.city.name
+          this.form.schoolInfo.school = dataFormResposne.school.id
+
+          this.form.schoolInfo.street = dataFormResposne.school.street
+          this.form.schoolInfo.address = dataFormResposne.school.address
+          this.form.schoolInfo.apartmentNumber = dataFormResposne.school.apartmentNumber
+          this.form.schoolInfo.zipCode = dataFormResposne.school.zipCode
+          this.form.schoolInfo.post = dataFormResposne.school.post
+          this.form.schoolInfo.phone = dataFormResposne.school.phone
+          this.form.schoolInfo.email = dataFormResposne.school.email
+
+          this.form.schoolDetailsInfo.category = dataFormResposne.schoolDetails.category.id
+          this.form.schoolDetailsInfo.schoolComplex = dataFormResposne.schoolDetails.schoolComplex
+          this.form.schoolDetailsInfo.schoolType = dataFormResposne.schoolDetails.schoolType.id
+
+          this.form.schoolDetailsInfo.headmaster.title = dataFormResposne.schoolDetails.title.id
+          this.form.schoolDetailsInfo.headmaster.firstname = dataFormResposne.schoolDetails.firstname
+          this.form.schoolDetailsInfo.headmaster.lastname = dataFormResposne.schoolDetails.lastname
+          this.form.schoolDetailsInfo.headmaster.email = dataFormResposne.schoolDetails.email
+
+          this.form.user.title = dataFormResposne.user.title
+          this.form.user.firstname = dataFormResposne.user.firstname
+          this.form.user.lastname = dataFormResposne.user.lastname
+          this.form.user.email = dataFormResposne.user.email
+          this.form.user.phone = dataFormResposne.user.phone
+          this.form.user.wantsToRate = dataFormResposne.user.wantsToRate
+
+        })
+        .catch((error) => {
+          window.alert("Nie ma takiego formularza!");
+        });
+    },
+    accepted(){
+      this.axios.put(`http://localhost:8080/form/${this.form.id}`)
+      .then((response) => {
+        alert("Formularz został zedytowany.");
+      })
+      .catch((err) => {
+        alert("Wystąpił nieoczekiwany błąd.");
+      });
+    },
   },
 };
 </script>
@@ -261,12 +367,22 @@ export default {
     <div class="pageA4">
       <v-Form ref="form" @input="validate" @submit.prevent="onSubmit">
         <h2 v-if="formResponse" style="text-align: center; margin-top: 0.5%; background-color: rgb(var(--v-theme-on-surface-variant));">
-          Formularz Zgłoszeniowy {{ formResponse.combinedInfo }}
+          Edytuj Formularz Zgłoszeniowy {{ formResponse.combinedInfo }}
         </h2>
+        <v-text-field
+        v-model="form.id"
+        label="Kod formularza"
+        type="text"
+        required
+        ></v-text-field>
+        <div style="width: 50%; display: flex; justify-content: space-between">
+        <v-btn color="grey" @click="getForm" >Pobierz formularz</v-btn>
+        <v-btn color="success" @click="accepted">Akceptuj edycję formularza</v-btn>
+        </div>
         <div>            
           <v-select
               v-model="form.schoolDetailsInfo.region"
-              @update:modelValue="form.schoolData.voivodeship = null"
+              @update:modelValue="form.schoolInfo.voivodeship = null"
               :items="regions"
               item-value="id"
               item-title="name"
@@ -278,8 +394,8 @@ export default {
           <!-- {{form}} -->
           <div style="width: auto; display: flex">
             <v-select
-              v-model="form.schoolData.voivodeship"
-              @update:modelValue="form.schoolData.county = null"
+              v-model="form.schoolInfo.voivodeship"
+              @update:modelValue="form.schoolInfo.county = null"
               :disabled="voivodeships.length < 1"
               :items="voivodeships"
               item-value="id"
@@ -289,9 +405,8 @@ export default {
               required
             ></v-select>
             <v-select
-              v-model="form.schoolData.county"
-              @update:modelValue="form.schoolData.community = null"
-              :disabled="counties.length < 1"
+              v-model="form.schoolInfo.county"
+              @update:modelValue="form.schoolInfo.community = null"
               :items="counties"
               item-value="id"
               item-title="name"
@@ -300,9 +415,8 @@ export default {
               required
             ></v-select>
             <v-autocomplete
-              v-model="form.schoolData.community"
-              @update:modelValue="form.schoolData.city = null"
-              :disabled="communities.length < 1"
+              v-model="form.schoolInfo.community"
+              @update:modelValue="form.schoolInfo.city.id = null"
               :items="communities"
               item-value="id"
               item-title="name"
@@ -311,9 +425,8 @@ export default {
               required
             ></v-autocomplete>
             <v-autocomplete
-              v-model="form.schoolData.city"
-              @update:modelValue="form.schoolData.school = null"
-              :disabled="cities.length < 1"
+              v-model="form.schoolInfo.city"
+              @update:modelValue="form.schoolInfo.school = null"
               :items="cities"
               item-value="id"
               item-title="name"
@@ -323,8 +436,7 @@ export default {
             ></v-autocomplete>
           </div>
           <v-autocomplete
-            v-model="form.schoolData.school"
-            :disabled="schools.length < 1"
+            v-model="form.schoolInfo.school"
             :items="schools"
             item-value="id"
             item-title="name"
@@ -364,7 +476,7 @@ export default {
           </div>
           <div style="display: flex;">
               <v-text-field
-              v-model="form.schoolData.phone"
+              v-model="form.schoolInfo.phone"
               readonly
               :counter="12"
               :rules="phoneRules"
@@ -373,7 +485,7 @@ export default {
               required
             ></v-text-field>
             <v-text-field
-              v-model="form.schoolData.email"
+              v-model="form.schoolInfo.email"
               :rules="emailRules"
               label="E-mail"
               placeholder="adres@poczta.pl"
@@ -385,25 +497,25 @@ export default {
           </legend>
           <div style="width: 100%; display: flex">
             <v-text-field
-              v-model="form.schoolData.street"
+              v-model="form.schoolInfo.street"
               label="Ulica"
               readonly
             ></v-text-field>
             <v-text-field
-              v-model="form.schoolData.address"
+              v-model="form.schoolInfo.address"
               :rules="addressRules"
               label="Nr budynku"
               required
               readonly
             ></v-text-field>
             <v-text-field
-              v-model="form.schoolData.apartmentNumber"
+              v-model="form.schoolInfo.apartmentNumber"
               label="Nr lokalu"
               required
               readonly
             ></v-text-field>
             <v-text-field
-              v-model="form.schoolData.zipCode"
+              v-model="form.schoolInfo.zipCode"
               :rules="zipCodeRules"
               label="Kod pocztowy"
               required
@@ -411,7 +523,7 @@ export default {
               readonly
             ></v-text-field>
             <v-text-field
-              v-model="form.schoolData.post"
+              v-model="form.schoolInfo.post"
               :rules="postRules"
               label="Miejscowość"
               required
@@ -464,7 +576,7 @@ export default {
           <div style="width: 100%; display: flex">
             <v-select
               class="width20per"
-              v-model="coordinator.title"
+              v-model="form.user.title"
               :items="titles"
               :rules="titleRules"
               item-value="id"
@@ -476,14 +588,14 @@ export default {
             <v-text-field
               class="width20per"
               :rules="firstnameRules"
-              v-model="coordinator.firstname"
+              v-model="form.user.firstname"
               label="Imię"
               required
               readonly
             ></v-text-field>
             <v-text-field
               class="width20per"
-              v-model="coordinator.lastname"
+              v-model="form.user.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
               required
@@ -492,7 +604,7 @@ export default {
           </div>
           <div style="width: 100%; display: flex">
             <v-text-field
-              v-model="coordinator.email"
+              v-model="form.user.email"
               :rules="emailRules"
               label="E-mail"
               type="email"
@@ -501,7 +613,7 @@ export default {
               readonly
             ></v-text-field>
             <v-text-field
-              v-model="coordinator.phone"
+              v-model="form.user.phone"
               :rules="phoneRules"
               label="Telefon"
               placeholder="+48 000 000 000"
@@ -523,7 +635,7 @@ export default {
           </label>
           <v-checkbox
             style="--v-input-control-height: 0px; height: 30px; margin-top: -1%"
-            v-model="coordinator.wantsToRate"
+            v-model="form.user.wantsToRate"
           ></v-checkbox>
         </div>
           <div style="width: 100%; display: flex; justify-content: space-between;">
@@ -583,16 +695,13 @@ export default {
                   label="Język"
                   required
                 ></v-select>
+
               </div>
+              
             </v-list-item>
+            
           </v-list>
-          <small class="visible-on-print" :class="{ 'visible-on-print': shouldShowSignature }"><hr> Data i podpis Dyrektora szkoły </small>
-        <div style="width: 33.3%; display: flex;">
-          <v-btn color="error" block @click="reset"> Wyczyść formularz </v-btn>
-          <v-btn color="blue" block onclick="print()">Zobacz podgląd</v-btn>
-          <v-btn color="success" block type="submit" :disabled="!valid">Zapisz i pobierz
-            <div  class="sub-text">(plik do wydruku zapisał się do pobranych)</div></v-btn>
-        </div>
+          
       </v-Form>
     </div>
   </v-sheet>
@@ -623,35 +732,5 @@ hr {
 }
 .v-field__input {
   padding-right: 10px;
-}
-.visible-on-print {
-  display: none;
-}
-@media print {
-  #buttonDisplayNone,
-  .v-field__append-inner,
-  .v-input__details,
-  .passoword {
-    display: none;
-  }
-  .v-btn {
-    visibility: hidden;
-  }
-  #labelPrintSize {
-    font-size: 10px;
-  }
-  .Signature {
-    visibility: visible;
-  }
-  .visible-on-print {
-    display: block !important;
-    margin-left: 75% !important;
-  }
-  .pageA4 {
-    margin-top: -2.9% !important;
-  }
-  .width20per {
-    max-width: 20% !important;
-  }
 }
 </style>

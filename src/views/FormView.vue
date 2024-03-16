@@ -78,12 +78,12 @@ export default {
         },
         schoolClasses: [
            {
-            title: null,
+            title: {id: null},
             firstname: "",
             lastname: "",
             name: "",
             students: null,
-            language: null,
+            language: {id: null},
           },
         ],
       },
@@ -105,9 +105,6 @@ export default {
     this.axios.get(`http://localhost:8080/languages`).then((response) => {
       this.languages = response.data;
     });
-    // this.axios.get(`http://localhost:8080/school-types`).then((response) => {
-    //   this.schoolTypes = response.data;
-    // });
   },
   watch: {
     '$refs.form.formData': {
@@ -241,6 +238,12 @@ export default {
     },
     addSchoolClass() {
       const schoolClass = {
+        title: { id: null }, 
+        firstname: "",
+        lastname: "",
+        name: "",
+        students: null,
+        language: { id: null },
       };
       this.form.schoolClasses.push(schoolClass);
     },
@@ -529,7 +532,7 @@ export default {
           <div style="width: 100%; display: flex; justify-content: space-between;">
             <legend style="width: 50%">Dane dotyczace Nauczyciela:</legend>
             <legend style="width: 20%">Dane dotyczace klasy:</legend>
-            <v-btn @click="addSchoolClass" style="width: 11%; border: 1px solid #00BFFF; ">Dodaj klasę</v-btn>
+            <v-btn @click="addSchoolClass()" style="width: 11%; border: 1px solid #00BFFF; ">Dodaj klasę</v-btn>
             <v-btn @click="deleteSchoolClass()" style="width: 18%; border: 1px solid #00BFFF;">Usuń ostatnią klasę</v-btn>
           </div>
           <v-list>
@@ -538,7 +541,7 @@ export default {
                 <v-select
                   @update:modelValue="validate"
                   class="width20per"
-                  v-model="schoolClass.title"
+                  v-model="schoolClass.title.id"
                   :items="titles"
                   :rules="titleRules"
                   item-value="id"
@@ -575,7 +578,7 @@ export default {
                 ></v-text-field>
                 <v-select
                   @update:modelValue="validate"
-                  v-model="schoolClass.language"
+                  v-model="schoolClass.language.id"
                   :items="languages"
                   :rules="[(v) => !!v || 'Język jest wymagany']"
                   item-value="id"

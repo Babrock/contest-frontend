@@ -1,153 +1,118 @@
 <script>
-import { RouterLink, RouterView } from 'vue-router'
-import { mapWritableState, mapState } from 'pinia'
+import {mapWritableState, mapState} from 'pinia'
 import {useAuthStore} from '@/store/auth.js'
-import { mergeProps } from 'vue'
+import NavigationBar from "@/components/NavigationBar.vue";
 
 export default {
+  components: {NavigationBar},
   data() {
     return {
-      itemsToEdit: [
-        { title: 'Edytuj Regiony', to: '/regions', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' },
-        { title: 'Edytuj Profil', to: '/editProfile', show: this.isAuthenticated },
-        { title: 'Edycja punktów', to: '/allScores', show: this.isAuthenticated || this.role=='ROLE_ADMIN' || this.role == 'ROLE_SCHOOL_COORDINATOR'},
-        { title: 'Edytuj Formularza', to: '/editForm', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' },
+      drawer: false,
+      editions: [],
+      navList: [
+        {title: "Rejestracja", to: "/register"},
+        {title: "Strona Główna", to: "/"},
+        {title: "Wyniki", to: "/scores"},
+        {title: "Informacje O Konkursie", to: "/informations/statute"},
+        {title: "Lokalizacja", to: "/location"},
+        {title: "Formularz", to: "/form"},
+        {title: "Zarejestrowane Szkoły", to: "/acceptedSchools"},
       ],
-      other:[
-        { title: 'RejestracjaOsóbUpoważnionych', to: '/authPersonRegister', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' },
-        { title: 'Zaakceptuj Formularz', to: '/acceptForm', show: this.isAuthenticated || this.role=='ROLE_ADMIN' || this.role == 'ROLE_REGION_COORDINATOR'},
-        { title: 'Export CSV', to: '/exportCsv', show: this.isAuthenticated || this.role=='ROLE_ADMIN'},
-        { title: 'Wyślij wiadomość', to: '/sendEmail', show: this.isAuthenticated},
+      itemsToEdit: [
+        {title: 'Edytuj Regiony', to: '/regions', show: this.isAuthenticated || this.role === 'ROLE_ADMIN'},
+        {title: 'Edytuj Profil', to: '/edit-profile', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_SCHOOL_COORDINATOR'},
+        {title: 'Edycja punktów', to: '/edit-score', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_REGION_COORDINATOR'},
+        {title: 'Edytuj Formularza', to: '/edit-form',show: this.isAuthenticated || this.role === 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'        },
+      ],
+      other: [
+        {title: 'RejestracjaOsóbUpoważnionych', to: '/auth-person-register', show: this.isAuthenticated || this.role === 'ROLE_ADMIN'},
+        {title: 'Zaakceptuj Formularz', to: '/accept-form', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_REGION_COORDINATOR'},
+        {title: 'Export CSV', to: '/export-csv', show: this.isAuthenticated || this.role == 'ROLE_ADMIN'},
+        {title: 'Import CSV', to: '/import-csv', show: this.isAuthenticated || this.role == 'ROLE_ADMIN'},
+        {title: 'Wyślij wiadomość', to: '/send-email', show: this.isAuthenticated},
       ],
     }
+  },
+  beforeMount() {
+    this.axios.get(`http://localhost:8080/editions`).then((response) => {
+      this.editions = response.data;
+    });
   },
   computed: {
     ...mapWritableState(useAuthStore, ['isAuthenticated']),
     ...mapState(useAuthStore, ['role'])
   },
   methods: {
-    mergeProps,
     logout() {
-        this.isAuthenticated = false
-        this.$router.push('/login') 
+      this.isAuthenticated = false
+      this.$router.push('/login')
     },
+    onHangeTest(to) {
+      this.$router.push({path: to})
+    }
   },
-
 }
 </script>
 <template>
-    <header id="buttonDisplayNone">
-      <nav>
-        <RouterLink to="/register">Rejestracja</RouterLink>
-        <RouterLink to="/">Strona Główna</RouterLink>
-        <RouterLink to="/scores">Wyniki</RouterLink>
-        <RouterLink to="/informations/statute">Informacje o konkursie</RouterLink>
-        <RouterLink to="/location">Lokalizacja</RouterLink>
-        <RouterLink v-if="isAuthenticated" to="/form">Formularz</RouterLink>
-        <RouterLink to="/acceptedSchools">Zaakceptowane Szkoły</RouterLink>
-        <div class="text-center" v-if="role=='ROLE_ADMIN'">
-        <v-menu v-if="isAuthenticated">
-          <template v-slot:activator="{ props: menu }">
-            <v-tooltip location="top">
-              <template v-slot:activator="{ props: tooltip }">
-                <v-btn color="rgba(4, 0, 255, 0.651)" v-bind="mergeProps(menu, tooltip)">Edytuj</v-btn>
-              </template>
-              <span>Kliknij aby wysunąć listę edycji</span>
-            </v-tooltip>
-          </template>
+  <v-layout class="rounded rounded-md">
+    <v-app-bar class="bg-blue-accent-4">
+        <navigation-bar @click="drawer = !drawer" :nav-list="navList" :items-to-edit="itemsToEdit"  :other="other" :editions="editions"></navigation-bar>
+    </v-app-bar>
+    <v-navigation-drawer disable-resize-watcher v-model="drawer">
+      <v-list>
+        <v-list-item v-for="(item, index) in navList" link :key="index" :title="item.title" :to="item.to"/>
+        <v-list-item link title="Edytuj" v-if="role=='ROLE_ADMIN'">
+          <v-menu activator="parent">
             <v-list>
-              <v-list-item v-for="(item, i) in itemsToEdit" :key="i" :to="item.to" to>
-                <v-list-item-title>{{item.title}}</v-list-item-title>
+              <v-list-item
+                  v-for="(item, index) in itemsToEdit"
+                  :key="index"
+                  link :title="item.tile" :to="item.to"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
-        </div>
-
-        <div class="text-center" v-if="role=='ROLE_ADMIN'">
-          <v-menu v-if="isAuthenticated">
-            <template v-slot:activator="{ props: menu }">
-              <v-tooltip location="top">
-                <template v-slot:activator="{ props: tooltip }">
-                  <v-btn color="rgba(4, 0, 255, 0.651)"  v-bind="mergeProps(menu, tooltip)" > Inne </v-btn>
-                </template>
-                <span>Kliknij aby wysunąć listę innych opcji</span>
-              </v-tooltip>
-            </template>
+        </v-list-item>
+        <v-list-item link title="Inne" v-if="role=='ROLE_ADMIN'">
+          <v-menu activator="parent">
             <v-list>
-              <v-list-item v-for="(item, i) in other" :key="i" :to="item.to" to>
-              <v-list-item-title>{{item.title}}</v-list-item-title>
+              <v-list-item
+                  v-for="(item, index) in other"
+                  :key="index"
+                  :value="index"
+                  link :title="item.tile" :to="item.to"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
-        </div>
-
-        <!-- <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/authPersonRegister">RejestracjaOsóbUpoważnionych</RouterLink>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR' || role == 'ROLE_COORDINATOR_REGION'" to="/acceptForm">Zaakceptuj Formularz</RouterLink>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/exportCsv">Export CSV</RouterLink>
-        <RouterLink v-if="isAuthenticated" to="/sendEmail">Wyślij wiadomość</RouterLink> -->
-<!-- 
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN' || role == 'ROLE_SCHOOL_COORDINATOR'" to="/allScores">Edycja punktów</RouterLink>
-        <RouterLink v-if="isAuthenticated || role=='ROLE_ADMIN'" to="/regions">Edytuj Regiony</RouterLink>
-        <RouterLink v-if="isAuthenticated" to="/editProfile">Edytuj Profil</RouterLink> -->
-
-        <RouterLink v-if="!isAuthenticated" to="/login">Zaloguj</RouterLink>
-        <RouterLink v-if="isAuthenticated" to="/login" @click="logout">wyloguj</RouterLink>
-      </nav>
-    </header>
-    <main>
-      <RouterView />
-    </main>
+        </v-list-item>
+        <v-list-item link title="Edycje">
+          <v-menu activator="parent">
+            <v-list>
+              <v-list-item
+                  v-for="(item, index) in editions"
+                  :key="index"
+                  :value="index"
+                  link
+              >
+                <v-list-item-title>{{ item.name }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-list-item>
+        <v-list-item link title="Zaloguj" v-if="!isAuthenticated" to="/login"></v-list-item>
+        <v-spacer></v-spacer>
+        <v-list-item link title="wyloguj" v-if="isAuthenticated" to="/login" @click="logout"></v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <v-main class="d-flex align-center justify-center ">
+      <router-view/>
+    </v-main>
+  </v-layout>
 </template>
+
 <style scoped>
-header {
-  width: 100%;
-  line-height: 3;
-  background: rgba(4, 0, 255, 0.651);
-  box-shadow: 0px 0px 10px 5px rgba(0, 13, 255, 0.5);
-}
 
-main {
-  max-width: 1000px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
-}
-
-nav {
-  width: auto;
-  font-size: 14px;
-  text-align: center;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: center;
-  margin: auto;
-}
-
-nav a.router-link-exact-active {
-  color: lightgray;
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 1%;
-  padding-top: 0%;
-  padding-bottom: 0%;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:hover {
-  background-color: grey;
-  cursor: pointer;
-}
-
-nav a:first-of-type {
-  border: 0;
-}
 </style>

@@ -11,11 +11,11 @@ export default {
         { title: 'Kategoria', key: 'form.schoolDetails.schoolType.name' },
         { title: 'Kategoria', key: 'form.schoolDetails.category.name' },
         { title: 'Region', key: 'form.schoolDetails.region.name' },
-        { title: 'Województwo', key: 'form.school.voivodeship' },
-        { title: 'Powiat', key: 'form.school.county' },
-        { title: 'Gmina', key: 'form.school.community' },
+        { title: 'Województwo', key: 'form.school.city.community.county.voivodeship.name' },
+        { title: 'Powiat', key: 'form.school.city.community.county.name' },
+        { title: 'Gmina', key: 'form.school.city.community.name' },
         
-        { title: 'Miasto', key: 'form.school.city' },
+        { title: 'Miasto', key: 'form.school.city.name' },
         
         { title: 'Nazwa klasy', key: 'name' },
         { title: 'Język', key: 'language.name' },
@@ -32,27 +32,20 @@ export default {
       console.log(this.schoolclasses)
     })
   },
-  mounted(){
-    this.fetchData();
-    this.setupAutoRefresh(); // Setup auto-refresh
+  async mounted(){
+    await this.fetchData();
   },
   methods: {
     async fetchData() {
       const response = await this.axios.get(`http://localhost:8080/classes/accepted`);
       this.schoolclasses = response.data;
     },
-    setupAutoRefresh() {
-      // Refresh every 5 seconds (adjust the interval as needed)
-      setInterval(() => {
-        this.fetchData();
-      }, 3000); 
-    },
   },
 }
 </script>
 
 <template>
-  <v-data-table style="min-width: 100%;" :headers="headers" :items="schoolclasses" item-value="name" class="elevation-1"> </v-data-table>
+  <v-data-table  :headers="headers" :items="schoolclasses" item-value="name" class="elevation-1" multi-sort> </v-data-table>
 </template>
 
 <style>

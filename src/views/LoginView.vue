@@ -1,5 +1,6 @@
 <script>
-import { useAuthStore } from '@/store/auth.js'
+import {useAuthStore} from '@/store/auth.js'
+
 export default {
   data() {
     return {
@@ -29,34 +30,27 @@ export default {
 </script>
 
 <template>
-  <img alt="uniwer logo" class="photoLogin" src="@/assets/uniwerBetter.png"/>
-  <div class="login">
-    <p>Adres E-mail:<br><input v-model="username" type="email" id="email" name="email" placeholder="Podaj Email"><br>
-    </p>
-    <p>Hasło: <br><input v-model="password" type="password" id="haslo" name="haslo" placeholder="Podaj Hasło"><br></p>
-    <button @click="login" class="buttonContinue" style="vertical-align:middle"><span>Przejdź dalej </span></button>
+  <div class="d-flex flex-column justify-center" style="width: 20rem">
+    <div class="d-flex">
+      <v-text-field
+          v-model="username"
+          label="Login"
+          required
+      />
+    </div>
+    <div class="d-flex">
+      <v-text-field
+          v-model="password"
+          type="password"
+          label="Hasło"
+          required
+      />
+    </div>
+    <div class="d-flex">
+      <v-btn class="w-100" color="success" @click="login">Zaloguj</v-btn>
+    </div>
   </div>
 </template>
 
 <style>
-
-.buttonContinue {
-  background-color: #55d86d;
-  border: none;
-  color: white;
-  padding: 16px 32px;
-  text-decoration: none;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 4px;
-  text-align: center;
-}
-
-.buttonContinue:hover {
-  background-color: #ADD8E6;
-  border: none;
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
 </style>

@@ -1,4 +1,5 @@
 <template>
+  <div>
     <h1>Geneza konkursu</h1>
     <blockquote>
         <ul>
@@ -37,4 +38,5 @@
             </li>
         </ul>
     </blockquote>
+  </div>
 </template>

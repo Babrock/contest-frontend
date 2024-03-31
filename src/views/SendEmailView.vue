@@ -97,11 +97,12 @@ export default {
 </script>
 
 <template>
+  <div class="w-100 h-100 d-flex flex-column bg-white">
     <v-Form ref="form" @input="validate" @submit.prevent="onSubmit(form.to, form.subject, form.text)">
-        <h1 style="text-align: center;">Wyślij wiadomość</h1>
-        <h2 style="text-align: center;" v-if="isAlertVisible" class="alert">Prosimy o chwilę cierpliwości...</h2>
-        <div class="pageA4" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
-            <v-autocomplete
+      <h1 style="text-align: center;">Wyślij wiadomość</h1>
+      <h2 style="text-align: center;" v-if="isAlertVisible" class="alert">Prosimy o chwilę cierpliwości...</h2>
+      <div class="pageA4" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
+        <v-autocomplete
             v-model="form.to"
             :items="to"
             item-value="id"
@@ -109,20 +110,21 @@ export default {
             label="Do"
             multiple
             required
-            ></v-autocomplete>
-            <v-text-field
+        ></v-autocomplete>
+        <v-text-field
             v-model="form.subject"
             :rules="subjectRules"
             label="Temat"
             required
-            ></v-text-field>
-            <v-text-field
+        ></v-text-field>
+        <v-text-field
             v-model="form.text"
             :rules="textRules"
             label="Treść wiadomości"
             required
-            ></v-text-field>
-          <v-btn color="success" block type="submit" :disabled="!valid">Wyślij</v-btn>
-        </div>
+        ></v-text-field>
+        <v-btn color="success" block type="submit" :disabled="!valid">Wyślij</v-btn>
+      </div>
     </v-Form>
+  </div>
 </template>

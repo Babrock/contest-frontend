@@ -97,9 +97,8 @@ export default {
 </script>
 
 <template>
-    <v-Form ref="form" @input="validate" @submit.prevent="onSubmit(user.email)">
-        <h1 style="text-align: center;">Profil użytkownika</h1>
-        <div class="pageA4" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
+    <v-Form class="bg-white " ref="form" @input="validate" @submit.prevent="onSubmit(user.email)">
+        <h1>Profil użytkownika</h1>
             <v-select
             v-model="form.title"
             :items="titles"
@@ -171,10 +170,14 @@ export default {
             współpracy jest całkowicie dobrowolna.
           </label>
           <v-checkbox
-            style="--v-input-control-height: 0px; height: 30px; margin-top: -1%"
             v-model="form.wantsToRate"
           ></v-checkbox>
           <v-btn color="success" block type="submit" :disabled="!valid">Zapisz</v-btn>
-        </div>
     </v-Form>
 </template>
+<style>
+h1{
+  text-align: center;
+}
+
+</style>

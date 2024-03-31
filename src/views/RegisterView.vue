@@ -1,9 +1,4 @@
 <script>
-// import Vue from 'vue';
-// import VueMask from 'v-mask';
-
-// Vue.use(VueMask);
-import { Form, Field, ErrorMessage } from "vee-validate";
 export default {
     data() {
         return {
@@ -82,73 +77,71 @@ export default {
 }
 </script>
 <template>
-  <v-sheet class="mx-auto">
-      <v-Form ref="form"  @input="validate" @submit.prevent="onSubmit" >
-      <h1 style="text-align: center; margin: 3%;">Zarejestruj się</h1>
-      <h2 style="text-align: center;" v-if="isAlertVisible" class="alert">Prosimy o chwilę cierpliwości...</h2>
-        <div style="width: 20vw; display: flex; flex-direction: column;">
-          <v-select
-            v-model="form.title"
-            :items="titles"
-            :rules="titleRules"
-            item-value="id"
-            item-title="name"
-            label="Tytuł"
-            required
-          ></v-select>
-          <v-text-field
-            v-model="form.firstname"
-            :rules="firstnameRules"
-            label="Imię"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="form.lastname"
-            :rules="lastnameRules"
-            label="Nazwisko"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="form.email"
-            :rules="emailRules"
-            label="E-mail"
-            type="email"
-            placeholder="adres@strona.pl"
-            required
-          ></v-text-field>
-          <v-text-field
-            class="passoword"
-            v-model="form.password"
-            :rules="passwordRules"
-            label="Hasło"
-            type="password"
-            Field
-            :validateOnInput="true"
-            @click:append="show1 = !show1"
-            required
-          ></v-text-field>
-          <v-text-field
-            class="passoword"
-            v-model="form.confirmPassword"
-            :rules="confirmPasswordRules"
-            label="Potwierdź hasło"
-            type="password"
-            name="passwordConfirmation"
-            Field
-            :validateOnInput="true"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="form.phone"
-            :rules="phoneRules"
-            label="Telefon"
-            placeholder="000 000 000"
-            required
-            :max="9"
-          ></v-text-field>
-          <v-btn  @click="showAlert" color="success" block type="submit" :disabled="!valid">Zarejestruj</v-btn>
-        </div>
-      </v-Form>
-  </v-sheet>
+  <v-Form class="d-flex flex-column w-100 h-100 bg-white" ref="form"  @input="validate" @submit.prevent="onSubmit" >
+    <h1 >Zarejestruj się</h1>
+    <h2 v-if="isAlertVisible">Prosimy o chwilę cierpliwości...</h2>
+    <v-select
+      v-model="form.title"
+      :items="titles"
+      :rules="titleRules"
+      item-value="id"
+      item-title="name"
+      label="Tytuł"
+      required
+    ></v-select>
+    <v-text-field
+      v-model="form.firstname"
+      :rules="firstnameRules"
+      label="Imię"
+      required
+    ></v-text-field>
+    <v-text-field
+      v-model="form.lastname"
+      :rules="lastnameRules"
+      label="Nazwisko"
+      required
+    ></v-text-field>
+    <v-text-field
+      v-model="form.email"
+      :rules="emailRules"
+      label="E-mail"
+      type="email"
+      placeholder="adres@strona.pl"
+      required
+    ></v-text-field>
+    <v-text-field
+      class="passoword"
+      v-model="form.password"
+      :rules="passwordRules"
+      label="Hasło"
+      type="password"
+      Field
+      :validateOnInput="true"
+      @click:append="show1 = !show1"
+      required
+    ></v-text-field>
+    <v-text-field
+      class="passoword"
+      v-model="form.confirmPassword"
+      :rules="confirmPasswordRules"
+      label="Potwierdź hasło"
+      type="password"
+      name="passwordConfirmation"
+      Field
+      :validateOnInput="true"
+      required
+    ></v-text-field>
+    <v-text-field
+      v-model="form.phone"
+      :rules="phoneRules"
+      label="Telefon"
+      placeholder="000 000 000"
+      required
+      :max="9"
+    ></v-text-field>
+    <v-btn  @click="showAlert" color="success" type="submit" :disabled="!valid">Zarejestruj</v-btn>
+  </v-Form>
 </template>
-<style></style>
+<style>
+
+</style>

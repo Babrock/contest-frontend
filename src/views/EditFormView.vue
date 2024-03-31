@@ -341,11 +341,9 @@ export default {
 </script>
 
 <template>
-  {{ form }}
-  <v-sheet class="mx-auto">
-    <div class="pageA4">
-      <v-Form ref="form" @input="validate" @submit.prevent="onSubmit">
-        <h2 v-if="formResponse" style="text-align: center; margin-top: 0.5%; background-color: rgb(var(--v-theme-on-surface-variant));">
+  <div class="d-flex ">
+      <v-Form class="bg-white" ref="form" @input="validate" @submit.prevent="onSubmit">
+        <h2 v-if="formResponse">
           Edytuj Formularz Zgłoszeniowy {{ formResponse.combinedInfo }}
         </h2>
         <v-text-field
@@ -354,11 +352,8 @@ export default {
         type="text"
         required
         ></v-text-field>
-        <div style="width: 50%; display: flex; justify-content: space-between">
-        <v-btn color="grey" @click="getForm" >Pobierz formularz</v-btn>
-        <v-btn color="success" @click="onSubmit">Akceptuj edycję formularza</v-btn>
-        </div>
-        <div>            
+        <v-btn class="w-100" color="grey" @click="getForm" >Pobierz formularz</v-btn>
+        <div>
           <v-select
               v-model="form.schoolDetailsInfo.region"
               @update:modelValue="form.schoolInfo.voivodeship = null"
@@ -370,8 +365,7 @@ export default {
               required
             ></v-select>
           <legend>Dane Szkoły:</legend>
-          <!-- {{form}} -->
-          <div style="width: auto; display: flex">
+          <div class="d-flex flex-column flex-md-row">
             <v-select
               v-model="form.schoolInfo.voivodeship"
               @update:modelValue="clearCounty"
@@ -427,7 +421,7 @@ export default {
             label="Nazwa szkoły"
             required
           ></v-autocomplete>
-          <div style="width: 100%; display: flex">
+          <div class="d-flex flex-column flex-md-row">
             <v-select
               @update:modelValue="validate"
               v-model="form.schoolDetailsInfo.category"
@@ -456,7 +450,7 @@ export default {
               required
             ></v-select>
           </div>
-          <div style="display: flex;">
+          <div class="d-flex flex-column flex-md-row">
               <v-text-field
               v-model="form.schoolInfo.phone"
               readonly
@@ -477,7 +471,7 @@ export default {
           <legend>
             Dokładny adres szkoły (tak jak na kopercie, bez nazwy szkoły):
           </legend>
-          <div style="width: 100%; display: flex">
+          <div class="d-flex flex-column flex-md-row">
             <v-text-field
               v-model="form.schoolInfo.street"
               label="Ulica"
@@ -516,7 +510,7 @@ export default {
 
         <div>
           <legend>Dane Dyrektora Szkoły:</legend>
-          <div style="width: 100%; display: flex">
+          <div class="d-flex flex-column flex-md-row">
             <v-select
               class="width20per"
               @update:modelValue="validate"
@@ -555,9 +549,8 @@ export default {
           <legend>
             Dane dotyczace Nauczyciela koordynujacego przebieg konkursu w szkole:
           </legend>
-          <div style="width: 100%; display: flex">
+          <div class="d-flex flex-column flex-md-row">
             <v-select
-              class="width20per"
               v-model="form.user.title"
               :items="titles"
               :rules="titleRules"
@@ -568,7 +561,6 @@ export default {
               readonly
             ></v-select>
             <v-text-field
-              class="width20per"
               :rules="firstnameRules"
               v-model="form.user.firstname"
               label="Imię"
@@ -576,7 +568,6 @@ export default {
               readonly
             ></v-text-field>
             <v-text-field
-              class="width20per"
               v-model="form.user.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
@@ -584,7 +575,7 @@ export default {
               readonly
             ></v-text-field>
           </div>
-          <div style="width: 100%; display: flex">
+          <div class="d-flex flex-column flex-md-row">
             <v-text-field
               v-model="form.user.email"
               :rules="emailRules"
@@ -616,22 +607,20 @@ export default {
             współpracy jest całkowicie dobrowolna.
           </label>
           <v-checkbox
-            style="--v-input-control-height: 0px; height: 30px; margin-top: -1%"
             v-model="form.user.wantsToRate"
           ></v-checkbox>
         </div>
-          <div style="width: 100%; display: flex; justify-content: space-between;">
-            <legend style="width: 50%">Dane dotyczace Nauczyciela:</legend>
-            <legend style="width: 20%">Dane dotyczace klasy:</legend>
-            <v-btn @click="addSchoolClass()" style="width: 11%; border: 1px solid #00BFFF; ">Dodaj klasę</v-btn>
-            <v-btn @click="deleteSchoolClass()" style="width: 18%; border: 1px solid #00BFFF;">Usuń ostatnią klasę</v-btn>
+          <div class="d-flex flex-column flex-md-row">
+            <legend >Dane dotyczace Nauczyciela:</legend>
+            <legend >Dane dotyczace klasy:</legend>
+            <v-btn @click="addSchoolClass()" >Dodaj klasę</v-btn>
+            <v-btn @click="deleteSchoolClass()" >Usuń ostatnią klasę</v-btn>
           </div>
           <v-list>
             <v-list-item v-for="(schoolClass) in form.schoolClasses">
-              <div style="width: 100%; display: flex">
+              <div class="d-flex flex-column flex-md-row">
                 <v-select
                   @update:modelValue="validate"
-                  class="width20per"
                   v-model="schoolClass.title.id"
                   :items="titles"
                   :rules="titleRules"
@@ -680,9 +669,9 @@ export default {
               </div>
             </v-list-item>
           </v-list>
+        <v-btn class="w-100" color="success" @click="onSubmit">Akceptuj edycję formularza</v-btn>
       </v-Form>
-    </div>
-  </v-sheet>
+  </div>
 </template>
 
 <style>
@@ -710,5 +699,13 @@ hr {
 }
 .v-field__input {
   padding-right: 10px;
+}
+h2{
+  text-align: center;
+}
+@media screen and (max-width: 600px) {
+  .flex-column flex-md-row {
+    flex-direction: column;
+  }
 }
 </style>

@@ -17,12 +17,13 @@ import * as labs from 'vuetify/labs/components'
 import '@mdi/font/css/materialdesignicons.css'
 
 
+
 const vuetify = createVuetify({
   theme: { defaultTheme: 'light' },
   components,
   components: {
     ...components,
-    ...labs
+    ...labs,
   },
   directives,
 })

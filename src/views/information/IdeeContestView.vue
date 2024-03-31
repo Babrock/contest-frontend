@@ -1,27 +1,29 @@
 <template>
+  <div>
     <h1>Idee konkursu</h1>
     <blockquote>
-        <p>Ideą Międzynarodowego Konkursu <i><b>"Matematyka bez granic"</b></i>
-            jest otwarcie mentalnych granic pomiędzy:
-        </p>
-        <ul>
-            <li> krajami Unii Europejskiej oraz krajami z innych regionów świata,</li>
-            <li> szkołami danego regionu, </li>
-            <li>matematyką i językami obcymi, </li>
-            <li> szkołami publicznymi i niepublicznymi, </li>
-            <li>samymi uczniami. </li>
-        </ul>
-        <p></p>
-        <p>Konkurs ma na celu podniesienie:
-        </p>
-        <ul>
-            <li> zainteresowania uczniów matematyką, </li>
-            <li> poziomu pracy w grupach, </li>
-            <li> stopnia zaangażowania wszystkich uczestników grup w realizacji wspólnie ustalonego celu,</li>
-            <li> własnej inicjatywy i rozwijanie twórczej aktywności uczniów,, </li>
-            <li> kształtowanie umiejętności pracy w grupach, </li>
-            <li> stopnia opanowania języków obcych. </li>
-        </ul>
-        <p></p>
+      <p>Ideą Międzynarodowego Konkursu <i><b>"Matematyka bez granic"</b></i>
+        jest otwarcie mentalnych granic pomiędzy:
+      </p>
+      <ul>
+        <li> krajami Unii Europejskiej oraz krajami z innych regionów świata,</li>
+        <li> szkołami danego regionu, </li>
+        <li>matematyką i językami obcymi, </li>
+        <li> szkołami publicznymi i niepublicznymi, </li>
+        <li>samymi uczniami. </li>
+      </ul>
+      <p></p>
+      <p>Konkurs ma na celu podniesienie:
+      </p>
+      <ul>
+        <li> zainteresowania uczniów matematyką, </li>
+        <li> poziomu pracy w grupach, </li>
+        <li> stopnia zaangażowania wszystkich uczestników grup w realizacji wspólnie ustalonego celu,</li>
+        <li> własnej inicjatywy i rozwijanie twórczej aktywności uczniów,, </li>
+        <li> kształtowanie umiejętności pracy w grupach, </li>
+        <li> stopnia opanowania języków obcych. </li>
+      </ul>
+      <p></p>
     </blockquote>
+  </div>
 </template>

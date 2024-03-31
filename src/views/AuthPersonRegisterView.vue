@@ -54,11 +54,11 @@ export default {
 };
 </script>
 <template>
-  <v-sheet >
+  <div class="w-100 bg-white">
     <v-form @submit.prevent="onSubmit" >
-      <legend>Dane użytkownika do rejestracji</legend>
-      <div style="width: 100%; display: flex; flex-wrap: wrap;">
-        <div style="width: 100%; display: flex;">
+      <h1>Dane użytkownika do rejestracji</h1>
+      <div >
+        <div >
         <v-select
         v-model="form.role"
         :items="roles"
@@ -76,7 +76,7 @@ export default {
         required
       ></v-select>
     </div>
-    <div style="width: 100%; display: flex;">
+    <div >
       <v-text-field
         v-model="form.firstname"
         :rules="firstnameRules"
@@ -98,7 +98,7 @@ export default {
         required
       ></v-text-field>
     </div>
-    <div style="width: 100%; display: flex;">
+    <div >
       <v-text-field
         v-model="form.email"
         :rules="emailRules"
@@ -123,11 +123,15 @@ export default {
         required
       ></v-text-field>
     </div>
-      <v-checkbox style="width: 10px;" v-model="form.wantsToRate" label="Chce oceniac" color="primary"></v-checkbox>
-      <v-btn style="margin-right: 45%;" color="grey" class="mt-4" type="submit"> Wyślij </v-btn>
+      <v-checkbox v-model="form.wantsToRate" label="Chce oceniac" color="primary"></v-checkbox>
+      <v-btn class="w-100" color="grey" type="submit"> Wyślij </v-btn>
     </div>
     </v-form>
-  </v-sheet>
+  </div>
 </template>
 
-<style></style>
+<style>
+h1{
+  text-align: center;
+}
+</style>

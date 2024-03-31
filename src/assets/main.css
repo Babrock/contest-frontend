@@ -1,11 +1,12 @@
 @import './base.css';
 
+body, html, main, #app {
+  height: 100%;
+  scrollbar-width: none;
+}
 #app {
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  width: 100%;
-  margin: 0 auto;
+  flex-direction: column;
   font-weight: normal;
 }
 a,

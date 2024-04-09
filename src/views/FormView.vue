@@ -225,6 +225,7 @@ export default {
     getUserDetails() {
       this.axios.get(`http://localhost:8080/users/details`).then((response) => {
         let data = response.data
+        console.log(response.data)
         this.coordinator.title = data.title
         this.coordinator.firstname = data.firstname
         this.coordinator.lastname = data.lastname
@@ -675,8 +676,5 @@ hr {
   .flex-column flex-md-row {
     flex-direction: column;
   }
-}
-h2{
-  text-align: center;
 }
 </style>

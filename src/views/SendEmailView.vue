@@ -99,8 +99,8 @@ export default {
 <template>
   <div class="w-100 h-100 d-flex flex-column bg-white">
     <v-Form ref="form" @input="validate" @submit.prevent="onSubmit(form.to, form.subject, form.text)">
-      <h1 style="text-align: center;">Wyślij wiadomość</h1>
-      <h2 style="text-align: center;" v-if="isAlertVisible" class="alert">Prosimy o chwilę cierpliwości...</h2>
+      <h1>Wyślij wiadomość</h1>
+      <h2 v-if="isAlertVisible" class="alert">Prosimy o chwilę cierpliwości...</h2>
       <div class="pageA4" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
         <v-autocomplete
             v-model="form.to"

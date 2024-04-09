@@ -88,7 +88,7 @@ export default {
             </v-list>
           </v-menu>
         </v-list-item>
-        <v-list-item link title="Edycje">
+        <v-list-item link title="Wybierz Edycje">
           <v-menu activator="parent">
             <v-list>
               <v-list-item

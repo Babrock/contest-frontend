@@ -1,65 +1,3 @@
-<!-- <template>
-  <nav>
-    <RouterLink to="/scores/currentStatistics">Bieżąca statystyka</RouterLink>
-    <RouterLink to="/scores/participantsByRegion">Uczestnicy konkursu wg regionu WIDOK SZKÓŁ ZAREJESTROWANYCH</RouterLink>
-    <RouterLink to="/scores/participantsByVoivodeship">Uczestnicy konkursu wg województwa</RouterLink>
-    <RouterLink to="/scores/resultsByRegion">Wyniki wg regionów</RouterLink>
-    <RouterLink to="/scores/resultsByVoivodeship">Wyniki wg województw</RouterLink>
-  </nav>
-  <div>
-    <RouterView/>
-  </div>
-  
-</template>
-
-<style>
-.side-bar {
-    color: black;
-    font-size: 14px;
-    text-align: center;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-}
-
-nav {
-  width: auto;
-  font-size: 14px;
-  text-align: center;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: center;
-  margin: auto;
-}
-
-nav a.router-link-exact-active {
-  color: grey;
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 1%;
-  padding-top: 0%;
-  padding-bottom: 0%;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:hover {
-  background-color: grey;
-  cursor: pointer;
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-</style>
-
- -->
  <script>
  export default {
    data: () => ({
@@ -135,7 +73,7 @@ nav a:first-of-type {
      })
      this.axios.get(`http://localhost:8080/tasks/sum-score`).then((response) => {
        this.taskswithsumscore = response.data
-       console.log(this.taskswithsumscore)
+       console.log(response.data)
      })
      // this.axios.get(`http://localhost:8080/tasks`).then((response) => {
      //   this.tasks = response.data
@@ -174,6 +112,7 @@ nav a:first-of-type {
      editItem(item) {
        this.axios.get(`http://localhost:8080/tasks/${item.schoolClass.id}`).then((response) => {
          this.tasks = response.data
+         console.log(response.data)
        })
        this.dialogEditSumScore = true
      },
@@ -249,7 +188,7 @@ nav a:first-of-type {
  
  <template>
    <v-data-table v-model:items-per-page="itemsPerPage" :headers="headersSumScore" :items="taskswithsumscore" item-value="name"
-     :sort-by="[{ key: 'score', order: 'asc' }]" class="h-100 elevation-1">
+     :sort-by="[{ key: 'score', order: 'asc' }]" class="h-100 elevation-1"  multi-sort>
  
      <template v-slot:top>
        <v-toolbar flat>

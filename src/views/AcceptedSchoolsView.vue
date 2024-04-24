@@ -44,7 +44,6 @@ export default {
   beforeMount() {
     this.axios.get(`http://localhost:8080/classes/accepted`).then((response) => {
       this.schoolclasses = response.data
-      console.log(this.schoolclasses)
     })
   },
   async mounted(){
@@ -52,7 +51,6 @@ export default {
   },
   methods: {
     async fetchData() {
-      console.log(this.role)
       const response = await this.axios.get(`http://localhost:8080/classes/accepted`);
       this.schoolclasses = response.data;
     },

@@ -700,9 +700,7 @@ hr {
 .v-field__input {
   padding-right: 10px;
 }
-h2{
-  text-align: center;
-}
+
 @media screen and (max-width: 600px) {
   .flex-column flex-md-row {
     flex-direction: column;

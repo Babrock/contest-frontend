@@ -245,9 +245,6 @@ export default {
   </div>
 </template>
 <style>
-h2{
-  text-align: center;
-}
 @media screen and (max-width: 600px) {
   .flex-column flex-md-row {
     flex-direction: column;

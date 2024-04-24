@@ -24,6 +24,7 @@ export default {
       schoolClassNameRules: [(v) => !!v || "Nazwa klasy jest wymagana"],
       schoolClassstudentsRules: [(v) => !!v || "Ilość uczniów jest wymagana"], isFormValid: false,
       titleRules: [(v) => !!v || "Tytuł jest wymagany"],
+      schoolClassNumberRules: [(v) => !!v || "Numer klasy jest wymagany"],
       shouldShowSignature: false,
       valid: false,
       regions: [],
@@ -33,6 +34,7 @@ export default {
       cities: [],
       schools: [],
       schoolTypes: [],
+      schoolClassNumbers: [],
       schoolsDictionary: [],
       categories: [],
       titles: [],
@@ -67,9 +69,8 @@ export default {
         },
         schoolDetailsInfo: {
           region: null,
-          category: null,
           schoolComplex: "",
-          schoolType: null,
+          schoolClassNumber: null,
           headmaster: {
             title: null,
             firstname: "",
@@ -106,20 +107,13 @@ export default {
     this.axios.get(`http://localhost:8080/languages`).then((response) => {
       this.languages = response.data;
     });
+    this.getUserDetails();
   },
   watch: {
     '$refs.form.formData': {
       handler: 'validate',
       deep: true,
     },
-    // "form.schoolDetailsInfo.region"(value) {
-    //   if (value === null) return;
-    //   this.axios
-    //     .get(`http://localhost:8080/voivodeships/region/${value}`)
-    //     .then((response) => {
-    //       this.voivodeships = response.data;
-    //     });
-    // },
     "form.schoolData.voivodeship"(value) {
       if (value === null) return;
       this.axios
@@ -160,11 +154,18 @@ export default {
             this.schoolTypes = response.data;
           });
     },
+    "form.schoolDetailsInfo.schoolType"(value) {
+      if (value === null) return;
+      this.axios
+          .get(`http://localhost:8080/class-numbers/${value}`)
+          .then((response) => {
+            this.schoolClassNumbers = response.data;
+          });
+    },
   },
   methods: {
     saveAsPDF(formResponse) {
       const element = this.$refs.form;
-      console.log(formResponse.combinedInfo)
       const options = {
         margin: 5,
         filename: `FormularzZgłoszeniowy_${formResponse.combinedInfo}.pdf`,
@@ -225,7 +226,6 @@ export default {
     getUserDetails() {
       this.axios.get(`http://localhost:8080/users/details`).then((response) => {
         let data = response.data
-        console.log(response.data)
         this.coordinator.title = data.title
         this.coordinator.firstname = data.firstname
         this.coordinator.lastname = data.lastname
@@ -235,7 +235,6 @@ export default {
     },
     updateValues(id) {
       this.getSchoolDetails(id);
-      this.getUserDetails();
       this.validate();
     },
     addSchoolClass() {
@@ -261,8 +260,7 @@ export default {
 </script>
 
 <template>
-  <!--  <v-sheet class="w-100 mx-auto">-->
-  <div class="d-flex bg-white">
+  <div class="d-flex bg-white pa-1 pa-sm-5" id="print">
     <v-Form ref="form" @input="validate" @submit.prevent="onSubmit">
       <h2 v-if="formResponse">
         Formularz Zgłoszeniowy {{ formResponse.combinedInfo }}
@@ -279,7 +277,7 @@ export default {
             required
         ></v-select>
         <legend>Dane Szkoły:</legend>
-        <div class="d-flex flex-column flex-md-row">
+        <div class="d-flex flex-column flex-sm-row ga-sm-1">
           <v-select
               v-model="form.schoolData.voivodeship"
               @update:modelValue="form.schoolData.county = null"
@@ -336,7 +334,7 @@ export default {
             label="Nazwa szkoły"
             required
         ></v-autocomplete>
-        <div class="d-flex flex-column flex-md-row">
+        <div class="d-flex flex-column flex-sm-row ga-sm-1">
           <v-select
               @update:modelValue="validate"
               v-model="form.schoolDetailsInfo.category"
@@ -364,8 +362,6 @@ export default {
               label="Typ szkoły"
               required
           ></v-select>
-        </div>
-        <div class="d-flex flex-column flex-md-row">
           <v-text-field
               v-model="form.schoolData.phone"
               readonly
@@ -383,10 +379,13 @@ export default {
               required
           ></v-text-field>
         </div>
+        <div class="d-flex flex-column flex-sm-row ga-sm-1">
+
+        </div>
         <legend>
           Dokładny adres szkoły (tak jak na kopercie, bez nazwy szkoły):
         </legend>
-        <div class="d-flex flex-column flex-md-row">
+        <div class="d-flex flex-column flex-sm-row ga-sm-1">
           <v-text-field
               v-model="form.schoolData.street"
               label="Ulica"
@@ -425,9 +424,9 @@ export default {
 
       <div>
         <legend>Dane Dyrektora Szkoły:</legend>
-        <div class="d-flex flex-column flex-md-row">
+        <div class="d-flex flex-column flex-sm-row ga-sm-1">
           <v-select
-              class="width20per"
+              class="d-flex flex-column w-0"
               @update:modelValue="validate"
               v-model="form.schoolDetailsInfo.headmaster.title"
               :rules="titleRules"
@@ -438,14 +437,12 @@ export default {
               required
           ></v-select>
           <v-text-field
-              class="width20per"
               :rules="firstnameRules"
               v-model="form.schoolDetailsInfo.headmaster.firstname"
               label="Imię"
               required
           ></v-text-field>
           <v-text-field
-              class="width20per"
               v-model="form.schoolDetailsInfo.headmaster.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
@@ -464,9 +461,8 @@ export default {
         <legend>
           Dane dotyczace Nauczyciela koordynujacego przebieg konkursu w szkole:
         </legend>
-        <div class="d-flex flex-column flex-md-row">
+        <div class="d-flex flex-column flex-sm-row ga-sm-1">
           <v-select
-              class="width20per"
               v-model="coordinator.title"
               :items="titles"
               :rules="titleRules"
@@ -477,7 +473,6 @@ export default {
               readonly
           ></v-select>
           <v-text-field
-              class="width20per"
               :rules="firstnameRules"
               v-model="coordinator.firstname"
               label="Imię"
@@ -485,15 +480,12 @@ export default {
               readonly
           ></v-text-field>
           <v-text-field
-              class="width20per"
               v-model="coordinator.lastname"
               :rules="lastnameRules"
               label="Nazwisko"
               required
               readonly
           ></v-text-field>
-        </div>
-        <div class="d-flex flex-column flex-md-row">
           <v-text-field
               v-model="coordinator.email"
               :rules="emailRules"
@@ -528,7 +520,7 @@ export default {
             v-model="coordinator.wantsToRate"
         ></v-checkbox>
       </div>
-      <div class="d-flex flex-column flex-md-row">
+      <div class="d-flex flex-column flex-sm-row ga-sm-1">
         <legend>Dane dotyczace Nauczyciela:</legend>
         <legend>Dane dotyczace klasy:</legend>
         <v-btn @click="addSchoolClass()">Dodaj klasę</v-btn>
@@ -536,10 +528,9 @@ export default {
       </div>
       <v-list>
         <v-list-item v-for="(schoolClass) in form.schoolClasses">
-          <div class="d-flex flex-column flex-md-row">
+          <div class="d-flex flex-column flex-sm-row">
             <v-select
                 @update:modelValue="validate"
-                class="width20per"
                 v-model="schoolClass.title.id"
                 :items="titles"
                 :rules="titleRules"
@@ -560,6 +551,17 @@ export default {
                 label="Nazwisko"
                 required
             ></v-text-field>
+            <v-select
+                @update:modelValue="validate"
+                v-model="form.schoolDetailsInfo.schoolClassNumber"
+                :disabled="schoolClassNumbers.length < 1"
+                :items="schoolClassNumbers"
+                item-value="id"
+                item-title="name"
+                :rules="schoolClassNumberRules"
+                label="Numer Klasy"
+                required
+            ></v-select>
             <v-text-field
                 v-model="schoolClass.name"
                 :rules="schoolClassNameRules"
@@ -588,10 +590,8 @@ export default {
           </div>
         </v-list-item>
       </v-list>
-      <small class="visible-on-print" :class="{ 'visible-on-print': shouldShowSignature }">
-        <hr>
-        Data i podpis Dyrektora szkoły </small>
-      <div class="w-100 d-flex flex-column flex-md-row ga-1">
+      <small class="visible-on-print" :class="{ 'visible-on-print': shouldShowSignature }"><hr> Data i podpis Dyrektora szkoły </small>
+      <div class="w-100 d-flex flex-column flex-sm-row ga-1">
         <v-btn class="flex-grow-1" color="error" @click="reset"> Wyczyść formularz</v-btn>
         <v-btn class="flex-grow-1" color="blue" onclick="print()">Zobacz podgląd</v-btn>
         <v-btn class="flex-grow-1" color="success" type="submit" :disabled="!valid">Zapisz i pobierz
@@ -600,7 +600,6 @@ export default {
       </div>
     </v-Form>
   </div>
-  <!--  </v-sheet>-->
 </template>
 
 <style>
@@ -609,16 +608,6 @@ export default {
   top: 80%;
   font-size: 60%; /* Adjust the font size as needed */
   color: rgb(0, 0, 0); /* Adjust the color as needed */
-}
-
-.additional-text {
-  font-size: smaller; /* Możesz dostosować rozmiar czcionki według własnych preferencji */
-  display: block;
-  margin-top: 5px; /* Dodałem margines na górę dla lepszego odstępu */
-}
-
-.err {
-  float: right;
 }
 
 hr {
@@ -630,51 +619,30 @@ hr {
   margin-top: 40px;
 }
 
-.v-field__input {
-  padding-right: 10px;
-}
-
 .visible-on-print {
   display: none;
+  margin-left: 70%;
 }
 
 @media print {
-  #buttonDisplayNone,
+  .v-app-bar,
+  .v-btn,
   .v-field__append-inner,
-  .v-input__details,
-  .passoword {
+  .v-input__details{
     display: none;
   }
 
-  .v-btn {
-    visibility: hidden;
+  .visible-on-print {
+    display: block;
   }
 
   #labelPrintSize {
     font-size: 10px;
   }
 
-  .Signature {
-    visibility: visible;
-  }
-
-  .visible-on-print {
-    display: block !important;
-    margin-left: 75% !important;
-  }
-
-  .pageA4 {
-    margin-top: -2.9% !important;
-  }
-
-  .width20per {
-    max-width: 20% !important;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .flex-column flex-md-row {
-    flex-direction: column;
+  #print{
+    margin-top: 0;
+    padding-top: 0;
   }
 }
 </style>

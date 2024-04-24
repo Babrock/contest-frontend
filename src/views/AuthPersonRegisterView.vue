@@ -74,7 +74,7 @@ export default {
 };
 </script>
 <template>
-  <div class="w-100 bg-white">
+  <div class=" bg-white">
     <v-form @submit.prevent="onSubmit" >
       <h1>Dane użytkownika do rejestracji</h1>
       <h2 v-if="isAlertVisible">Prosimy o chwilę cierpliwości...</h2>

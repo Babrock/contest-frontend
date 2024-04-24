@@ -20,55 +20,45 @@
 }
 </style> -->
 <template>
-    <div>
-      <input type="file" @change="handleFileUpload">
-      <button @click="uploadFile">Upload</button>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        file: null,
-        fileName: ''
-      };
+  <div class="d-flex flex-column w-50 bg-white">
+    <v-file-input label="Wybierz plik" @change="handleFileUpload($event)" type="file" variant="underlined"></v-file-input>
+    <v-btn @click="uploadFile">Importuj</v-btn>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      file:{},
+      fileNameWithoutExtension: ''
+    };
+  },
+  methods: {
+    handleFileUpload(event) {
+      this.file = event.target.files[0]; // Pobierz pierwszy plik z przekazanych plików
+      this.fileNameWithoutExtension =  this.file.name.split('.')[0] // Przypisz nazwę pliku do this.fileName
     },
-    methods: {
-      handleFileUpload(event) {
-        this.file = event.target.files[0];
-        this.fileName = this.file.name;
-      },
-      async uploadFile() {
-        if (!this.file) {
-          console.error('Nie wybrano pliku.');
-          return;
-        }
-  
+    uploadFile() {
+      try {
         const formData = new FormData();
-        formData.append('file', this.file);
-  
-        const url = `http://localhost:8080/counties/import`;
-  
-        try {
-          const response = await fetch(url, {
-            method: 'POST',
-            body: formData
-          });
-  
-          if (response.ok) {
-            console.log('Plik został pomyślnie przesłany.');
-            // Tutaj możesz dodać kod obsługi po pomyślnym przesłaniu pliku
-          } else {
-            console.error('Wystąpił błąd podczas przesyłania pliku.');
-            // Tutaj możesz dodać kod obsługi w przypadku błędu
+        formData.append('file', this.file); // this.file zawiera przesłany plik
+        this.axios.post(`http://localhost:8080/${this.fileNameWithoutExtension}/import`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data' // Ustaw nagłówek Content-Type
           }
-        } catch (error) {
-          console.error('Wystąpił błąd:', error);
-          // Tutaj możesz dodać kod obsługi błędu sieciowego
-        }
+        })
+            .then(response => {
+              alert('Pomyślnie przesłano plik:', response.data);
+            })
+            .catch(error => {
+              alert('Wystąpił błąd podczas przesyłania pliku:', error);
+            });
+      } catch (error) {
+        console.error('Wystąpił błąd:', error);
       }
     }
-  };
-  </script>
-  
+
+  }
+};
+</script>

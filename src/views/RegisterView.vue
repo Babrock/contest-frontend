@@ -78,7 +78,7 @@ export default {
 }
 </script>
 <template>
-  <v-Form class="d-flex flex-column w-100 h-100 bg-white" ref="form" @input="validate" @submit.prevent="onSubmit">
+  <v-Form class="d-flex flex-column h-100 bg-white" ref="form" @input="validate" @submit.prevent="onSubmit">
     <h1>Zarejestruj się</h1>
     <h2 v-if="isAlertVisible">Prosimy o chwilę cierpliwości...</h2>
     <v-select

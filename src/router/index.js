@@ -126,6 +126,11 @@ const router = createRouter({
       name: 'acceptedSchools',
       component: () => import('../views/AcceptedSchoolsView.vue'),
     },
+    {
+      path: '/add-edition',
+      name: 'addEdition',
+      component: () => import('../views/addEditionView.vue'),
+    },
   ]
 })
 

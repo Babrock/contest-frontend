@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mdi/font": "^7.2.96",
+    "@mdi/font": "^7.4.47",
     "axios": "^1.2.0",
     "html2pdf.js": "^0.10.1",
     "jspdf": "^2.5.1",
@@ -19,7 +19,7 @@
     "vue": "^3.3.13",
     "vue-axios": "^3.5.2",
     "vue-router": "^4.1.6",
-    "vuetify": "^3.5.13",
+    "vuetify": "^3.6.0-beta.0.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {

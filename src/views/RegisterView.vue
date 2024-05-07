@@ -2,7 +2,7 @@
 export default {
   data() {
     return {
-      phoneRules: [v => !!v || 'Telefon jest wymagany', v => (v && v.replace(/\s/g, '').length === 9) || 'Telefon musi mieć 9 cyfer'],
+      phoneRules: [v => !!v || 'Telefon jest wymagany', v => (v && v.replace(/\s/g, '').length === 9) || 'Telefon musi mieć 9 cyfr'],
       firstnameRules: [(v) => !!v || "Imię jest wymagane"],
       lastnameRules: [(v) => !!v || "Nazwisko jest wymagane"],
       emailRules: [(v) => !!v || "E-mail jest wymagany"],

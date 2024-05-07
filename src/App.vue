@@ -30,6 +30,7 @@ export default {
         {title: 'Export CSV', to: '/export-csv', show: this.isAuthenticated || this.role == 'ROLE_ADMIN'},
         {title: 'Import CSV', to: '/import-csv', show: this.isAuthenticated || this.role == 'ROLE_ADMIN'},
         {title: 'Wyślij wiadomość', to: '/send-email', show: this.isAuthenticated},
+        {title: 'Dodaj nową edycję', to: '/add-edition', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'},
       ],
     }
   },
@@ -61,7 +62,7 @@ export default {
     <v-navigation-drawer disable-resize-watcher v-model="drawer">
       <v-list>
         <v-list-item v-for="(item, index) in navList" link :key="index" :title="item.title" :to="item.to"/>
-        <v-list-item link title="Edytuj" v-if="role=='ROLE_ADMIN'">
+        <v-list-item link title="Edytuj" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'">
           <v-menu activator="parent">
             <v-list>
               <v-list-item
@@ -74,7 +75,7 @@ export default {
             </v-list>
           </v-menu>
         </v-list-item>
-        <v-list-item link title="Inne" v-if="role=='ROLE_ADMIN'">
+        <v-list-item link title="Inne" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'">
           <v-menu activator="parent">
             <v-list>
               <v-list-item

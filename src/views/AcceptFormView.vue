@@ -100,9 +100,9 @@ export default {
           this.school.email = dataFormResposne.school.email
 
           this.schoolDetails.region = dataFormResposne.schoolDetails.region
-          this.schoolDetails.category = dataFormResposne.schoolDetails.category
+          this.schoolDetails.category = classesResponse.data[0].schoolClassNumber.schoolType.category.name
           this.schoolDetails.schoolComplex = dataFormResposne.schoolDetails.schoolComplex
-          this.schoolDetails.schoolType = dataFormResposne.schoolDetails.schoolType
+          this.schoolDetails.schoolType = classesResponse.data[0].schoolClassNumber.schoolType.name
 
           this.schoolDetails.title = dataFormResposne.schoolDetails.title
           this.schoolDetails.firstname = dataFormResposne.schoolDetails.firstname
@@ -237,6 +237,7 @@ export default {
           <v-text-field class="flex-grow-1" readonly v-model="schoolClass.title.name" label="Tytuł"></v-text-field>
           <v-text-field class="flex-grow-1" readonly v-model="schoolClass.firstname" label="Imie"></v-text-field>
           <v-text-field class="flex-grow-1" readonly v-model="schoolClass.lastname" label="Nazwisko"></v-text-field>
+          <v-text-field class="flex-grow-1" readonly v-model="schoolClass.schoolClassNumber.name" label="Numer klasy"></v-text-field>
           <v-text-field class="flex-grow-1" readonly v-model="schoolClass.name" label="Nazwa klasy"></v-text-field>
           <v-text-field class="flex-grow-1" readonly v-model="schoolClass.students" label="Ilość uczniów"></v-text-field>
           <v-text-field class="flex-grow-1" readonly v-model="schoolClass.language.name" label="Język"></v-text-field>

@@ -70,7 +70,6 @@ export default {
         schoolDetailsInfo: {
           region: null,
           schoolComplex: "",
-          schoolClassNumber: null,
           headmaster: {
             title: null,
             firstname: "",
@@ -83,6 +82,7 @@ export default {
             title: {id: null},
             firstname: "",
             lastname: "",
+            schoolClassNumber: {id: null},
             name: "",
             students: null,
             language: {id: null},
@@ -242,6 +242,7 @@ export default {
         title: {id: null},
         firstname: "",
         lastname: "",
+        schoolClassNumber: null,
         name: "",
         students: null,
         language: {id: null},
@@ -553,7 +554,7 @@ export default {
             ></v-text-field>
             <v-select
                 @update:modelValue="validate"
-                v-model="form.schoolDetailsInfo.schoolClassNumber"
+                v-model="schoolClass.schoolClassNumber.id"
                 :disabled="schoolClassNumbers.length < 1"
                 :items="schoolClassNumbers"
                 item-value="id"

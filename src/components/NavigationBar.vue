@@ -1,7 +1,7 @@
 <template>
   <v-app-bar-nav-icon @click="$emit('click')"></v-app-bar-nav-icon>
   <v-list-item class="hidden-on-mobile" v-for="(item, index) in navList" link :key="index" :title="item.title" :to="item.to"/>
-  <v-list-item class="hidden-on-mobile" link title="Edytuj" v-if="role=='ROLE_ADMIN'">
+  <v-list-item class="hidden-on-mobile" link title="Edytuj" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'">
     <v-menu activator="parent">
       <v-list>
         <v-list-item
@@ -14,7 +14,7 @@
       </v-list>
     </v-menu>
   </v-list-item>
-  <v-list-item class="hidden-on-mobile" link title="Inne" v-if="role=='ROLE_ADMIN'">
+  <v-list-item class="hidden-on-mobile" link title="Inne" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'">
     <v-menu activator="parent">
       <v-list>
         <v-list-item

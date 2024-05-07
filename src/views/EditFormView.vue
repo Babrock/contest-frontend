@@ -20,8 +20,9 @@ export default {
         addressRules: [(v) => !!v || "Nr budynku"],
         postRules: [(v) => !!v || "Miejscowość jest wymagana"],
         zipCodeRules: [(v) => !!v || "Kod pocztowy jest wymagany"],
+        schoolClassNumberRules: [(v) => !!v || "Numer klasy jest wymagana"],
         schoolClassNameRules: [(v) => !!v || "Nazwa klasy jest wymagana"],
-        schoolClassstudentsRules: [(v) => !!v || "Ilość uczniów jest wymagana"], isFormValid: false,
+        schoolClassStudentsRules: [(v) => !!v || "Ilość uczniów jest wymagana"], isFormValid: false,
         titleRules: [(v) => !!v || "Tytuł jest wymagany"],
         shouldShowSignature: false,
         valid: false,
@@ -33,6 +34,7 @@ export default {
         schools: [],
         schoolTypes: [],
         schoolsDictionary: [],
+        schoolClassNumbers:[],
         categories: [],
         titles: [],
         languages: [],
@@ -195,6 +197,14 @@ export default {
           this.schoolTypes = response.data;
         });
     },
+    "form.schoolDetailsInfo.schoolType"(value) {
+      if (value === null) return;
+      this.axios
+          .get(`http://localhost:8080/class-numbers/${value}`)
+          .then((response) => {
+            this.schoolClassNumbers = response.data;
+          });
+    },
   },
   methods: {
     clearVoivodeship() {
@@ -315,9 +325,9 @@ export default {
           this.form.schoolInfo.phone = dataFormResposne.school.phone
           this.form.schoolInfo.email = dataFormResposne.school.email
 
-          this.form.schoolDetailsInfo.category = dataFormResposne.schoolDetails.category.id
+          this.form.schoolDetailsInfo.category = classesResponse.data[0].schoolClassNumber.schoolType.category.id
           this.form.schoolDetailsInfo.schoolComplex = dataFormResposne.schoolDetails.schoolComplex
-          this.form.schoolDetailsInfo.schoolType = dataFormResposne.schoolDetails.schoolType.id
+          this.form.schoolDetailsInfo.schoolType = classesResponse.data[0].schoolClassNumber.schoolType.id
 
           this.form.schoolDetailsInfo.headmaster.title = dataFormResposne.schoolDetails.title.id
           this.form.schoolDetailsInfo.headmaster.firstname = dataFormResposne.schoolDetails.firstname
@@ -641,6 +651,17 @@ export default {
                   label="Nazwisko"
                   required
                 ></v-text-field>
+                <v-select
+                    @update:modelValue="validate"
+                    v-model="schoolClass.schoolClassNumber"
+                    :disabled="schoolClassNumbers.length < 1"
+                    :items="schoolClassNumbers"
+                    item-value="id"
+                    item-title="name"
+                    :rules="schoolClassNumberRules"
+                    label="Numer Klasy"
+                    required
+                ></v-select>
                 <v-text-field
                   v-model="schoolClass.name"
                   :rules="schoolClassNameRules"
@@ -649,7 +670,7 @@ export default {
                 ></v-text-field>
                 <v-text-field
                   v-model="schoolClass.students"
-                  :rules="schoolClassstudentsRules"
+                  :rules="schoolClassStudentsRules"
                   label="Ilość uczniów"
                   required
                   type="number"

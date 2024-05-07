@@ -16,11 +16,8 @@ import * as directives from 'vuetify/directives'
 import * as labs from 'vuetify/labs/components'
 import '@mdi/font/css/materialdesignicons.css'
 
-
-
 const vuetify = createVuetify({
   theme: { defaultTheme: 'light' },
-  components,
   components: {
     ...components,
     ...labs,
@@ -29,6 +26,7 @@ const vuetify = createVuetify({
 })
 
 import { createPinia } from 'pinia'
+
 const pinia = createPinia()
 
 axios.defaults.baseURL = 'http://backend:8080'

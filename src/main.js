@@ -16,6 +16,7 @@ import * as directives from 'vuetify/directives'
 import * as labs from 'vuetify/labs/components'
 import '@mdi/font/css/materialdesignicons.css'
 
+
 const vuetify = createVuetify({
   theme: { defaultTheme: 'light' },
   components: {
@@ -38,6 +39,8 @@ app.use(pinia)
 app.use(vuetify)
 app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
 
+// const bus = {}
+// app.provide('bus', bus)
 
 app.use(router)
 

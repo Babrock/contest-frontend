@@ -1,7 +1,37 @@
+<script>
+import {mapState, mapWritableState} from "pinia";
+import {useAuthStore} from "@/store/auth";
+
+export default {
+  emits: ["click", "editionIdSelected"],
+  props: ['drawer', 'navList', 'itemsToEdit', 'other', 'editions'],
+  data() {
+    return {
+      selectedId: null,
+    }
+  },
+  computed: {
+    ...mapWritableState(useAuthStore, ['isAuthenticated']),
+    ...mapState(useAuthStore, ['role'])
+  },
+  methods: {
+    logout() {
+      this.isAuthenticated = false
+      this.$router.push('/login')
+    },
+    selectedEditionId(editionId) {
+      this.selectedId = editionId
+      this.$emit('editionIdSelected', editionId)
+      console.log("NavigarionBar.vue ", editionId)
+      this.handleSelectedId(editionId)
+    },
+  },
+}
+</script>
 <template>
   <v-app-bar-nav-icon @click="$emit('click')"></v-app-bar-nav-icon>
   <v-list-item class="hidden-on-mobile" v-for="(item, index) in navList" link :key="index" :title="item.title" :to="item.to"/>
-  <v-list-item class="hidden-on-mobile" link title="Edytuj" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'">
+  <v-list-item class="hidden-on-mobile" link title="Edytuj" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_COORDINATOR_REGION'">
     <v-menu activator="parent">
       <v-list>
         <v-list-item
@@ -14,7 +44,7 @@
       </v-list>
     </v-menu>
   </v-list-item>
-  <v-list-item class="hidden-on-mobile" link title="Inne" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'">
+  <v-list-item class="hidden-on-mobile" link title="Inne" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_COORDINATOR_REGION'">
     <v-menu activator="parent">
       <v-list>
         <v-list-item
@@ -36,6 +66,7 @@
             :key="index"
             :value="index"
             link
+            @click="selectedEditionId(item.id)"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
@@ -47,28 +78,7 @@
   <v-list-item link title="wyloguj" v-if="isAuthenticated" to="/login" @click="logout"></v-list-item>
 </template>
 
-<script>
-import {mapState, mapWritableState} from "pinia";
-import {useAuthStore} from "@/store/auth";
 
-export default {
-  emits: ["click"],
-  props: ['drawer', 'navList', 'itemsToEdit', 'other', 'editions'],
-  data() {
-    return {}
-  },
-  computed: {
-    ...mapWritableState(useAuthStore, ['isAuthenticated']),
-    ...mapState(useAuthStore, ['role'])
-  },
-  methods: {
-    logout() {
-      this.isAuthenticated = false
-      this.$router.push('/login')
-    },
-  },
-}
-</script>
 
 <style scoped>
 @media screen and (max-width: 600px) {

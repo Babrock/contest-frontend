@@ -78,7 +78,7 @@ export default {
 }
 </script>
 <template>
-  <v-Form class="d-flex flex-column h-100 bg-white" ref="form" @input="validate" @submit.prevent="onSubmit">
+  <v-Form class="bg-white pa-1 pa-sm-5 w-sm-33 w-100" ref="form" @input="validate" @submit.prevent="onSubmit">
     <h1>Zarejestruj się</h1>
     <h2 v-if="isAlertVisible">Prosimy o chwilę cierpliwości...</h2>
     <v-select
@@ -111,7 +111,7 @@ export default {
         required
     ></v-text-field>
     <v-text-field
-        class="passoword"
+        class="password"
         v-model="form.password"
         :rules="passwordRules"
         label="Hasło"
@@ -122,7 +122,7 @@ export default {
         required
     ></v-text-field>
     <v-text-field
-        class="passoword"
+        class="password"
         v-model="form.confirmPassword"
         :rules="confirmPasswordRules"
         label="Potwierdź hasło"
@@ -140,9 +140,6 @@ export default {
         required
         :max="9"
     ></v-text-field>
-    <v-btn @click="showAlert" color="success" type="submit" :disabled="!valid">Zarejestruj</v-btn>
+    <v-btn class="w-100" @click="showAlert" color="success" type="submit" :disabled="!valid">Zarejestruj</v-btn>
   </v-Form>
 </template>
-<style>
-
-</style>

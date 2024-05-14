@@ -351,8 +351,8 @@ export default {
 </script>
 
 <template>
-  <div class="d-flex ">
-      <v-Form class="bg-white" ref="form" @input="validate" @submit.prevent="onSubmit">
+  <div class="d-flex">
+      <v-Form class="bg-white pa-1 pa-sm-5" ref="form" @input="validate" @submit.prevent="onSubmit">
         <h2 v-if="formResponse">
           Edytuj Formularz Zgłoszeniowy {{ formResponse.combinedInfo }}
         </h2>
@@ -362,7 +362,7 @@ export default {
         type="text"
         required
         ></v-text-field>
-        <v-btn class="w-100" color="grey" @click="getForm" >Pobierz formularz</v-btn>
+        <v-btn class="w-100" color="grey" @click="getForm">Pobierz formularz</v-btn>
         <div>
           <v-select
               v-model="form.schoolDetailsInfo.region"

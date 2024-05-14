@@ -129,7 +129,7 @@ const router = createRouter({
     {
       path: '/add-edition',
       name: 'addEdition',
-      component: () => import('../views/addEditionView.vue'),
+      component: () => import('../views/AddEditionView.vue'),
     },
   ]
 })

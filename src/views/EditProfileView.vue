@@ -97,7 +97,7 @@ export default {
 </script>
 
 <template>
-    <v-Form class="bg-white " ref="form" @input="validate" @submit.prevent="onSubmit(user.email)">
+    <v-Form class="bg-white pa-1 pa-sm-5 w-sm-33" ref="form" @input="validate" @submit.prevent="onSubmit(user.email)">
         <h1>Profil użytkownika</h1>
             <v-select
             v-model="form.title"

@@ -48,9 +48,11 @@ export default {
       this.isAuthenticated = false
       this.$router.push('/login')
     },
-    onHangeTest(to) {
-      this.$router.push({path: to})
-    }
+    selectedEditionId(selectedId) {
+      this.selectedId = selectedId;
+      console.log("App.vue " , this.selectedId)
+      this.$emit('editionIdSelected', this.editionId);
+    },
   },
 }
 </script>
@@ -62,7 +64,7 @@ export default {
     <v-navigation-drawer disable-resize-watcher v-model="drawer">
       <v-list>
         <v-list-item v-for="(item, index) in navList" link :key="index" :title="item.title" :to="item.to"/>
-        <v-list-item link title="Edytuj" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'">
+        <v-list-item link title="Edytuj" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_COORDINATOR_REGION' ">
           <v-menu activator="parent">
             <v-list>
               <v-list-item
@@ -75,7 +77,7 @@ export default {
             </v-list>
           </v-menu>
         </v-list-item>
-        <v-list-item link title="Inne" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'">
+        <v-list-item link title="Inne" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_COORDINATOR_REGION' ">
           <v-menu activator="parent">
             <v-list>
               <v-list-item
@@ -97,6 +99,7 @@ export default {
                   :key="index"
                   :value="index"
                   link
+                  @click="selectedEditionId(item.id)"
               >
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
               </v-list-item>
@@ -109,7 +112,7 @@ export default {
       </v-list>
     </v-navigation-drawer>
     <v-main class="d-flex align-center justify-center ">
-      <router-view/>
+      <router-view  :edition-id="editions.length > 0 ? editions[0].id : null" />
     </v-main>
   </v-layout>
 </template>

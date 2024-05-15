@@ -3,11 +3,10 @@ import {mapState, mapWritableState} from "pinia";
 import {useAuthStore} from "@/store/auth";
 
 export default {
-  emits: ["click", "editionIdSelected"],
+  emits: ['click', 'editionIdSelected'],
   props: ['drawer', 'navList', 'itemsToEdit', 'other', 'editions'],
   data() {
     return {
-      selectedId: null,
     }
   },
   computed: {
@@ -19,11 +18,8 @@ export default {
       this.isAuthenticated = false
       this.$router.push('/login')
     },
-    selectedEditionId(editionId) {
-      this.selectedId = editionId
-      this.$emit('editionIdSelected', editionId)
-      console.log("NavigarionBar.vue ", editionId)
-      this.handleSelectedId(editionId)
+    selectEdition(id) {
+      this.$emit('editionIdSelected', id);
     },
   },
 }
@@ -66,7 +62,7 @@ export default {
             :key="index"
             :value="index"
             link
-            @click="selectedEditionId(item.id)"
+            @click="selectEdition(item.id)"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>

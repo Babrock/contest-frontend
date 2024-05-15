@@ -39,9 +39,6 @@ app.use(pinia)
 app.use(vuetify)
 app.provide('axios', app.config.globalProperties.axios)  // provide 'axios'
 
-// const bus = {}
-// app.provide('bus', bus)
-
 app.use(router)
 
 app.mount('#app')

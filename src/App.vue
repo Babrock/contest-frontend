@@ -2,13 +2,16 @@
 import {mapWritableState, mapState} from 'pinia'
 import {useAuthStore} from '@/store/auth.js'
 import NavigationBar from "@/components/NavigationBar.vue";
+import AcceptedSchoolsView from "@/views/AcceptedSchoolsView.vue";
 
 export default {
-  components: {NavigationBar},
+  name: 'ParentComponent',
+  components: {AcceptedSchoolsView, NavigationBar},
   data() {
     return {
       drawer: false,
       editions: [],
+      selectedEditionId: 0,
       navList: [
         {title: "Rejestracja", to: "/register"},
         {title: "Strona Główna", to: "/"},
@@ -37,6 +40,9 @@ export default {
   beforeMount() {
     this.axios.get(`http://localhost:8080/editions`).then((response) => {
       this.editions = response.data;
+      if (this.editions.length > 0) {
+        this.selectedEditionId = this.editions[0].id
+      }
     });
   },
   computed: {
@@ -48,10 +54,8 @@ export default {
       this.isAuthenticated = false
       this.$router.push('/login')
     },
-    selectedEditionId(selectedId) {
-      this.selectedId = selectedId;
-      console.log("App.vue " , this.selectedId)
-      this.$emit('editionIdSelected', this.editionId);
+    editionChange(id) {
+      this.selectedEditionId = id;
     },
   },
 }
@@ -59,7 +63,7 @@ export default {
 <template>
   <v-layout class="rounded rounded-md">
     <v-app-bar class="bg-blue-accent-4">
-        <navigation-bar @click="drawer = !drawer" :nav-list="navList" :items-to-edit="itemsToEdit"  :other="other" :editions="editions"></navigation-bar>
+        <navigation-bar @click="drawer = !drawer" :nav-list="navList" :items-to-edit="itemsToEdit"  :other="other" :editions="editions" @editionIdSelected="editionChange"></navigation-bar>
     </v-app-bar>
     <v-navigation-drawer disable-resize-watcher v-model="drawer">
       <v-list>
@@ -91,15 +95,15 @@ export default {
             </v-list>
           </v-menu>
         </v-list-item>
-        <v-list-item link title="Wybierz Edycje">
-          <v-menu activator="parent">
+        <v-list-item link title="Wybierz Edycje" >
+          <v-menu activator="parent" >
             <v-list>
               <v-list-item
                   v-for="(item, index) in editions"
                   :key="index"
                   :value="index"
                   link
-                  @click="selectedEditionId(item.id)"
+                  @click="editionChange(item.id)"
               >
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
               </v-list-item>
@@ -112,7 +116,7 @@ export default {
       </v-list>
     </v-navigation-drawer>
     <v-main class="d-flex align-center justify-center ">
-      <router-view  :edition-id="editions.length > 0 ? editions[0].id : null" />
+      <router-view :edition-id="selectedEditionId"/>
     </v-main>
   </v-layout>
 </template>

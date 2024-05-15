@@ -1,12 +1,9 @@
 <script>
 import { mapWritableState, mapState } from 'pinia'
 import {useAuthStore} from '@/store/auth.js'
-import NavigationBar from "@/components/NavigationBar.vue";
+
 
 export default {
-  components: {
-    NavigationBar
-  },
   props: {
     editionId: {
       type: Number,
@@ -15,7 +12,6 @@ export default {
   },
   data() {
     return {
-      selectedId: null,
       schoolclasses:[],
       headers: [
         {
@@ -50,23 +46,21 @@ export default {
       return this.isAuthenticated || this.role === 'ROLE_ADMIN' || this.role === 'ROLE_COORDINATOR';
     }
   },
-  beforeMount() {
-    this.axios.get(`http://localhost:8080/classes/accepted/${this.editionId}`).then((response) => {
-      this.schoolclasses = response.data
-    })
-  },
-   async mounted(){
-     await this.fetchData();
+  watch: {
+    editionId: {
+      immediate: true,
+      handler(newVal) {
+        this.fetchData(newVal);
+      }
+    }
   },
   methods: {
-    async fetchData() {
-      const response = await this.axios.get(`http://localhost:8080/classes/accepted/${this.editionId}`);
+    async fetchData(editionId) {
+      const response = await this.axios.get(`http://localhost:8080/classes/accepted/${editionId}`);
       this.schoolclasses = response.data;
     },
-    handleSelectedId(selectedId) {
-      console.log("Selected ID:", selectedId); // Wyświetl wartość selectedId w konsoli
-    },
   },
+
 }
 </script>
 

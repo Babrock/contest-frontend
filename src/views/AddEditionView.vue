@@ -18,9 +18,22 @@ export default {
     };
   },
   methods: {
+    formatDate(date) {
+      // Pobierz ró¿nicê czasu w minutach dla twojej strefy czasowej
+      const offsetMinutes = new Date().getTimezoneOffset();
+      // Dodaj ró¿nicê czasu do daty, aby uzyskaæ lokaln¹ datê
+      const localDate = new Date(date.getTime() - (offsetMinutes * 60000));
+      // Formatuj datê jako ³añcuch znaków w formacie "YYYY-MM-DD"
+      return localDate.toISOString().split('T')[0];
+    },
     onSubmit() {
+      const formData = {
+        ...this.form,
+        startDate: this.formatDate(this.form.startDate),
+        endDate: this.formatDate(this.form.endDate)
+      };
       this.axios
-          .post(`http://localhost:8080/editions`, this.form)
+          .post(`http://localhost:8080/editions`, formData)
           .then((response) => {
             alert("Wiadomoœæ zosta³a wys³ana.");
             this.formResponse = response.data
@@ -48,32 +61,6 @@ export default {
             label="Nazwa"
             required
         ></v-text-field>
-<!--        <v-menu-->
-<!--            ref="menu"-->
-<!--            v-model="menu"-->
-<!--            :close-on-content-click="false"-->
-<!--            transition="scale-transition"-->
-<!--            offset-y-->
-<!--            min-width="auto"-->
-<!--        >-->
-<!--          <template v-slot:activator="{ on, attrs }">-->
-<!--            <v-text-field-->
-<!--                v-model="form.startDate"-->
-<!--                label="Wybierz Data rozpoczêcia"-->
-<!--                prepend-icon="mdi-calendar"-->
-<!--                readonly-->
-<!--                v-bind="attrs"-->
-<!--                v-on="on"-->
-<!--            ></v-text-field>-->
-<!--          </template>-->
-<!--          <v-date-picker-->
-<!--              v-model="form.startDate"-->
-<!--              required-->
-<!--              color="primary"-->
-<!--              show-adjacent-months-->
-<!--              title="Wybierz Data rozpoczêcia"-->
-<!--          ></v-date-picker>-->
-<!--        </v-menu>-->
         <v-date-picker
             v-model="form.startDate"
             required

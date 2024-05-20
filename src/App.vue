@@ -11,7 +11,7 @@ export default {
     return {
       drawer: false,
       editions: [],
-      selectedEditionId: 0,
+      selectedEdition: {id: null, name: null},
       navList: [
         {title: "Rejestracja", to: "/register"},
         {title: "Strona Główna", to: "/"},
@@ -41,7 +41,8 @@ export default {
     this.axios.get(`http://localhost:8080/editions`).then((response) => {
       this.editions = response.data;
       if (this.editions.length > 0) {
-        this.selectedEditionId = this.editions[0].id
+        this.selectedEdition.id = this.editions[0].id
+        this.selectedEdition.name = this.editions[0].name
       }
     });
   },
@@ -54,8 +55,8 @@ export default {
       this.isAuthenticated = false
       this.$router.push('/login')
     },
-    editionChange(id) {
-      this.selectedEditionId = id;
+    editionChange(item) {
+      this.selectedEdition = item;
     },
   },
 }
@@ -63,7 +64,7 @@ export default {
 <template>
   <v-layout class="rounded rounded-md">
     <v-app-bar class="bg-blue-accent-4">
-        <navigation-bar @click="drawer = !drawer" :nav-list="navList" :items-to-edit="itemsToEdit"  :other="other" :editions="editions" @editionIdSelected="editionChange"></navigation-bar>
+        <navigation-bar @click="drawer = !drawer" :nav-list="navList" :items-to-edit="itemsToEdit"  :other="other" :editions="editions" :selected-edition="selectedEdition" @editionIdSelected="editionChange"></navigation-bar>
     </v-app-bar>
     <v-navigation-drawer disable-resize-watcher v-model="drawer">
       <v-list>
@@ -103,12 +104,15 @@ export default {
                   :key="index"
                   :value="index"
                   link
-                  @click="editionChange(item.id)"
+                  @click="editionChange(item)"
               >
                 <v-list-item-title>{{ item.name }}</v-list-item-title>
               </v-list-item>
             </v-list>
+
           </v-menu>
+          <v-list-item-title>Wybrana edycja: {{ selectedEdition.name }}</v-list-item-title>
+
         </v-list-item>
         <v-list-item link title="Zaloguj" v-if="!isAuthenticated" to="/login"></v-list-item>
         <v-spacer></v-spacer>
@@ -116,7 +120,7 @@ export default {
       </v-list>
     </v-navigation-drawer>
     <v-main class="d-flex align-center justify-center ">
-      <router-view :edition-id="selectedEditionId"/>
+      <router-view :edition-id="selectedEdition.id"/>
     </v-main>
   </v-layout>
 </template>

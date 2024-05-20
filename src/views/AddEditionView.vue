@@ -8,7 +8,7 @@ export default {
   },
   data() {
     return {
-      nameRules: [(v) => !!v || "Nazwa jest wymagana"],
+      nameRules: [(v) => !!v || "Nazwa edycji jest wymagana"],
       valid: false,
       form: {
         name: "",
@@ -19,11 +19,11 @@ export default {
   },
   methods: {
     formatDate(date) {
-      // Pobierz ró¿nicê czasu w minutach dla twojej strefy czasowej
+      // Pobierz rÃ³nicÄ™ czasu w minutach dla twojej strefy czasowej
       const offsetMinutes = new Date().getTimezoneOffset();
-      // Dodaj ró¿nicê czasu do daty, aby uzyskaæ lokaln¹ datê
+      // Dodaj rÃ³nicÄ™ czasu do daty, aby uzyskaÄ‡ lokalnÄ… datÄ™
       const localDate = new Date(date.getTime() - (offsetMinutes * 60000));
-      // Formatuj datê jako ³añcuch znaków w formacie "YYYY-MM-DD"
+      // Formatuj datÄ™ jako Å‚aÅ„cuch znakÃ³w w formacie "YYYY-MM-DD"
       return localDate.toISOString().split('T')[0];
     },
     onSubmit() {
@@ -35,11 +35,11 @@ export default {
       this.axios
           .post(`http://localhost:8080/editions`, formData)
           .then((response) => {
-            alert("Wiadomoœæ zosta³a wys³ana.");
+            alert("WiadomoÅ›Ä‡ zostaÅ‚a wysÅ‚ana.");
             this.formResponse = response.data
           })
           .catch((err) => {
-            alert("Wyst¹pi³ nieoczekiwany b³¹d.");
+            alert("WystÄ…piÅ‚ nieoczekiwany bÅ‚Ä…d.");
           });
     },
     async validate() {
@@ -53,12 +53,12 @@ export default {
 <template>
   <div class="h-100 d-flex flex-column bg-white">
     <v-Form ref="form" @input="validate" @submit.prevent="onSubmit">
-      <h1>Dodaj now¹ edycjê</h1>
+      <h1>Dodaj nowÄ… edycjÄ™</h1>
       <div class="pageA4" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
         <v-text-field
             v-model="form.name"
             :rules="nameRules"
-            label="Nazwa"
+            label="Nazwa edycji"
             required
         ></v-text-field>
         <v-date-picker
@@ -66,16 +66,16 @@ export default {
             required
             color="primary"
             show-adjacent-months
-            title="Wybierz Data rozpoczêcia"
+            title="Wybierz Data rozpoczÄ™cia"
         ></v-date-picker>
         <v-date-picker
             v-model="form.endDate"
             required
             color="primary"
             show-adjacent-months
-            title="Wybierz Data zakoñczenia"
+            title="Wybierz Data zakonczenia"
         ></v-date-picker>
-        <v-btn color="success" block type="submit" :disabled="!valid">Wyœlij</v-btn>
+        <v-btn color="success" block type="submit" :disabled="!valid">Wyï¿½lij</v-btn>
       </div>
     </v-Form>
   </div>

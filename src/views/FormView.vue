@@ -242,7 +242,7 @@ export default {
         title: {id: null},
         firstname: "",
         lastname: "",
-        schoolClassNumber: null,
+        schoolClassNumber: {id: null},
         name: "",
         students: null,
         language: {id: null},

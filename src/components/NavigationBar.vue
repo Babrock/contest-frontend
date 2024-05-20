@@ -4,9 +4,10 @@ import {useAuthStore} from "@/store/auth";
 
 export default {
   emits: ['click', 'editionIdSelected'],
-  props: ['drawer', 'navList', 'itemsToEdit', 'other', 'editions'],
+  props: ['drawer', 'navList', 'itemsToEdit', 'other', 'editions', 'selected-edition'],
   data() {
     return {
+      menuOpen: false
     }
   },
   computed: {
@@ -18,8 +19,9 @@ export default {
       this.isAuthenticated = false
       this.$router.push('/login')
     },
-    selectEdition(id) {
-      this.$emit('editionIdSelected', id);
+    selectEdition(item) {
+      this.menuOpen = false
+      this.$emit('editionIdSelected', item);
     },
   },
 }
@@ -55,26 +57,25 @@ export default {
     </v-menu>
   </v-list-item>
   <v-list-item link title="Wybierz Edycje">
-    <v-menu activator="parent">
+    <v-menu v-model="menuOpen" activator="parent">
       <v-list>
         <v-list-item
             v-for="(item, index) in editions"
             :key="index"
             :value="index"
             link
-            @click="selectEdition(item.id)"
+            @click="selectEdition(item)"
         >
           <v-list-item-title>{{ item.name }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
   </v-list-item>
+  <v-list-item-title style="margin-left: -1%">: {{ selectedEdition.name }}</v-list-item-title>
   <v-list-item link title="Zaloguj" v-if="!isAuthenticated" to="/login"></v-list-item>
   <v-spacer></v-spacer>
   <v-list-item link title="wyloguj" v-if="isAuthenticated" to="/login" @click="logout"></v-list-item>
 </template>
-
-
 
 <style scoped>
 @media screen and (max-width: 600px) {

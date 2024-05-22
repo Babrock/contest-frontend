@@ -6,6 +6,7 @@ import {mapWritableState, mapState} from 'pinia'
 export default {
   data() {
     return {
+      dialogAction: '',
       dialogAccept: false,
       snackbar: false,
       snackbarMessage: "",
@@ -117,6 +118,10 @@ export default {
             this.snackbar = true
           });
     },
+    handleAction(action) {
+      this.dialogAction = action;
+      this.dialogAccept = true;
+    },
     accept() {
       this.axios.post(`http://localhost:8080/form/accepted/${this.form.id}`)
           .then((response) => {
@@ -132,20 +137,35 @@ export default {
     withdraw() {
       this.axios.post(`http://localhost:8080/form/not-accepted/${this.form.id}`)
           .then((response) => {
-            alert("Formularz został wycofany.");
+            this.snackbarMessage = 'Formularz został wycofany.';
+            this.snackbar = true;
           })
           .catch((err) => {
-            alert("Wystąpił nieoczekiwany błąd.");
+            this.snackbarMessage = 'Wystąpił nieoczekiwany błąd.';
+            this.snackbar = true;
           });
+      this.dialogAccept = false;
     },
     deleteForm() {
       this.axios.delete(`http://localhost:8080/form/${this.form.id}`)
           .then((response) => {
-            alert("Formularz został Usunięty.");
+            this.snackbarMessage = 'Formularz został Usunięty.';
+            this.snackbar = true;
           })
           .catch((err) => {
-            alert("Wystąpił nieoczekiwany błąd.");
+            this.snackbarMessage = 'Wystąpił nieoczekiwany błąd.';
+            this.snackbar = true;
           });
+      this.dialogAccept = false;
+    },
+    confirmAction() {
+      if (this.dialogAction === 'accept') {
+        this.accept();
+      } else if (this.dialogAction === 'withdraw') {
+        this.withdraw();
+      } else if (this.dialogAction === 'delete') {
+        this.deleteForm();
+      }
     },
   },
 };
@@ -168,18 +188,23 @@ export default {
             max-width="500"
             persistent
         >
-          <v-card  title="Czy na pewno chcesz zaakceptować formularz?" >
-            <template v-slot:actions>
+          <v-card>
+            <v-card-title class="headline">
+              Czy na pewno chcesz
+              {{ dialogAction === 'accept' ? 'zaakceptować' : dialogAction === 'withdraw' ? 'wycofać' : 'usunąć' }}
+              formularz?
+            </v-card-title>
+            <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn @click="dialogAccept = false"> Anuluj</v-btn>
-              <v-btn @click="accept"> Potwierdź</v-btn>
-            </template>
+              <v-btn @click="dialogAccept = false">Anuluj</v-btn>
+              <v-btn @click="confirmAction">Potwierdź</v-btn>
+            </v-card-actions>
           </v-card>
         </v-dialog>
-        <v-snackbar v-model="snackbar" :timeout="5000" >{{ snackbarMessage }}</v-snackbar>
-        <v-btn class="flex-grow-1" color="success" @click="dialogAccept=true">Akceptuj formularz</v-btn>
-        <v-btn class="flex-grow-1" color="warning" @click="withdraw">Wycofaj formularz</v-btn>
-        <v-btn class="flex-grow-1" v-if="role=='ROLE_ADMIN'" color="error" @click="deleteForm">Usuń formularz</v-btn>
+        <v-snackbar v-model="snackbar" :timeout="3000" >{{ snackbarMessage }}</v-snackbar>
+        <v-btn class="flex-grow-1" color="success" @click="handleAction('accept')">Akceptuj formularz</v-btn>
+        <v-btn class="flex-grow-1" color="warning" @click="handleAction('withdraw')">Wycofaj formularz</v-btn>
+        <v-btn class="flex-grow-1" v-if="role == 'ROLE_ADMIN'" color="error" @click="handleAction('delete')">Usuń formularz</v-btn>
       </div>
       <v-text-field readonly v-model="schoolDetails.region.name" label="Region"></v-text-field>
       <legend>Dane Szkoły:</legend>

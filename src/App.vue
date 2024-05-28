@@ -69,22 +69,23 @@ export default {
     <v-navigation-drawer disable-resize-watcher v-model="drawer">
       <v-list>
         <v-list-item v-for="(item, index) in navList" link :key="index" :title="item.title" :to="item.to"/>
-        <v-list-item link title="Edytuj" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_COORDINATOR_REGION' ">
-          <v-menu activator="parent">
+
+        <v-list-item link title="Opcje" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_COORDINATOR_REGION' ">
+          <v-menu activator="parent" location="end">
             <v-list>
-              <v-list-item
-                  v-for="(item, index) in itemsToEdit"
-                  :key="index"
-                  link :title="item.tile" :to="item.to"
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item link title="Edytuj" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_COORDINATOR_REGION' ">
+                <v-menu activator="parent" location="end">
+                  <v-list>
+                    <v-list-item
+                        v-for="(item, index) in itemsToEdit"
+                        :key="index"
+                        link :title="item.tile" :to="item.to"
+                    >
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-list-item>
-        <v-list-item link title="Inne" v-if="role=='ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_COORDINATOR_REGION' ">
-          <v-menu activator="parent">
-            <v-list>
               <v-list-item
                   v-for="(item, index) in other"
                   :key="index"

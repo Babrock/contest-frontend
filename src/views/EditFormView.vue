@@ -207,9 +207,6 @@ export default {
     },
   },
   methods: {
-    clearVoivodeship() {
-      this.form.schoolInfo.voivodeship = null;
-    },
     clearCounty() {
       this.form.schoolInfo.county = null;
       this.clearCommunity()

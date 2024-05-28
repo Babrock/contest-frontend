@@ -84,7 +84,6 @@ export default {
 
     // Ustaw indeks edytowanego elementu
     this.editedIndex = this.regions.indexOf(item);
-    console.log(itemWithoutId)
     // Otwórz dialog edycji
     this.dialog = true;
   },
@@ -144,8 +143,7 @@ export default {
 }
 </script>
 <template>
-  <v-sheet class="mx-auto">
-    <div class="pageA4">
+    <div class="h-100 w-100 bg-white pa-1 pa-sm-5">
       <v-data-table :headers="headers" :items="regions" :sort-by="[{ key: 'name', order: 'asc' }]">
         <template v-slot:top>
       <v-toolbar
@@ -157,7 +155,6 @@ export default {
           inset
           vertical
         ></v-divider>
-        <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
   <template v-slot:activator="{ props }">
     <v-btn color="primary" dark class="mb-2" v-bind="props">
@@ -176,7 +173,6 @@ export default {
             <v-text-field v-model="itemToEdit.name" label="Nazwa" required></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="6">
-            <!-- {{ itemToEdit }} -->
             <v-autocomplete
               @update:modelValue="handleVoivodeshipChange"
               v-model="itemToEdit.voivodeships"
@@ -234,5 +230,4 @@ export default {
     </template>
       </v-data-table>
     </div>
-  </v-sheet>
 </template>

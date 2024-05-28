@@ -27,6 +27,10 @@ export default {
       schoolClassNumberRules: [(v) => !!v || "Numer klasy jest wymagany"],
       shouldShowSignature: false,
       valid: false,
+      hasPreviewed: false,
+      dialogAccept: false,
+      snackbar: false,
+      snackbarMessage: "",
       regions: [],
       voivodeships: [],
       counties: [],
@@ -164,6 +168,41 @@ export default {
     },
   },
   methods: {
+    clearCounty() {
+      this.form.schoolData.county = null;
+      this.clearCommunity()
+    },
+    clearCommunity() {
+      this.form.schoolData.community = null;
+      this.clearCity()
+    },
+    clearCity() {
+      this.form.schoolData.city = null;
+      this.clearSchool()
+    },
+    clearSchool() {
+      this.form.schoolData.school = null;
+    },
+    updateSchoolData(id) {
+      this.getSchoolDetails(id);
+      this.validate();
+    },
+    countiesDisabled() {
+      return this.voivodeships.length < 1 || !this.form.schoolData.voivodeship
+    },
+    communitiesDisabled() {
+      return this.counties.length < 1 || !this.form.schoolData.county
+    },
+    citiesDisabled() {
+      return this.communities.length < 1 || !this.form.schoolData.community
+    },
+    schoolsDisabled() {
+      return this.cities.length < 1 || !this.form.schoolData.city
+    },
+    preview() {
+      this.hasPreviewed = true; // Ustawienie na true po zobaczeniu podglądu
+      window.print(); // Wywołanie funkcji print
+    },
     saveAsPDF(formResponse) {
       const element = this.$refs.form;
       const options = {
@@ -175,28 +214,29 @@ export default {
       };
       html2pdf().from(element).set(options).save();
     },
-
     print() {
       this.shouldShowSignature = true;
       window.print();
       this.shouldShowSignature = false;
     },
-
-    onSubmit(values) {
-      if (window.confirm("Czy potwierdzasz zgodność danych?")) {
-        this.axios
-            .post("http://localhost:8080/form", this.form)
-            .then((response) => {
-              alert("Formularz został zgłoszony.");
-              this.formResponse = response.data
-              this.saveAsPDF(this.formResponse);
-            })
-            .catch((err) => {
-              alert("Wystąpił nieoczekiwany błąd.");
-            });
-      }
+    saveAndDownload() {
+      this.dialogAccept = true;
     },
-
+    onSubmit() {
+      this.axios
+          .post("http://localhost:8080/form", this.form)
+          .then((response) => {
+            this.snackbarMessage = ("Formularz został zgłoszony.")
+            this.formResponse = response.data
+            this.saveAsPDF(this.formResponse);
+            this.snackbar = true
+          })
+          .catch((err) => {
+            this.snackbarMessage = ("Wystąpił nieoczekiwany błąd.")
+            this.snackbar = true
+          });
+      this.dialogAccept = false
+    },
     async validate() {
       const {valid} = await this.$refs.form.validate();
       this.valid = valid;
@@ -233,10 +273,6 @@ export default {
         this.coordinator.email = data.email
       });
     },
-    updateValues(id) {
-      this.getSchoolDetails(id);
-      this.validate();
-    },
     addSchoolClass() {
       const schoolClass = {
         title: {id: null},
@@ -269,7 +305,6 @@ export default {
       <div>
         <v-select
             v-model="form.schoolDetailsInfo.region"
-            @update:modelValue="form.schoolData.voivodeship = null"
             :items="regions"
             item-value="id"
             item-title="name"
@@ -281,7 +316,7 @@ export default {
         <div class="d-flex flex-column flex-sm-row ga-sm-1">
           <v-select
               v-model="form.schoolData.voivodeship"
-              @update:modelValue="form.schoolData.county = null"
+              @update:modelValue="clearCounty"
               :disabled="voivodeships.length < 1"
               :items="voivodeships"
               item-value="id"
@@ -292,8 +327,8 @@ export default {
           ></v-select>
           <v-select
               v-model="form.schoolData.county"
-              @update:modelValue="form.schoolData.community = null"
-              :disabled="counties.length < 1"
+              @update:modelValue="clearCommunity"
+              :disabled="countiesDisabled()"
               :items="counties"
               item-value="id"
               item-title="name"
@@ -303,8 +338,8 @@ export default {
           ></v-select>
           <v-autocomplete
               v-model="form.schoolData.community"
-              @update:modelValue="form.schoolData.city = null"
-              :disabled="communities.length < 1"
+              @update:modelValue="clearCity"
+              :disabled="communitiesDisabled()"
               :items="communities"
               item-value="id"
               item-title="name"
@@ -314,8 +349,8 @@ export default {
           ></v-autocomplete>
           <v-autocomplete
               v-model="form.schoolData.city"
-              @update:modelValue="form.schoolData.school = null"
-              :disabled="cities.length < 1"
+              @update:modelValue="clearSchool"
+              :disabled="citiesDisabled()"
               :items="cities"
               item-value="id"
               item-title="name"
@@ -326,33 +361,37 @@ export default {
         </div>
         <v-autocomplete
             v-model="form.schoolData.school"
-            :disabled="schools.length < 1"
+            @update:modelValue="updateSchoolData"
+            :disabled="schoolsDisabled()"
             :items="schools"
             item-value="id"
             item-title="name"
-            @update:modelValue="updateValues"
             :rules="nameRules"
             label="Nazwa szkoły"
             required
         ></v-autocomplete>
         <div class="d-flex flex-column flex-sm-row ga-sm-1">
-          <v-select
-              @update:modelValue="validate"
-              v-model="form.schoolDetailsInfo.category"
-              :items="categories"
-              item-value="id"
-              item-title="name"
-              label="Kategoria"
-              :rules="[(v) => !!v || 'Kategoria jest wymagana']"
-              required
-          ></v-select>
+          <div class="w-sm-10">
+            <v-select
+                @update:modelValue="form.schoolDetailsInfo.schoolType = null"
+                v-model="form.schoolDetailsInfo.category"
+                :items="categories"
+                item-value="id"
+                item-title="name"
+                label="Kategoria"
+                :rules="[(v) => !!v || 'Kategoria jest wymagana']"
+                required
+            ></v-select>
+          </div>
           <v-text-field
+              class="w-sm-20"
               v-model="form.schoolDetailsInfo.schoolComplex"
               :rules="schoolComplexRules"
               label="Zespół szkół"
               required
           ></v-text-field>
           <v-select
+              class="w-sm-1"
               @update:modelValue="validate"
               v-model="form.schoolDetailsInfo.schoolType"
               :disabled="schoolTypes.length < 1"
@@ -364,20 +403,22 @@ export default {
               required
           ></v-select>
           <v-text-field
+              class="w-sm-1"
               v-model="form.schoolData.phone"
               readonly
-              :counter="12"
               :rules="phoneRules"
               label="Numer telefonu"
               placeholder="+48 000 000 000"
               required
           ></v-text-field>
           <v-text-field
+              class="w-sm-20"
               v-model="form.schoolData.email"
               :rules="emailRules"
               label="E-mail"
               placeholder="adres@poczta.pl"
               required
+              readonly
           ></v-text-field>
         </div>
         <div class="d-flex flex-column flex-sm-row ga-sm-1">
@@ -388,31 +429,37 @@ export default {
         </legend>
         <div class="d-flex flex-column flex-sm-row ga-sm-1">
           <v-text-field
+              class="w-sm-5"
               v-model="form.schoolData.street"
               label="Ulica"
               readonly
           ></v-text-field>
-          <v-text-field
-              v-model="form.schoolData.address"
-              :rules="addressRules"
-              label="Nr budynku"
-              required
-              readonly
-          ></v-text-field>
-          <v-text-field
-              v-model="form.schoolData.apartmentNumber"
-              label="Nr lokalu"
-              required
-              readonly
-          ></v-text-field>
-          <v-text-field
-              v-model="form.schoolData.zipCode"
-              :rules="zipCodeRules"
-              label="Kod pocztowy"
-              required
-              placeholder="00-000"
-              readonly
-          ></v-text-field>
+          <div class="d-flex flex-row flex-sm-row ga-sm-1 w-sm-25">
+            <v-text-field
+                class="w-sm-35"
+                v-model="form.schoolData.address"
+                :rules="addressRules"
+                label="Nr budynku"
+                required
+                readonly
+            ></v-text-field>
+            <v-text-field
+                class="w-sm-30"
+                v-model="form.schoolData.apartmentNumber"
+                label="Nr lokalu"
+                required
+                readonly
+            ></v-text-field>
+            <v-text-field
+                class="w-sm-40"
+                v-model="form.schoolData.zipCode"
+                :rules="zipCodeRules"
+                label="Kod pocztowy"
+                required
+                placeholder="00-000"
+                readonly
+            ></v-text-field>
+          </div>
           <v-text-field
               v-model="form.schoolData.post"
               :rules="postRules"
@@ -426,30 +473,36 @@ export default {
       <div>
         <legend>Dane Dyrektora Szkoły:</legend>
         <div class="d-flex flex-column flex-sm-row ga-sm-1">
-          <v-select
-              class="d-flex flex-column w-0"
-              @update:modelValue="validate"
-              v-model="form.schoolDetailsInfo.headmaster.title"
-              :rules="titleRules"
-              :items="titles"
-              item-value="id"
-              item-title="name"
-              label="Tytuł"
-              required
-          ></v-select>
+          <div class="w-sm-10">
+            <v-select
+                @update:modelValue="validate"
+                v-model="form.schoolDetailsInfo.headmaster.title"
+                :rules="titleRules"
+                :items="titles"
+                item-value="id"
+                item-title="name"
+                label="Tytuł"
+                required
+            ></v-select>
+          </div>
+          <div class="d-flex flex-row flex-sm-row ga-sm-1 w-sm-50">
+            <v-text-field
+                class="w-sm-50"
+                :rules="firstnameRules"
+                v-model="form.schoolDetailsInfo.headmaster.firstname"
+                label="Imię"
+                required
+            ></v-text-field>
+            <v-text-field
+                class="w-sm-50"
+                v-model="form.schoolDetailsInfo.headmaster.lastname"
+                :rules="lastnameRules"
+                label="Nazwisko"
+                required
+            ></v-text-field>
+          </div>
           <v-text-field
-              :rules="firstnameRules"
-              v-model="form.schoolDetailsInfo.headmaster.firstname"
-              label="Imię"
-              required
-          ></v-text-field>
-          <v-text-field
-              v-model="form.schoolDetailsInfo.headmaster.lastname"
-              :rules="lastnameRules"
-              label="Nazwisko"
-              required
-          ></v-text-field>
-          <v-text-field
+              class="w-sm-20"
               v-model="form.schoolDetailsInfo.headmaster.email"
               :rules="emailRules"
               label="E-mail"
@@ -463,31 +516,38 @@ export default {
           Dane dotyczace Nauczyciela koordynujacego przebieg konkursu w szkole:
         </legend>
         <div class="d-flex flex-column flex-sm-row ga-sm-1">
-          <v-select
-              v-model="coordinator.title"
-              :items="titles"
-              :rules="titleRules"
-              item-value="id"
-              item-title="name"
-              label="Tytuł"
-              required
-              readonly
-          ></v-select>
+          <div class="w-sm-10">
+            <v-select
+                v-model="coordinator.title"
+                :items="titles"
+                :rules="titleRules"
+                item-value="id"
+                item-title="name"
+                label="Tytuł"
+                required
+                readonly
+            ></v-select>
+          </div>
+          <div class="d-flex flex-row flex-sm-row ga-sm-1 w-sm-50">
+            <v-text-field
+                class="w-sm-50"
+                :rules="firstnameRules"
+                v-model="coordinator.firstname"
+                label="Imię"
+                required
+                readonly
+            ></v-text-field>
+            <v-text-field
+                class="w-sm-50"
+                v-model="coordinator.lastname"
+                :rules="lastnameRules"
+                label="Nazwisko"
+                required
+                readonly
+            ></v-text-field>
+          </div>
           <v-text-field
-              :rules="firstnameRules"
-              v-model="coordinator.firstname"
-              label="Imię"
-              required
-              readonly
-          ></v-text-field>
-          <v-text-field
-              v-model="coordinator.lastname"
-              :rules="lastnameRules"
-              label="Nazwisko"
-              required
-              readonly
-          ></v-text-field>
-          <v-text-field
+              class="w-sm-20"
               v-model="coordinator.email"
               :rules="emailRules"
               label="E-mail"
@@ -497,6 +557,7 @@ export default {
               readonly
           ></v-text-field>
           <v-text-field
+              class="w-sm-0"
               v-model="coordinator.phone"
               :rules="phoneRules"
               label="Telefon"
@@ -529,47 +590,57 @@ export default {
       </div>
       <v-list>
         <v-list-item v-for="(schoolClass) in form.schoolClasses">
-          <div class="d-flex flex-column flex-sm-row">
-            <v-select
-                @update:modelValue="validate"
-                v-model="schoolClass.title.id"
-                :items="titles"
-                :rules="titleRules"
-                item-value="id"
-                item-title="name"
-                label="Tytuł"
-                required
-            ></v-select>
+          <div class="d-flex flex-column flex-sm-row ga-sm-1">
+            <div class="w-sm-10">
+              <v-select
+                  @update:modelValue="validate"
+                  v-model="schoolClass.title.id"
+                  :items="titles"
+                  :rules="titleRules"
+                  item-value="id"
+                  item-title="name"
+                  label="Tytuł"
+                  required
+              ></v-select>
+            </div>
+            <div class="d-flex flex-row flex-sm-row ga-sm-1 w-sm-50 h-100">
+              <v-text-field
+                  class="w-sm-50"
+                  :rules="firstnameRules"
+                  v-model="schoolClass.firstname"
+                  label="Imię"
+                  required
+              ></v-text-field>
+              <v-text-field
+                  class="w-sm-50"
+                  v-model="schoolClass.lastname"
+                  :rules="lastnameRules"
+                  label="Nazwisko"
+                  required
+              ></v-text-field>
+            </div>
+            <div class="d-flex flex-row flex-sm-row ga-sm-1 w-sm-10">
+              <v-select
+                  @update:modelValue="validate"
+                  v-model="schoolClass.schoolClassNumber.id"
+                  :disabled="schoolClassNumbers.length < 1"
+                  :items="schoolClassNumbers"
+                  item-value="id"
+                  item-title="name"
+                  :rules="schoolClassNumberRules"
+                  label="Numer Klasy"
+                  required
+              ></v-select>
+            </div>
             <v-text-field
-                :rules="firstnameRules"
-                v-model="schoolClass.firstname"
-                label="Imię"
-                required
-            ></v-text-field>
-            <v-text-field
-                v-model="schoolClass.lastname"
-                :rules="lastnameRules"
-                label="Nazwisko"
-                required
-            ></v-text-field>
-            <v-select
-                @update:modelValue="validate"
-                v-model="schoolClass.schoolClassNumber.id"
-                :disabled="schoolClassNumbers.length < 1"
-                :items="schoolClassNumbers"
-                item-value="id"
-                item-title="name"
-                :rules="schoolClassNumberRules"
-                label="Numer Klasy"
-                required
-            ></v-select>
-            <v-text-field
+                class="w-sm-0"
                 v-model="schoolClass.name"
                 :rules="schoolClassNameRules"
                 label="Nazwa klasy"
                 required
             ></v-text-field>
             <v-text-field
+                class="w-sm-0"
                 v-model="schoolClass.students"
                 :rules="schoolClassstudentsRules"
                 label="Ilość uczniów"
@@ -579,6 +650,7 @@ export default {
                 max="100"
             ></v-text-field>
             <v-select
+                class="w-sm-0"
                 @update:modelValue="validate"
                 v-model="schoolClass.language.id"
                 :items="languages"
@@ -591,14 +663,35 @@ export default {
           </div>
         </v-list-item>
       </v-list>
-      <small class="visible-on-print" :class="{ 'visible-on-print': shouldShowSignature }"><hr> Data i podpis Dyrektora szkoły </small>
+      <small class="visible-on-print" :class="{ 'visible-on-print': shouldShowSignature }">
+        <hr>
+        Data i podpis Dyrektora szkoły </small>
       <div class="w-100 d-flex flex-column flex-sm-row ga-1">
-        <v-btn class="flex-grow-1" color="error" @click="reset"> Wyczyść formularz</v-btn>
-        <v-btn class="flex-grow-1" color="blue" onclick="print()">Zobacz podgląd</v-btn>
-        <v-btn class="flex-grow-1" color="success" type="submit" :disabled="!valid">Zapisz i pobierz
+        <v-btn style="height: 50px" class="flex-grow-1" color="error" @click="reset"> Wyczyść formularz</v-btn>
+        <v-btn style="height: 50px" class="flex-grow-1" color="blue" @click="preview">Zobacz podgląd
+          <div class="sub-text">(zobacz podgląd aby móc zapisać i pobrać)</div>
+        </v-btn>
+        <v-btn style="height: 50px" class="flex-grow-1" color="success" @click="saveAndDownload" :disabled="!valid || !hasPreviewed">Zapisz i pobierz
           <div class="sub-text">(plik do wydruku zapisał się do pobranych)</div>
         </v-btn>
       </div>
+      <v-dialog
+          v-model="dialogAccept"
+          max-width="500"
+          persistent
+      >
+        <v-card>
+          <v-card-title class="headline">
+            Czy potwierdzasz zgodność danych?
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="dialogAccept = false">Anuluj</v-btn>
+            <v-btn @click="onSubmit">Potwierdź</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-snackbar v-model="snackbar" :timeout="3000">{{ snackbarMessage }}</v-snackbar>
     </v-Form>
   </div>
 </template>
@@ -607,7 +700,7 @@ export default {
 .sub-text {
   position: absolute;
   top: 80%;
-  font-size: 60%; /* Adjust the font size as needed */
+  font-size: 90%; /* Adjust the font size as needed */
   color: rgb(0, 0, 0); /* Adjust the color as needed */
 }
 
@@ -629,7 +722,7 @@ hr {
   .v-app-bar,
   .v-btn,
   .v-field__append-inner,
-  .v-input__details{
+  .v-input__details {
     display: none;
   }
 
@@ -641,8 +734,8 @@ hr {
     font-size: 10px;
   }
 
-  #print{
-    margin-top: 0;
+  #print {
+    margin-top: -10%;
     padding-top: 0;
   }
 }

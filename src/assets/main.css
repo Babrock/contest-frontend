@@ -52,8 +52,17 @@ span[role = alert]{
   .w-sm-1 {
     width: 1% !important;
   }
+  .w-sm-6 {
+    width: 6% !important;
+  }
   .w-sm-10 {
     width: 10% !important;
+  }
+  .w-sm-13 {
+    width: 13% !important;
+  }
+  .w-sm-15 {
+    width: 15% !important;
   }
   .w-sm-20 {
     width: 20% !important;

@@ -289,7 +289,8 @@ export default {
       if (this.form.schoolClasses.length > 1) {
         this.form.schoolClasses.pop();
       } else {
-        alert("W zgłoszeniu musi być podana co najmniej jedna klasa!");
+        this.snackbarMessage = ("W zgłoszeniu musi być podana co najmniej jedna klasa!")
+        this.snackbar = true
       }
     },
   },
@@ -297,7 +298,7 @@ export default {
 </script>
 
 <template>
-  <div class="d-flex bg-white pa-1 pa-sm-5" id="print">
+  <div class="d-flex bg-white pa-1 pa-sm-5">
     <v-Form ref="form" @input="validate" @submit.prevent="onSubmit">
       <h2 v-if="formResponse">
         Formularz Zgłoszeniowy {{ formResponse.combinedInfo }}
@@ -371,7 +372,7 @@ export default {
             required
         ></v-autocomplete>
         <div class="d-flex flex-column flex-sm-row ga-sm-1">
-          <div class="w-sm-10">
+          <div class="w-sm-15">
             <v-select
                 @update:modelValue="form.schoolDetailsInfo.schoolType = null"
                 v-model="form.schoolDetailsInfo.category"
@@ -384,7 +385,7 @@ export default {
             ></v-select>
           </div>
           <v-text-field
-              class="w-sm-20"
+              class="w-sm-15"
               v-model="form.schoolDetailsInfo.schoolComplex"
               :rules="schoolComplexRules"
               label="Zespół szkół"
@@ -403,7 +404,7 @@ export default {
               required
           ></v-select>
           <v-text-field
-              class="w-sm-1"
+              class="w-sm-6"
               v-model="form.schoolData.phone"
               readonly
               :rules="phoneRules"
@@ -734,9 +735,10 @@ hr {
     font-size: 10px;
   }
 
-  #print {
-    margin-top: -10%;
-    padding-top: 0;
+  @page {
+    margin: 0;
+    background: none;
   }
+
 }
 </style>

@@ -54,7 +54,7 @@ export default {
   <div class="h-100 d-flex flex-column bg-white">
     <v-Form ref="form" @input="validate" @submit.prevent="onSubmit">
       <h1>Dodaj nową edycję</h1>
-      <div class="pageA4" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
+      <div class="bg-white" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
         <v-text-field
             v-model="form.name"
             :rules="nameRules"

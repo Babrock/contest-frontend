@@ -101,7 +101,7 @@ export default {
     <v-Form ref="form" @input="validate" @submit.prevent="onSubmit(form.to, form.subject, form.text)">
       <h1>Wyślij wiadomość</h1>
       <h2 v-if="isAlertVisible" class="alert">Prosimy o chwilę cierpliwości...</h2>
-      <div class="pageA4" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
+      <div class="bg-white" style="width: 100%; min-width: 300px; display: flex; flex-direction: column">
         <v-autocomplete
             v-model="form.to"
             :items="to"

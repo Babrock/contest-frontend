@@ -18,7 +18,7 @@ export default {
         {title: "Wyniki", to: "/scores"},
         {title: "Informacje O Konkursie", to: "/informations/statute"},
         {title: "Lokalizacja", to: "/location"},
-        {title: "Formularz", to: "/form"},
+        {title: "Formularz", to: "/form", show: this.isAuthenticated},
         {title: "Zarejestrowane Szkoły", to: "/acceptedSchools"},
       ],
       itemsToEdit: [

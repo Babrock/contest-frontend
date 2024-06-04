@@ -15,11 +15,6 @@ a,
   color: rgb(0, 0, 0);
   transition: 0.4s;
 }
-.pageA4 {
-  color: rgb(0, 0, 0);
-  background-color: #ffffff;
-  margin: 1%;
-}
 .w-100 {
   width: 100%;
 }
@@ -29,6 +24,7 @@ a,
 h1,h2 {
   color: black;
   text-align: center;
+
 }
 h3{
   color: red;
@@ -76,5 +72,4 @@ span[role = alert]{
   .w-sm-40 {
     width: 40% !important;
   }
-  /* Dodaj więcej klas w razie potrzeby */
 }

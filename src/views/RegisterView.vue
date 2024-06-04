@@ -17,8 +17,12 @@ export default {
       ],
       titleRules: [(v) => !!v || "Tytuł jest wymagany"],
       titles: [],
+      snackbar: false,
+      snackbarMessage: "",
       isAlertVisible: false,
       valid: false,
+      interval: -1,
+      value: 0,
       form: {
         title: null,
         role: 2,
@@ -34,7 +38,9 @@ export default {
       },
     }
   },
+
   beforeMount() {
+    clearInterval(this.interval)
     this.axios.get(`http://localhost:8080/titles`).then((response) => {
       this.titles = response.data;
     });
@@ -51,10 +57,13 @@ export default {
       this.valid = valid;
     },
     showAlert() {
-      this.isAlertVisible = true;
-      setTimeout(() => {
-        this.isAlertVisible = false;
-      }, 10000);
+      this.isAlertVisible = true
+      this.interval = setInterval(() => {
+        if (this.value === 100) {
+          return (this.value = 0)
+        }
+        this.value += 10
+      }, 500)
     },
     onSubmit() {
       this.showAlert()
@@ -62,13 +71,19 @@ export default {
         this.axios
             .post("http://localhost:8080/emails-verification/send", this.form)
             .then((response) => {
-              alert("Potwierdź link w mailu.");
+              this.snackbarMessage = ("Potwierdź link w mailu.")
+              this.snackbar = true
+              this.isAlertVisible = false
             })
             .catch((err) => {
               if (err.response && err.response.status === 409 && err.response.data === "User with email " + this.form.email + " already exists") {
-                alert("Użytkownik o podanym adresie e-mail już istnieje.");
+                this.snackbarMessage = ("Użytkownik o podanym adresie e-mail już istnieje.")
+                this.snackbar = true
+                this.isAlertVisible = false
               } else {
-                alert("Wystąpił nieoczekiwany błąd.");
+                this.snackbarMessage = ("Wystąpił nieoczekiwany błąd.")
+                this.snackbar = true
+                this.isAlertVisible = false
               }
             });
       }, 2000);
@@ -80,7 +95,11 @@ export default {
 <template>
   <v-Form class="bg-white pa-1 pa-sm-5 w-sm-33 w-100" ref="form" @input="validate" @submit.prevent="onSubmit">
     <h1>Zarejestruj się</h1>
-    <h2 v-if="isAlertVisible">Prosimy o chwilę cierpliwości...</h2>
+    <div class="text-center">
+      <v-progress-circular v-if="isAlertVisible" :model-value="value" :rotate="360" :size="100" :width="15" color="teal">
+        <template v-slot:default> {{ value }} % </template>
+      </v-progress-circular>
+    </div>
     <v-select
         v-model="form.title"
         :items="titles"
@@ -140,6 +159,7 @@ export default {
         required
         :max="9"
     ></v-text-field>
-    <v-btn class="w-100" @click="showAlert" color="success" type="submit" :disabled="!valid">Zarejestruj</v-btn>
+    <v-btn class="w-100" color="success" type="submit" :disabled="!valid">Zarejestruj</v-btn>
+    <v-snackbar v-model="snackbar" :timeout="3000">{{ snackbarMessage }}</v-snackbar>
   </v-Form>
 </template>

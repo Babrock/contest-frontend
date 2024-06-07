@@ -25,7 +25,9 @@ export default {
         {title: 'Edytuj Regiony', to: '/regions', show: this.isAuthenticated || this.role === 'ROLE_ADMIN'},
         {title: 'Edytuj Profil', to: '/edit-profile', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_SCHOOL_COORDINATOR'},
         {title: 'Edycja punktów', to: '/edit-score', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_REGION_COORDINATOR'},
-        {title: 'Edytuj Formularza', to: '/edit-form',show: this.isAuthenticated || this.role === 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'        },
+        {title: 'Edytuj Formularza', to: '/edit-form', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' },
+        {title: 'Edytuj Stronę główną', to: '/edit-home-page', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' },
+
       ],
       other: [
         {title: 'RejestracjaOsóbUpoważnionych', to: '/auth-person-register', show: this.isAuthenticated || this.role === 'ROLE_ADMIN'},

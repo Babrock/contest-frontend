@@ -130,6 +130,13 @@ const router = createRouter({
       path: '/add-edition',
       name: 'addEdition',
       component: () => import('../views/AddEditionView.vue'),
+      beforeEnter: checkAuthentication,
+    },
+    {
+      path: '/edit-home-page',
+      name: 'EditHomePage',
+      component: () => import('../views/EditHomePageView.vue'),
+      beforeEnter: checkAuthentication,
     },
   ]
 })

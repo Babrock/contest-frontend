@@ -27,6 +27,7 @@ export default {
         {title: 'Edycja punktów', to: '/edit-score', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_REGION_COORDINATOR'},
         {title: 'Edytuj Formularza', to: '/edit-form', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' },
         {title: 'Edytuj Stronę główną', to: '/edit-home-page', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' },
+        {title: 'Edytuj zdjęcia strony głównej', to: '/edit-home-page-image', show: this.isAuthenticated || this.role === 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' },
 
       ],
       other: [
@@ -36,6 +37,7 @@ export default {
         {title: 'Import CSV', to: '/import-csv', show: this.isAuthenticated || this.role == 'ROLE_ADMIN'},
         {title: 'Wyślij wiadomość', to: '/send-email', show: this.isAuthenticated},
         {title: 'Dodaj nową edycję', to: '/add-edition', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'},
+        {title: 'Wydrukuj tabelę', to: '/print-table', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_REGION_COORDINATOR'},
       ],
     }
   },

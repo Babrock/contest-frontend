@@ -435,9 +435,9 @@ export default {
               label="Ulica"
               readonly
           ></v-text-field>
-          <div class="d-flex flex-row flex-sm-row ga-sm-1 w-sm-25">
+          <div class="d-flex flex-row flex-sm-row ga-sm-1 w-sm-75">
             <v-text-field
-                class="w-sm-35"
+                class="w-sm-20"
                 v-model="form.schoolData.address"
                 :rules="addressRules"
                 label="Nr budynku"
@@ -445,14 +445,14 @@ export default {
                 readonly
             ></v-text-field>
             <v-text-field
-                class="w-sm-30"
+                class="w-sm-20"
                 v-model="form.schoolData.apartmentNumber"
                 label="Nr lokalu"
                 required
                 readonly
             ></v-text-field>
             <v-text-field
-                class="w-sm-40"
+                class="w-sm-20"
                 v-model="form.schoolData.zipCode"
                 :rules="zipCodeRules"
                 label="Kod pocztowy"
@@ -460,14 +460,15 @@ export default {
                 placeholder="00-000"
                 readonly
             ></v-text-field>
+            <v-text-field
+                class="w-sm-40"
+                v-model="form.schoolData.post"
+                :rules="postRules"
+                label="Miejscowość"
+                required
+                readonly
+            ></v-text-field>
           </div>
-          <v-text-field
-              v-model="form.schoolData.post"
-              :rules="postRules"
-              label="Miejscowość"
-              required
-              readonly
-          ></v-text-field>
         </div>
       </div>
 

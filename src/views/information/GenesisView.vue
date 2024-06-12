@@ -1,8 +1,7 @@
 <template>
   <div>
-    <h1>Geneza konkursu</h1>
-    <blockquote>
-        <ul>
+    <h1><b>Geneza konkursu</b></h1>
+        <ul style="margin-left: 30px">
             <li>Od kilkunastu lat w krajach Europy Zachodniej organizowany jest Międzynarodowy Konkurs
                 Matematyczny <b><i>"Mathematiques sans frontieres"</i></b>
                 mający charakter zawodów międzyklasowych.
@@ -37,6 +36,5 @@
                 Austrii, Brazylii, Egiptu, Stanów Zjednoczonych, Kanady, Nigerii, Maroko, Tunezji.
             </li>
         </ul>
-    </blockquote>
   </div>
 </template>

@@ -138,6 +138,18 @@ const router = createRouter({
       component: () => import('../views/EditHomePageView.vue'),
       beforeEnter: checkAuthentication,
     },
+    {
+      path: '/edit-home-page-image',
+      name: 'EditHomePageImage',
+      component: () => import('../views/EditHomePageImageView.vue'),
+      beforeEnter: checkAuthentication,
+    },
+    {
+      path: '/print-table',
+      name: 'PrintTable',
+      component: () => import('../views/PrintTableView.vue'),
+      beforeEnter: checkAuthentication,
+    },
   ]
 })
 

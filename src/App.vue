@@ -38,6 +38,8 @@ export default {
         {title: 'Wyślij wiadomość', to: '/send-email', show: this.isAuthenticated},
         {title: 'Dodaj nową edycję', to: '/add-edition', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR'},
         {title: 'Wydrukuj tabelę', to: '/print-table', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_REGION_COORDINATOR'},
+        {title: 'Zobacz pliki PDF', to: '/display-pdf', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_REGION_COORDINATOR'},
+        {title: 'Dodaj podpisany formularz', to: '/add-Sign-pdf', show: this.isAuthenticated || this.role == 'ROLE_ADMIN' || this.role == 'ROLE_COORDINATOR' || this.role == 'ROLE_REGION_COORDINATOR'},
       ],
     }
   },

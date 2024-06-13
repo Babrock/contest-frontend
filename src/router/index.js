@@ -150,6 +150,18 @@ const router = createRouter({
       component: () => import('../views/PrintTableView.vue'),
       beforeEnter: checkAuthentication,
     },
+    {
+      path: '/display-pdf',
+      name: 'DisplayPdf',
+      component: () => import('../views/DisplayPdfView.vue'),
+      beforeEnter: checkAuthentication,
+    },
+    {
+      path: '/add-Sign-pdf',
+      name: 'AddSignPdf',
+      component: () => import('../views/AddSignPdf.vue'),
+      beforeEnter: checkAuthentication,
+    },
   ]
 })
 

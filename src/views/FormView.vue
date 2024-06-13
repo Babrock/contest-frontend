@@ -92,6 +92,7 @@ export default {
             language: {id: null},
           },
         ],
+        formPdf: null,
       },
     };
   },
@@ -212,7 +213,20 @@ export default {
         html2canvas: {scale: 2},
         jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
       };
-      html2pdf().from(element).set(options).save();
+      html2pdf().from(element).set(options).output('blob').then((pdfBlob) => {
+        // Przekształcenie Blob na base64
+        const reader = new FileReader();
+        reader.readAsDataURL(pdfBlob);
+        reader.onloadend = () => {
+          const base64data = reader.result.split(',')[1]; // Pobieranie części base64 z Data URL
+          this.form.formPdf = base64data;
+
+          // Wywołanie funkcji onSubmit po konwersji PDF na base64
+          this.onSubmit();
+        };
+      }).catch((error) => {
+        console.error('Błąd podczas generowania PDF-a:', error);
+      });
     },
     print() {
       this.shouldShowSignature = true;
@@ -228,7 +242,6 @@ export default {
           .then((response) => {
             this.snackbarMessage = ("Formularz został zgłoszony.")
             this.formResponse = response.data
-            this.saveAsPDF(this.formResponse);
             this.snackbar = true
           })
           .catch((err) => {
@@ -676,6 +689,7 @@ export default {
         <v-btn style="height: 50px" class="flex-grow-1" color="success" @click="saveAndDownload" :disabled="!valid || !hasPreviewed">Zapisz i pobierz
           <div class="sub-text">(plik do wydruku zapisał się do pobranych)</div>
         </v-btn>
+        <v-btn @click="saveAsPDF" >savePdf</v-btn>
       </div>
       <v-dialog
           v-model="dialogAccept"
